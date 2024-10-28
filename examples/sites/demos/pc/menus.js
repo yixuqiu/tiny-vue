@@ -358,7 +358,7 @@ if (envTarget === 'inner' || showBusiness) {
       { 'nameCn': '公司', 'name': 'Company', 'key': 'company' },
       { 'nameCn': '国家/地区', 'name': 'Country', 'key': 'country' },
       { 'nameCn': '币种', 'name': 'Currency', 'key': 'currency' },
-      { 'nameCn': '部门', 'name': 'Dept', 'key': 'dept' },
+      // { 'nameCn': '部门', 'name': 'Dept', 'key': 'dept' },
       { 'nameCn': '下拉角色', 'name': 'DropRoles', 'key': 'drop-roles' },
       { 'nameCn': '消息弹框', 'name': 'Espace', 'key': 'espace' },
       { 'nameCn': '权签人', 'name': 'HrApprover', 'key': 'hrapprover' },
