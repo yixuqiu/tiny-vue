@@ -5,7 +5,7 @@ export const filter =
   }
 
 export const nodeClick =
-  ({ props, vm }) =>
+  ({ props, vm, emit }) =>
   (data) => {
     if (!props.multiple) {
       vm.$refs.baseSelectRef.updateSelectedData({
