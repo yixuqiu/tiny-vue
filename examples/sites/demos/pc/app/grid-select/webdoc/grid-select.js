@@ -30,6 +30,33 @@ export default {
         'en-US': ''
       },
       codeFiles: ['multiple.vue']
+    },
+    {
+      demoId: 'filter',
+      name: {
+        'zh-CN': '可过滤',
+        'en-US': 'Filterable'
+      },
+      desc: {
+        'zh-CN':
+          '<p>通过 <code>filterable</code> 设置是否可过滤，<code>filter-method</code> 设置自定义过滤逻辑。</p>\n',
+        'en-US': ''
+      },
+      codeFiles: ['filter.vue']
+    },
+    {
+      demoId: 'config',
+      name: {
+        'zh-CN': '配置项',
+        'en-US': 'Config'
+      },
+      desc: {
+        'zh-CN':
+          '<p>通过 <code>select-config</code> （多选）或 <code>radio-config</code> （单选）属性的 <code>checkMethod</code> 自定义禁用逻辑，返回 true (启用) / false (禁用)。配置 <code>{ trigger: "row" }</code> 可以设置点击行选中数据。</p>\n',
+        'en-US':
+          "<p>By customizing the disable logic through the <code>select-config</code> (multiple selection) or <code>radio-config</code> (single selection) attribute's <code>checkMethod</code>, return true (Enable) / false (disable).Configure {trigger: 'row'} to set the selected data in the click row.</p>"
+      },
+      codeFiles: ['config.vue']
     }
   ]
 }

@@ -1,10 +1,11 @@
 <template>
   <tiny-grid-select
-    v-model="value"
-    multiple
-    :grid-op="gridOpMulti"
+    v-model="valueSingle"
+    filterable
+    :filter-method="filter"
     value-field="id"
     text-field="city"
+    :grid-op="gridOpSingle"
   ></tiny-grid-select>
 </template>
 
@@ -17,8 +18,8 @@ export default {
   },
   data() {
     return {
-      value: [],
-      treeOp: {
+      valueSingle: [],
+      gridOpSingle: {
         data: [
           { id: '001', area: '华南区', province: '广东省', city: '广州市' },
           { id: '002', area: '华南区', province: '广东省', city: '深圳市' },
@@ -27,7 +28,7 @@ export default {
           { id: '005', area: '华南区', province: '广东省', city: '中山市' }
         ],
         columns: [
-          { type: 'selection', title: '' },
+          { type: 'radio', title: '' },
           { field: 'area', title: '区域', width: 90 },
           { field: 'province', title: '省份', width: 60 },
           { field: 'city', title: '城市', width: 60 }
