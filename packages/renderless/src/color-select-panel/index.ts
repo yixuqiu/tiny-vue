@@ -1,5 +1,5 @@
 import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
-import { Color } from './utils/color-new'
+import { Color } from './utils/color'
 
 export const panelRgb = (color: Color, alpha: boolean) => {
   const { r, g, b } = color.toRgb()

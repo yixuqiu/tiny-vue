@@ -1,5 +1,5 @@
 import type { IColorSelectPanelSVProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
-import type { Color } from '../utils/color-new'
+import type { Color } from '../utils/color'
 import { getClientXY } from '../utils/getClientXY'
 import { draggable } from '../utils/use-drag'
 

@@ -1,5 +1,5 @@
 import type { IColorSelectPanelRef } from '@/types'
-import type Color from '../utils/color'
+import type { Color } from '../utils/color'
 
 export const setPosition = (el: HTMLElement, x: number, y: number) => {
   el.style.top = `${y}px`

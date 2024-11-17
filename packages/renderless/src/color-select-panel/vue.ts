@@ -1,6 +1,6 @@
 import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
 import { panelRgb, triggerCancel, triggerColorUpdate, triggerConfirm, updateModelValue } from './index'
-import { Color } from './utils/color-new'
+import { Color } from './utils/color'
 import { onMounted, watch } from 'vue'
 
 export const api = [
