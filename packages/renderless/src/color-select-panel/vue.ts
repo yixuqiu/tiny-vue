@@ -154,12 +154,12 @@ export const renderless = (
     onHistoryClick,
     onClickOutside
   }
-  // watch(
-  //   () => color,
-  //   () => {
-  //     emit('color-update', color)
-  //   }
-  // )
+  watch(
+    () => color,
+    () => {
+      emit('color-update', color)
+    }
+  )
   watch(
     () => props.visible,
     () => {
