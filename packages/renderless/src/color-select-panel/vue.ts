@@ -16,7 +16,8 @@ export const api = [
   'onSvReady',
   'onAlphaReady',
   'onPredefineColorClick',
-  'onHistoryClick'
+  'onHistoryClick',
+  'onClickOutside'
 ]
 
 export const renderless = (
@@ -100,7 +101,8 @@ export const renderless = (
     }
   }
   const onCancel = () => {
-    onClickOutside()
+    resetColor()
+    close()
     emit('cancel')
   }
   const submitValue = () => {
@@ -129,6 +131,7 @@ export const renderless = (
       return
     }
     close()
+    resetColor()
     emit('cancel')
   }
   const onHueReady = (update) => (hue.value = { update })
@@ -148,8 +151,15 @@ export const renderless = (
     onSvReady,
     onAlphaReady,
     onPredefineColorClick,
-    onHistoryClick
+    onHistoryClick,
+    onClickOutside
   }
+  // watch(
+  //   () => color,
+  //   () => {
+  //     emit('color-update', color)
+  //   }
+  // )
   watch(
     () => props.visible,
     () => {
