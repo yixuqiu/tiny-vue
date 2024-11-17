@@ -1,7 +1,7 @@
 import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
-import { initState, triggerCancel, triggerColorUpdate, triggerConfirm, updateModelValue } from './index'
+import { initState, initWatch, triggerCancel, triggerConfirm, updateModelValue } from './index'
 import { Color } from './utils/color'
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 
 export const api = [
   'state',
@@ -124,78 +124,11 @@ export const renderless = (
     onHistoryClick,
     onClickOutside
   }
-  watch(
-    () => state.color,
-    () => {
-      emit('color-update', state.color)
-    }
-  )
-  watch(
-    () => props.visible,
-    () => {
-      state.showPicker = props.visible
-    }
-  )
+  initWatch(state, props, hooks, utils)
   onMounted(() => {
     if (props.modelValue) {
       state.input = state.currentColor
     }
   })
-  watch(
-    () => props.modelValue,
-    (newValue) => {
-      if (!newValue) {
-        state.showPanel = false
-      }
-      if (newValue && newValue !== state.color.value) {
-        state.color.fromString(newValue)
-      }
-    }
-  )
-  watch(
-    () => [props.format, props.alpha],
-    () => {
-      state.color.enableAlpha = props.alpha
-      state.color.format = props.format || state.color.format
-      state.color.onChange()
-      updateModelValue(state.color.value, emit)
-    }
-  )
-  watch(
-    () => state.currentColor,
-    () => {
-      state.input = state.currentColor
-      triggerColorUpdate(state.input, emit)
-    },
-    { flush: 'sync' }
-  )
-  watch(state.color, () => {
-    if (!props.modelValue && !state.showPanel) {
-      state.showPanel = true
-    }
-  })
-  watch(
-    () => state.showPicker,
-    () => {
-      nextTick(() => {
-        if (state.hue) {
-          state.hue.update()
-        }
-        if (state.sv) {
-          state.sv.update()
-        }
-        if (state.alpha) {
-          state.alpha.update()
-        }
-      })
-    }
-  )
-  watch(
-    () => props.history,
-    () => {
-      state.stack = props.history
-    },
-    { deep: true }
-  )
   return api
 }

@@ -67,3 +67,84 @@ export const initState = (
   })
   return state
 }
+
+export const initWatch = (
+  state: ReturnType<typeof initState>,
+  props: IColorSelectPanelProps,
+  { nextTick, watch }: ISharedRenderlessParamHooks,
+  { emit }: ISharedRenderlessParamUtils
+) => {
+  watch(
+    () => state.color,
+    () => {
+      emit('color-update', state.color)
+    }
+  )
+  watch(
+    () => props.visible,
+    () => {
+      state.showPicker = props.visible
+    }
+  )
+  watch(
+    () => props.modelValue,
+    () => {
+      if (!props.modelValue) {
+        state.showPanel = false
+      }
+      if (props.modelValue && props.modelValue !== state.color.value) {
+        state.color.fromString(props.modelValue)
+      }
+    }
+  )
+  /**
+   * @description 预留了一个 format props类型
+   * @description 2024/11/17 尚未实现
+   * @see https://github.com/opentiny/tiny-vue/issues/2514
+   */
+  watch(
+    () => [props.format, props.alpha],
+    () => {
+      state.color.enableAlpha = props.alpha
+      state.color.format = props.format || state.color.format
+      state.color.onChange()
+      updateModelValue(state.color.value, emit)
+    }
+  )
+  watch(
+    () => state.currentColor,
+    () => {
+      state.input = state.currentColor
+      triggerColorUpdate(state.input, emit)
+    },
+    { flush: 'sync' }
+  )
+  watch(state.color, () => {
+    if (!props.modelValue && !state.showPanel) {
+      state.showPanel = true
+    }
+  })
+  watch(
+    () => state.showPicker,
+    () => {
+      nextTick(() => {
+        if (state.hue) {
+          state.hue.update()
+        }
+        if (state.sv) {
+          state.sv.update()
+        }
+        if (state.alpha) {
+          state.alpha.update()
+        }
+      })
+    }
+  )
+  watch(
+    () => props.history,
+    () => {
+      state.stack = props.history
+    },
+    { deep: true }
+  )
+}
