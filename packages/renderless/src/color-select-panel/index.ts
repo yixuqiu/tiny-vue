@@ -30,97 +30,40 @@ export const initState = (
   const color = reactive(
     new Color({
       enableAlpha: props.alpha,
-      format: props.format || '',
+      format: props.format ?? '',
       value: props.modelValue
     })
   ) as Color
-  const showPicker = ref(false)
+  const input = ref<string>('')
+  const showPicker = ref(props.visible)
   const showPanel = ref(false)
-  const input = ref('')
-  const hue = ref()
-  const sv = ref()
-  const alpha = ref()
   const panelColor = computed(() => {
     if (!props.modelValue && !showPanel.value) {
       return 'transparent'
     }
     return panelRgb(color, props.alpha)
   })
-  const currentColor = computed(() => {
-    return !props.modelValue && !showPanel.value ? '' : color.value
-  })
-  return {
+  const currentColor = computed(() => (!props.modelValue && !showPicker.value ? '' : color.value))
+
+  const stack = ref<string[]>([...(props.history ?? [])])
+  const predefineStack = computed(() => props.predefine)
+  const hue = ref()
+  const sv = ref()
+  const alpha = ref()
+  const state = reactive({
     color,
-    showPicker,
     input,
+    showPicker,
+    showPanel,
     panelColor,
     currentColor,
-    showPanel,
     hue,
     sv,
-    alpha
-  }
-}
-
-export const initWatch = (
-  props: IColorSelectPanelProps,
-  { watch, onMounted, watchEffect }: ISharedRenderlessParamHooks,
-  { emit }: ISharedRenderlessParamUtils,
-  { input, showPanel, color, currentColor, showPicker, hue, sv, alpha }: ReturnType<typeof initState>
-) => {
-  let dirty = true
-  onMounted(() => {
-    if (props.modelValue) {
-      input.value = currentColor.value
-    }
+    alpha,
+    stack,
+    predefineStack,
+    enablePredefineColor: computed(() => props.predefine?.length),
+    enableHistory: computed(() => props.history?.length)
   })
-  watch(
-    () => props.modelValue,
-    () => {
-      if (!props.modelValue) {
-        showPanel.value = false
-      } else if (props.modelValue && props.modelValue !== color.value) {
-        dirty = false
-        color.fromString(props.modelValue)
-      }
-    }
-  )
-  watchEffect(() => {
-    color.enableAlpha = props.alpha
-    color.format = props.format || color.format
-    color.onChange()
-    updateModelValue(color.value, emit)
-  })
-  watch(
-    () => currentColor.value,
-    () => {
-      input.value = currentColor.value
-      if (dirty) {
-        triggerColorUpdate(currentColor.value, emit)
-      }
-      dirty = true
-    }
-  )
-  watch(
-    () => color.value,
-    () => {
-      if (!props.modelValue && !showPanel.value) {
-        showPanel.value = true
-      }
-    }
-  )
-  watch(
-    () => showPicker.value,
-    () => {
-      if (hue.value) {
-        hue.value.update()
-      }
-      if (sv.value) {
-        sv.value.update()
-      }
-      if (alpha.value) {
-        alpha.value.update()
-      }
-    }
-  )
+  return state
 }

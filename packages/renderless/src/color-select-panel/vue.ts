@@ -1,5 +1,5 @@
 import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
-import { panelRgb, triggerCancel, triggerColorUpdate, triggerConfirm, updateModelValue } from './index'
+import { initState, triggerCancel, triggerColorUpdate, triggerConfirm, updateModelValue } from './index'
 import { Color } from './utils/color'
 import { onMounted, watch } from 'vue'
 
@@ -22,57 +22,21 @@ export const api = [
 
 export const renderless = (
   props: IColorSelectPanelProps,
-  { reactive, ref, computed, nextTick }: ISharedRenderlessParamHooks,
-  { emit }: ISharedRenderlessParamUtils
+  hooks: ISharedRenderlessParamHooks,
+  utils: ISharedRenderlessParamUtils
 ) => {
-  const color = reactive(
-    new Color({
-      enableAlpha: props.alpha,
-      format: props.format ?? '',
-      value: props.modelValue
-    })
-  ) as Color
-  const input = ref()
-  const showPicker = ref(props.visible)
-  const showPanel = ref(false)
-  const panelColor = computed(() => {
-    if (!props.modelValue && !showPanel.value) {
-      return 'transparent'
-    }
-    return panelRgb(color, props.alpha)
-  })
-  const currentColor = computed(() => (!props.modelValue && !showPicker.value ? '' : color.value))
+  const { nextTick } = hooks
+  const { emit } = utils
+  const state = initState(props, hooks, utils)
 
-  const setShowPicker = (value: boolean) => (showPicker.value = value)
-
-  const stack = ref<string[]>([...(props.history ?? [])])
-  const predefineStack = computed(() => props.predefine)
+  const setShowPicker = (value: boolean) => (state.showPicker = value)
 
   const onPredefineColorClick = (predefineColor: string) => {
-    color.fromString(predefineColor)
+    state.color.fromString(predefineColor)
   }
   const onHistoryClick = (historyColor: string) => {
-    color.fromString(historyColor)
+    state.color.fromString(historyColor)
   }
-
-  const hue = ref()
-  const sv = ref()
-  const alpha = ref()
-  const state = reactive({
-    color,
-    input,
-    showPicker,
-    showPanel,
-    panelColor,
-    currentColor,
-    hue,
-    sv,
-    alpha,
-    stack,
-    predefineStack,
-    enablePredefineColor: computed(() => props.predefine?.length),
-    enableHistory: computed(() => props.history?.length)
-  })
   const open = () => {
     setShowPicker(true)
   }
@@ -82,22 +46,22 @@ export const renderless = (
   const resetColor = () => {
     nextTick(() => {
       if (props.modelValue) {
-        color.fromString(props.modelValue)
+        state.color.fromString(props.modelValue)
       } else {
-        color.value = ''
+        state.color.value = ''
         nextTick(() => {
-          showPanel.value = false
+          state.showPanel = false
         })
       }
     })
   }
   const onConfirm = () => {
     submitValue()
-    let index = stack.value.indexOf(input.value)
+    let index = state.stack.indexOf(state.input)
     if (index === -1) {
-      stack.value.push(input.value)
+      state.stack.push(state.input)
     } else {
-      stack.value = [input.value, ...stack.value.filter((c, i) => i !== index)]
+      state.stack = [state.input, ...state.stack.filter((c, i) => i !== index)]
     }
   }
   const onCancel = () => {
@@ -106,7 +70,7 @@ export const renderless = (
     emit('cancel')
   }
   const submitValue = () => {
-    const value = color.value
+    const value = state.color.value
     updateModelValue(value, emit)
     triggerConfirm(value, emit)
     setShowPicker(false)
@@ -116,7 +80,7 @@ export const renderless = (
         format: props.format ?? '',
         value: props.modelValue
       })
-      if (!color.compare(newColor)) {
+      if (!state.color.compare(newColor)) {
         resetColor()
       }
     })
@@ -127,16 +91,22 @@ export const renderless = (
     resetColor()
   }
   const onClickOutside = () => {
-    if (!showPicker.value) {
+    if (!state.showPicker) {
       return
     }
     close()
     resetColor()
     emit('cancel')
   }
-  const onHueReady = (update) => (hue.value = { update })
-  const onSvReady = (update) => (sv.value = { update })
-  const onAlphaReady = (update) => (alpha.value = { update })
+  const onHueReady = (update) => {
+    state.hue = { update }
+  }
+  const onSvReady = (update) => {
+    state.sv = { update }
+  }
+  const onAlphaReady = (update) => {
+    state.alpha = { update }
+  }
 
   const api = {
     state,
@@ -155,9 +125,9 @@ export const renderless = (
     onClickOutside
   }
   watch(
-    () => color,
+    () => state.color,
     () => {
-      emit('color-update', color)
+      emit('color-update', state.color)
     }
   )
   watch(
@@ -168,54 +138,54 @@ export const renderless = (
   )
   onMounted(() => {
     if (props.modelValue) {
-      input.value = currentColor.value
+      state.input = state.currentColor
     }
   })
   watch(
     () => props.modelValue,
     (newValue) => {
       if (!newValue) {
-        showPanel.value = false
+        state.showPanel = false
       }
-      if (newValue && newValue !== color.value) {
-        color.fromString(newValue)
+      if (newValue && newValue !== state.color.value) {
+        state.color.fromString(newValue)
       }
     }
   )
   watch(
     () => [props.format, props.alpha],
     () => {
-      color.enableAlpha = props.alpha
-      color.format = props.format || color.format
-      color.onChange()
-      updateModelValue(color.value, emit)
+      state.color.enableAlpha = props.alpha
+      state.color.format = props.format || state.color.format
+      state.color.onChange()
+      updateModelValue(state.color.value, emit)
     }
   )
   watch(
-    () => currentColor.value,
+    () => state.currentColor,
     () => {
-      input.value = currentColor.value
-      triggerColorUpdate(input.value, emit)
+      state.input = state.currentColor
+      triggerColorUpdate(state.input, emit)
     },
     { flush: 'sync' }
   )
-  watch(color, () => {
-    if (!props.modelValue && !showPanel.value) {
-      showPanel.value = true
+  watch(state.color, () => {
+    if (!props.modelValue && !state.showPanel) {
+      state.showPanel = true
     }
   })
   watch(
-    () => showPicker.value,
+    () => state.showPicker,
     () => {
       nextTick(() => {
-        if (hue.value) {
-          hue.value.update()
+        if (state.hue) {
+          state.hue.update()
         }
-        if (sv.value) {
-          sv.value.update()
+        if (state.sv) {
+          state.sv.update()
         }
-        if (alpha.value) {
-          alpha.value.update()
+        if (state.alpha) {
+          state.alpha.update()
         }
       })
     }
@@ -223,7 +193,7 @@ export const renderless = (
   watch(
     () => props.history,
     () => {
-      stack.value = props.history
+      state.stack = props.history
     },
     { deep: true }
   )
