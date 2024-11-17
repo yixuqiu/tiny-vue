@@ -91,8 +91,7 @@ export const renderless = (
     })
   }
   const onConfirm = () => {
-    color.fromString(input.value)
-    emit('confirm', input.value)
+    submitValue()
     let index = stack.value.indexOf(input.value)
     if (index === -1) {
       stack.value.push(input.value)
