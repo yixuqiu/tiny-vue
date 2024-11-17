@@ -14,7 +14,9 @@ export const api = [
   'clear',
   'onHueReady',
   'onSvReady',
-  'onAlphaReady'
+  'onAlphaReady',
+  'onPredefineColorClick',
+  'onHistoryClick'
 ]
 
 export const renderless = (
@@ -41,6 +43,17 @@ export const renderless = (
   const currentColor = computed(() => (!props.modelValue && !showPicker.value ? '' : color.value))
 
   const setShowPicker = (value: boolean) => (showPicker.value = value)
+
+  const stack = ref<string[]>([...(props.history ?? [])])
+  const predefineStack = computed(() => props.predefine)
+
+  const onPredefineColorClick = (predefineColor: string) => {
+    color.fromString(predefineColor)
+  }
+  const onHistoryClick = (historyColor: string) => {
+    color.fromString(historyColor)
+  }
+
   const hue = ref()
   const sv = ref()
   const alpha = ref()
@@ -53,7 +66,11 @@ export const renderless = (
     currentColor,
     hue,
     sv,
-    alpha
+    alpha,
+    stack,
+    predefineStack,
+    enablePredefineColor: computed(() => props.predefine?.length),
+    enableHistory: computed(() => props.history?.length)
   })
   const open = () => {
     setShowPicker(true)
@@ -76,6 +93,12 @@ export const renderless = (
   const onConfirm = () => {
     color.fromString(input.value)
     emit('confirm', input.value)
+    let index = stack.value.indexOf(input.value)
+    if (index === -1) {
+      stack.value.push(input.value)
+    } else {
+      stack.value = [input.value, ...stack.value.filter((c, i) => i !== index)]
+    }
   }
   const onCancel = () => {
     onClickOutside()
@@ -124,7 +147,9 @@ export const renderless = (
     clear,
     onHueReady,
     onSvReady,
-    onAlphaReady
+    onAlphaReady,
+    onPredefineColorClick,
+    onHistoryClick
   }
   watch(
     () => props.visible,
@@ -185,6 +210,13 @@ export const renderless = (
         }
       })
     }
+  )
+  watch(
+    () => props.history,
+    () => {
+      stack.value = props.history
+    },
+    { deep: true }
   )
   return api
 }

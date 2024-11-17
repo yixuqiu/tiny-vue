@@ -13,7 +13,7 @@
         </tiny-button>
       </div>
     </div>
-    <!-- <tiny-collapse>
+    <tiny-collapse>
       <tiny-collapse-item :title="t('ui.colorSelectPanel.history')" name="history" v-if="state.enableHistory">
         <div class="tiny-color-select-panel__history" v-if="state.stack.length">
           <div
@@ -46,7 +46,7 @@
         </div>
         <div v-if="!state.predefineStack.length">{{ t('ui.colorSelectPanel.empty') }}</div>
       </tiny-collapse-item>
-    </tiny-collapse> -->
+    </tiny-collapse>
   </div>
 </template>
 
@@ -59,6 +59,8 @@ import HueSelect from './components/hue-select.vue'
 import AlphaSelect from './components/alpha-select.vue'
 import '@opentiny/vue-theme/color-select-panel/index.less'
 import Clickoutside from '@opentiny/vue-renderless/common/deps/clickoutside'
+import Collapse from '@opentiny/vue-collapse'
+import CollapseItem from '@opentiny/vue-collapse-item'
 
 export default defineComponent({
   emits: ['update:modelValue', 'cancel', 'confirm', 'color-update'],
@@ -67,9 +69,9 @@ export default defineComponent({
     HueSelect,
     AlphaSelect,
     TinyButton: Button,
-    TinyInput: Input
-    // TinyCollapse: Collapse,
-    // TinyCollapseItem: CollapseItem
+    TinyInput: Input,
+    TinyCollapse: Collapse,
+    TinyCollapseItem: CollapseItem
   },
   directives: directive({ Clickoutside }),
   setup(props, context) {
