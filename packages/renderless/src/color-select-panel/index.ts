@@ -1,122 +1,126 @@
-import type { IColorSelectPanelRef } from '@/types'
-import Color from './utils/color'
+import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
+import { Color } from './utils/color-new'
 
-export const onConfirm = (
-  hex: IColorSelectPanelRef<string>,
-  pre: IColorSelectPanelRef<string>,
-  res: IColorSelectPanelRef<string>,
-  emit,
-  stack: IColorSelectPanelRef<string[]>,
-  enableHistory: boolean,
-  color: IColorSelectPanelRef<Color>
+export const panelRgb = (color: Color, alpha: boolean) => {
+  const { r, g, b } = color.toRgb()
+  return alpha ? `rgba(${r},${g},${b},${color.get('alpha') / 100})` : `rgb(${r},${g},${b})`
+}
+
+export const updateModelValue = (value: string | null, emit: ISharedRenderlessParamUtils['emit']) => {
+  emit('update:modelValue', value)
+}
+
+export const triggerCancel = (value: string | null, emit: ISharedRenderlessParamUtils['emit']) => {
+  emit('cancel')
+}
+
+export const triggerColorUpdate = (value: string | null, emit: ISharedRenderlessParamUtils['emit']) => {
+  emit('color-update', value)
+}
+
+export const triggerConfirm = (value: string | null, emit: ISharedRenderlessParamUtils['emit']) => {
+  emit('confirm', value)
+}
+
+export const initState = (
+  props: IColorSelectPanelProps,
+  { reactive, ref, computed, nextTick }: ISharedRenderlessParamHooks,
+  { emit }: ISharedRenderlessParamUtils
 ) => {
-  return () => {
-    pre.value = hex.value
-    hex.value = res.value
-    if (enableHistory) {
-      const itemIdx = Math.max(
-        stack.value.indexOf(res.value),
-        stack.value.indexOf(res.value.toLowerCase()),
-        stack.value.indexOf(res.value.toUpperCase())
-      )
-      if (itemIdx !== -1) {
-        stack.value.splice(itemIdx, 1)
+  const color = reactive(
+    new Color({
+      enableAlpha: props.alpha,
+      format: props.format || '',
+      value: props.modelValue
+    })
+  ) as Color
+  const showPicker = ref(false)
+  const showPanel = ref(false)
+  const input = ref('')
+  const hue = ref()
+  const sv = ref()
+  const alpha = ref()
+  const panelColor = computed(() => {
+    if (!props.modelValue && !showPanel.value) {
+      return 'transparent'
+    }
+    return panelRgb(color, props.alpha)
+  })
+  const currentColor = computed(() => {
+    return !props.modelValue && !showPanel.value ? '' : color.value
+  })
+  return {
+    color,
+    showPicker,
+    input,
+    panelColor,
+    currentColor,
+    showPanel,
+    hue,
+    sv,
+    alpha
+  }
+}
+
+export const initWatch = (
+  props: IColorSelectPanelProps,
+  { watch, onMounted, watchEffect }: ISharedRenderlessParamHooks,
+  { emit }: ISharedRenderlessParamUtils,
+  { input, showPanel, color, currentColor, showPicker, hue, sv, alpha }: ReturnType<typeof initState>
+) => {
+  let dirty = true
+  onMounted(() => {
+    if (props.modelValue) {
+      input.value = currentColor.value
+    }
+  })
+  watch(
+    () => props.modelValue,
+    () => {
+      if (!props.modelValue) {
+        showPanel.value = false
+      } else if (props.modelValue && props.modelValue !== color.value) {
+        dirty = false
+        color.fromString(props.modelValue)
       }
-      stack.value.unshift(res.value)
     }
-    color.value.setPrevH(color.value.get('h'))
-    emit('confirm', res.value)
-    emit('update:modelValue', res.value)
-  }
-}
-
-export const onCancel = (
-  res: IColorSelectPanelRef<string>,
-  pre: IColorSelectPanelRef<string>,
-  emit,
-  isShow: IColorSelectPanelRef<boolean>,
-  hex: IColorSelectPanelRef<string>,
-  color: IColorSelectPanelRef<Color>
-) => {
-  return () => {
-    if (isShow.value) {
-      res.value = pre.value
-      hex.value = pre.value
-      const tmpColor = new Color(pre.value)
-      color.value.set({
-        ...tmpColor.getHSV(),
-        h: color.value.get('preH')
-      })
-      emit('cancel', color)
+  )
+  watchEffect(() => {
+    color.enableAlpha = props.alpha
+    color.format = props.format || color.format
+    color.onChange()
+    updateModelValue(color.value, emit)
+  })
+  watch(
+    () => currentColor.value,
+    () => {
+      input.value = currentColor.value
+      if (dirty) {
+        triggerColorUpdate(currentColor.value, emit)
+      }
+      dirty = true
     }
-    emit('update:modelValue', hex.value)
-  }
-}
-export const onColorUpdate = (color: IColorSelectPanelRef<Color>, res: IColorSelectPanelRef<string>, emit) => {
-  res.value = color.value.getHex()
-  emit('update:modelValue', res.value)
-}
-
-export const onHSVUpdate = (
-  color: IColorSelectPanelRef<Color>,
-  res: IColorSelectPanelRef<string>,
-  hex: IColorSelectPanelRef<string>,
-  emit
-) => {
-  return {
-    onHueUpdate: (hue: number) => {
-      color.value.set({ h: hue })
-      onColorUpdate(color, res, emit)
-      hex.value = color.value.getHex()
-      emit('hue-update', hue)
-    },
-    onSVUpdate: ({ s, v }: { s: number; v: number }) => {
-      hex.value = color.value.getHex()
-      onColorUpdate(color, res, emit)
-      emit('sv-update', { s, v })
+  )
+  watch(
+    () => color.value,
+    () => {
+      if (!props.modelValue && !showPanel.value) {
+        showPanel.value = true
+      }
     }
-  }
-}
-
-export const onAlphaUpdate = (color: IColorSelectPanelRef<Color>, res: IColorSelectPanelRef<string>, emit) => {
-  return {
-    update: (alpha: number) => {
-      color.value.set({ a: alpha })
-      onColorUpdate(color, res, emit)
+  )
+  watch(
+    () => showPicker.value,
+    () => {
+      if (hue.value) {
+        hue.value.update()
+      }
+      if (sv.value) {
+        sv.value.update()
+      }
+      if (alpha.value) {
+        alpha.value.update()
+      }
     }
-  }
-}
-
-export const handleHistoryClick = (
-  hex: IColorSelectPanelRef<string>,
-  res: IColorSelectPanelRef<string>,
-  color: IColorSelectPanelRef<Color>,
-  emit
-) => {
-  return (history: string) => {
-    hex.value = history
-    res.value = history
-    const tmpColor = new Color(history)
-    color.value.set({
-      ...tmpColor.getHSV()
-    })
-    emit('color-update', color)
-  }
-}
-
-export const handlePredefineClick = (
-  hex: IColorSelectPanelRef<string>,
-  res: IColorSelectPanelRef<string>,
-  color: IColorSelectPanelRef<Color>,
-  emit
-) => {
-  return (selectedColor: string) => {
-    hex.value = selectedColor
-    res.value = selectedColor
-    const tmpColor = new Color(selectedColor)
-    color.value.set({
-      ...tmpColor.getHSV()
-    })
-    emit('color-update', color)
-  }
+  )
 }

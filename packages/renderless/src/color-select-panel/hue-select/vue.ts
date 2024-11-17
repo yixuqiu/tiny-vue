@@ -1,58 +1,93 @@
-import type { IColorSelectPanelRef as Ref } from '@/types'
+import type { IColorSelectPanelHueProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
+import type { Color } from '../utils/color-new'
+import { getClientXY } from '../utils/getClientXY'
 import { draggable } from '../utils/use-drag'
-import { getThumbTop, resetCursor, updateThumb, updateCursor } from './index'
-import type Color from '../utils/color'
 
-export const api = ['state', 'cursor', 'wrapper', 'bar', 'thumb']
-export const renderless = (props, context, { emit, expose }) => {
-  const cursor: Ref<HTMLElement> = context.ref()
-  const wrapper: Ref<HTMLElement> = context.ref()
-  const thumb: Ref<HTMLElement> = context.ref()
-  const bar: Ref<HTMLElement> = context.ref()
-  const color: Color = props.color
-  const h = context.ref(color.get('h'))
+export const api = ['state', 'onSvReady', 'bar', 'thumb', 'wrapper']
 
-  const background: string = `hsl(${h.value}deg, 100%, 50%)`
-  const state = context.reactive({
-    background
-  })
+export const renderless = (
+  props: IColorSelectPanelHueProps<Color>,
+  { onMounted, reactive, ref, computed }: ISharedRenderlessParamHooks,
+  { emit }: ISharedRenderlessParamUtils
+) => {
+  const thumb = ref<HTMLElement>()
+  const bar = ref<HTMLElement>()
+  const wrapper = ref<HTMLElement>()
+  const cursor = ref<HTMLElement>()
 
-  const api = { state, cursor, wrapper, bar, thumb }
-  context.watch(
-    () => props,
-    () => {
-      h.value = color.get('h')
-      resetCursor(color.get('s'), color.get('v'), wrapper, cursor, thumb, color, h)
-    },
-    { deep: true }
-  )
-  context.watch(h, (newHue: string) => {
-    state.background = `hsl(${newHue}deg, 100%, 50%)`
-  })
-  context.onMounted(() => {
-    const update = {
-      thumb: updateThumb(bar, thumb, h, emit),
-      cursor: updateCursor(wrapper, cursor, emit)
+  const thumbLeft = ref(0)
+  const thumbTop = ref(0)
+  const hueValue = computed(() => props.color.get('hue'))
+  const state = reactive({ hueValue, thumb, bar, wrapper, thumbTop })
+  const onSvReady = (update) => {
+    emit('svReady', update)
+  }
+  const api = {
+    state,
+    onSvReady,
+    bar,
+    thumb,
+    wrapper
+  }
+  const getThumbLeft = () => {
+    if (!thumb.value) {
+      return 0
     }
-    const thumbTop = getThumbTop(wrapper.value, thumb.value, h.value)
-    thumb.value.style.top = `${thumbTop}px`
-    resetCursor(color.get('s'), color.get('v'), wrapper, cursor, thumb, color, h)
-    draggable(wrapper.value, {
-      drag(event) {
-        update.cursor(color, event as MouseEvent)
+    const hue = props.color.get('hue')
+    if (!wrapper.value) {
+      return 0
+    }
+    return Math.round((hue * (wrapper.value.offsetWidth - thumb.value.offsetWidth / 2)) / 360)
+  }
+  const getThumbTop = () => {
+    if (!thumb.value) {
+      return 0
+    }
+    const hue = props.color.get('hue')
+    if (!bar.value) {
+      return 0
+    }
+    return (hue * (bar.value.offsetHeight - thumb.value.offsetHeight / 2)) / 360
+  }
+  const update = () => {
+    thumbLeft.value = getThumbLeft()
+    thumbTop.value = getThumbTop()
+  }
+  const onDrag = (event: MouseEvent | TouchEvent) => {
+    if (!bar.value || !thumb.value) {
+      return
+    }
+    const el = bar.value
+    if (!el) {
+      return
+    }
+    const rect = el?.getBoundingClientRect()
+    const { clientY } = getClientXY(event)
+    let top = clientY - rect.top
+
+    top = Math.min(top, rect.height - thumb.value.offsetHeight / 2)
+    top = Math.max(thumb.value.offsetHeight / 2, top)
+    const hue = Math.round(((top - thumb.value.offsetHeight / 2) / (rect.height - thumb.value.offsetHeight)) * 360)
+    thumbTop.value = top
+    emit('hueUpdate', hue)
+    props.color.set('hue', hue)
+  }
+  onMounted(() => {
+    if (!bar.value || !thumb.value) {
+      return
+    }
+    const dragConfig = {
+      drag: (event: MouseEvent | TouchEvent) => {
+        onDrag(event)
       },
-      start(event) {
-        update.cursor(color, event as MouseEvent)
+      end: (event: MouseEvent | TouchEvent) => {
+        onDrag(event)
       }
-    })
-    draggable(bar.value, {
-      drag(event) {
-        update.thumb(event as MouseEvent)
-      },
-      start(event) {
-        update.thumb(event as MouseEvent)
-      }
-    })
+    }
+    draggable(bar.value, dragConfig)
+    draggable(thumb.value, dragConfig)
+    emit('hueReady', update)
+    update()
   })
   return api
 }

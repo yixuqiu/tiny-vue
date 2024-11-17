@@ -1,9 +1,9 @@
 <template>
-  <div class="tiny-color-select-panel" @click.stop v-if="state.isShow" v-clickoutside="onCancel">
-    <hue-select :color="state.color" @hue-update="onHueUpdate" @sv-update="onSVUpdate" />
-    <alpha-select v-if="alpha" :color="state.color" @alpha-update="onAlphaUpdate" />
+  <div class="tiny-color-select-panel" @click.stop v-if="state.showPicker" v-clickoutside="onCancel">
+    <hue-select :color="state.color" @hue-ready="onHueReady" @sv-ready="onSvReady" />
+    <alpha-select v-if="alpha" :color="state.color" @alpha-update="onAlphaUpdate" @ready="onAlphaReady" />
     <div class="tiny-color-select-panel__tools">
-      <tiny-input v-model="state.res" size="small" />
+      <tiny-input v-model="state.input" size="small" />
       <div class="tiny-color-select-panel__tools-btns">
         <tiny-button size="small" @click="onCancel">
           {{ t('ui.colorSelectPanel.cancel') }}
@@ -13,7 +13,7 @@
         </tiny-button>
       </div>
     </div>
-    <tiny-collapse>
+    <!-- <tiny-collapse>
       <tiny-collapse-item :title="t('ui.colorSelectPanel.history')" name="history" v-if="state.enableHistory">
         <div class="tiny-color-select-panel__history" v-if="state.stack.length">
           <div
@@ -46,14 +46,12 @@
         </div>
         <div v-if="!state.predefineStack.length">{{ t('ui.colorSelectPanel.empty') }}</div>
       </tiny-collapse-item>
-    </tiny-collapse>
+    </tiny-collapse> -->
   </div>
 </template>
 
 <script>
 import Button from '@opentiny/vue-button'
-import Collapse from '@opentiny/vue-collapse'
-import CollapseItem from '@opentiny/vue-collapse-item'
 import Input from '@opentiny/vue-input'
 import { renderless, api } from '@opentiny/vue-renderless/color-select-panel/vue'
 import { props, setup, defineComponent, directive } from '@opentiny/vue-common'
@@ -63,15 +61,15 @@ import '@opentiny/vue-theme/color-select-panel/index.less'
 import Clickoutside from '@opentiny/vue-renderless/common/deps/clickoutside'
 
 export default defineComponent({
-  emits: ['update:modelValue', 'cancel', 'confirm', 'hue-update', 'sv-update', 'color-update'],
+  emits: ['update:modelValue', 'cancel', 'confirm', 'color-update'],
   props: [...props, 'modelValue', 'visible', 'alpha', 'history', 'predefine'],
   components: {
     HueSelect,
     AlphaSelect,
     TinyButton: Button,
-    TinyInput: Input,
-    TinyCollapse: Collapse,
-    TinyCollapseItem: CollapseItem
+    TinyInput: Input
+    // TinyCollapse: Collapse,
+    // TinyCollapseItem: CollapseItem
   },
   directives: directive({ Clickoutside }),
   setup(props, context) {
