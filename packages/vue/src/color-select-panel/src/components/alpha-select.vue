@@ -24,7 +24,7 @@ import { defineComponent, setup } from '@opentiny/vue-common'
 import { renderless, api } from '@opentiny/vue-renderless/color-select-panel/alpha-select/vue'
 
 export default defineComponent({
-  emits: ['alpha-update', 'ready'],
+  emits: ['ready'],
   props: {
     color: {
       type: Object

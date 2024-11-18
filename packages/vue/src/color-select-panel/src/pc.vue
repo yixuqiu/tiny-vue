@@ -1,7 +1,7 @@
 <template>
   <div class="tiny-color-select-panel" @click.stop v-if="state.showPicker" v-clickoutside="onClickOutside">
     <hue-select :color="state.color" @hue-ready="onHueReady" @sv-ready="onSvReady" />
-    <alpha-select v-if="alpha" :color="state.color" @alpha-update="onAlphaUpdate" @ready="onAlphaReady" />
+    <alpha-select v-if="alpha" :color="state.color" @ready="onAlphaReady" />
     <div class="tiny-color-select-panel__tools">
       <tiny-input v-model="state.input" size="small" />
       <div class="tiny-color-select-panel__tools-btns">
