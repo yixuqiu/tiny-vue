@@ -1,6 +1,8 @@
 import type { IColorSelectPanelProps, ISharedRenderlessParamHooks, ISharedRenderlessParamUtils } from '@/types'
 import { Color } from './utils/color'
 
+type State = ReturnType<typeof initState>
+
 export const panelRgb = (color: Color, alpha: boolean) => {
   const { r, g, b } = color.toRgb()
   return alpha ? `rgba(${r},${g},${b},${color.get('alpha') / 100})` : `rgb(${r},${g},${b})`
@@ -22,11 +24,106 @@ export const triggerConfirm = (value: string | null, emit: ISharedRenderlessPara
   emit('confirm', value)
 }
 
-export const initState = (
+export const initApi = (
   props: IColorSelectPanelProps,
-  { reactive, ref, computed, nextTick }: ISharedRenderlessParamHooks,
-  { emit }: ISharedRenderlessParamUtils
+  state: State,
+  { emit, nextTick }: ISharedRenderlessParamUtils
 ) => {
+  const setShowPicker = (value: boolean) => (state.showPicker = value)
+  const resetColor = () => {
+    nextTick(() => {
+      if (props.modelValue) {
+        state.color.fromString(props.modelValue)
+      } else {
+        state.color.value = ''
+        nextTick(() => {
+          state.showPanel = false
+        })
+      }
+    })
+  }
+  const submitValue = () => {
+    const value = state.color.value
+    updateModelValue(value, emit)
+    triggerConfirm(value, emit)
+    setShowPicker(false)
+    nextTick(() => {
+      const newColor = new Color({
+        enableAlpha: props.alpha,
+        format: props.format ?? '',
+        value: props.modelValue
+      })
+      if (!state.color.compare(newColor)) {
+        resetColor()
+      }
+    })
+  }
+  const onConfirm = () => {
+    submitValue()
+    let index = state.stack.indexOf(state.input)
+    if (index === -1) {
+      state.stack.push(state.input)
+    } else {
+      state.stack = [state.input, ...state.stack.filter((c, i) => i !== index)]
+    }
+  }
+  const onCancel = () => {
+    resetColor()
+    close()
+    emit('cancel')
+  }
+  const clear = () => {
+    updateModelValue(null, emit)
+    triggerCancel(null, emit)
+    resetColor()
+  }
+  const onClickOutside = () => {
+    if (!state.showPicker) {
+      return
+    }
+    close()
+    resetColor()
+    emit('cancel')
+  }
+  const onHueReady = (update) => {
+    state.hue = { update }
+  }
+  const onSvReady = (update) => {
+    state.sv = { update }
+  }
+  const onAlphaReady = (update) => {
+    state.alpha = { update }
+  }
+  const open = () => {
+    setShowPicker(true)
+  }
+  const close = () => {
+    setShowPicker(false)
+  }
+  const onHistoryClick = (historyColor: string) => {
+    state.color.fromString(historyColor)
+  }
+  const onPredefineColorClick = (predefineColor: string) => {
+    state.color.fromString(predefineColor)
+  }
+  return {
+    open,
+    close,
+    resetColor,
+    onConfirm,
+    onCancel,
+    submitValue,
+    clear,
+    onHueReady,
+    onSvReady,
+    onAlphaReady,
+    onPredefineColorClick,
+    onHistoryClick,
+    onClickOutside
+  }
+}
+
+export const initState = (props: IColorSelectPanelProps, { reactive, ref, computed }: ISharedRenderlessParamHooks) => {
   const color = reactive(
     new Color({
       enableAlpha: props.alpha,
