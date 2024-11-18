@@ -86,6 +86,7 @@ export const useDrag = (
 export const initWatch = (state: State, update: () => void, { watch }: ISharedRenderlessParamHooks) => {
   watch(
     () => state.colorValue.value,
-    () => update()
+    () => update(),
+    { deep: true }
   )
 }
