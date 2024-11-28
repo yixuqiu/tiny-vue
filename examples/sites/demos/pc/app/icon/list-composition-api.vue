@@ -4,12 +4,18 @@
       <tiny-input class="search-input" v-model="searchName" clearable autofocus size="small"></tiny-input>
     </div>
     <div class="svgs-wrapper">
-      <div v-for="(nameList, groupName) in iconGroupsMap" :key="groupName">
-        <div v-show="nameList.length" class="group-name">
+      <div v-for="(nameList, groupName) in iconGroups" :key="groupName" class="svgs-box">
+        <div class="group-name">
           {{ groupName }}
         </div>
         <template v-for="name in nameList" :key="name">
-          <div class="svgs-item" @click="click(name)">
+          <div
+            :class="{
+              'svg-visible': searchName === '' || name.toLowerCase().includes(searchName.toLowerCase()),
+              'svgs-item': true
+            }"
+            @click="click(name)"
+          >
             <component :is="Svgs[name] && Svgs[name]()" class="svgs-icon"></component>
             <span class="svgs-text">{{ name }}</span>
           </div>
@@ -20,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref } from 'vue'
 import Svgs from '@opentiny/vue-icon'
 import { TinyModal, TinyInput } from '@opentiny/vue'
 import { iconGroups } from './iconGroups.js'
@@ -36,7 +42,6 @@ Object.keys(iconGroups).forEach((k) => {
 })
 
 const searchName = ref('')
-let iconGroupsMap = reactive(iconGroups)
 
 function click(name) {
   window.navigator.clipboard.writeText(name)
@@ -45,28 +50,6 @@ function click(name) {
     status: 'info'
   })
 }
-
-watch(searchName, (newVal) => {
-  const keyWord = (newVal || '').trim().toLowerCase()
-  if (keyWord === '') {
-    iconGroupsMap = iconGroups
-  } else {
-    const result = {}
-    for (let groupName in iconGroups) {
-      const nameList = iconGroups[groupName]
-      nameList.forEach((name) => {
-        if (name.toLowerCase().includes(keyWord)) {
-          if (!result[groupName]) {
-            result[groupName] = [name]
-          } else {
-            result[groupName] = [...result[groupName], name]
-          }
-        }
-      })
-    }
-    iconGroupsMap = result
-  }
-})
 </script>
 
 <style scoped>
@@ -93,6 +76,7 @@ watch(searchName, (newVal) => {
 }
 
 .group-name {
+  display: none;
   font-weight: 400;
   font-size: 18px;
   line-height: 26px;
@@ -113,9 +97,9 @@ watch(searchName, (newVal) => {
 }
 
 .svgs-item {
+  display: none;
   width: 20%;
   text-align: center;
-  display: inline-block;
   padding: 24px;
 }
 
@@ -128,5 +112,13 @@ watch(searchName, (newVal) => {
   display: block;
   font-size: 12px;
   font-weight: 600;
+}
+
+.svgs-box:has(> .svg-visible) .group-name {
+  display: block;
+}
+
+.svgs-item.svg-visible {
+  display: inline-block;
 }
 </style>
