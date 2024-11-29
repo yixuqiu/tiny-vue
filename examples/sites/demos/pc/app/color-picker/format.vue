@@ -1,38 +1,32 @@
 <template>
   <div>
-    <p>{{ enablePredefineColor }}</p>
-    <tiny-button @click="changeVisible">Show Color select panel</tiny-button>
-    <tiny-button @click="addPredefineColor">Append predefine color</tiny-button>
-    <tiny-button @click="popPredefineColor">Pop predefine color</tiny-button>
-    <tiny-button @click="enablePredefineColor = !enablePredefineColor">Toggle Predefine color visibility</tiny-button>
     <div style="position: relative">
-      <tiny-color-select-panel
+      <p>颜色值: {{ color }}</p>
+      <tiny-color-picker
         v-model="color"
         :visible="visible"
         @confirm="onConfirm"
         @cancel="onCancel"
         :predefine="predefine"
-        :enable-predefine-color="enablePredefineColor"
-        alpha
+        :format="options"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { TinyColorSelectPanel, TinyButton } from '@opentiny/vue'
+import { TinyColorPicker } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyColorSelectPanel,
-    TinyButton
+    TinyColorPicker
   },
   data() {
     return {
-      color: '#66ccff',
+      color: 'rgb(102,204,255)',
       visible: false,
       predefine: new Array(8).fill(0).map(() => this.randomHex()),
-      enablePredefineColor: false
+      options: ['rgb', 'hex', 'hsl', 'hsv']
     }
   },
   methods: {
@@ -42,7 +36,7 @@ export default {
     hidden() {
       this.visible = false
     },
-    onConfirm(msg) {
+    onConfirm() {
       this.hidden()
     },
     onCancel() {

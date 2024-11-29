@@ -1,19 +1,14 @@
 <template>
   <div>
-    <p>{{ enablePredefineColor }}</p>
-    <tiny-button @click="changeVisible">Show Color select panel</tiny-button>
-    <tiny-button @click="addPredefineColor">Append predefine color</tiny-button>
-    <tiny-button @click="popPredefineColor">Pop predefine color</tiny-button>
-    <tiny-button @click="enablePredefineColor = !enablePredefineColor">Toggle Predefine color visibility</tiny-button>
+    <p>颜色值: {{ color }}</p>
+    <tiny-button @click="changeVisible"> Toggle </tiny-button>
     <div style="position: relative">
       <tiny-color-select-panel
         v-model="color"
         :visible="visible"
         @confirm="onConfirm"
         @cancel="onCancel"
-        :predefine="predefine"
-        :enable-predefine-color="enablePredefineColor"
-        alpha
+        :format="options"
       />
     </div>
   </div>
@@ -29,10 +24,11 @@ export default {
   },
   data() {
     return {
-      color: '#66ccff',
+      color: 'rgb(102,204,255)',
       visible: false,
       predefine: new Array(8).fill(0).map(() => this.randomHex()),
-      enablePredefineColor: false
+      options: ['hex', 'rgb', 'hsl', 'hsv'],
+      value: 'rgb'
     }
   },
   methods: {
@@ -42,7 +38,7 @@ export default {
     hidden() {
       this.visible = false
     },
-    onConfirm(msg) {
+    onConfirm() {
       this.hidden()
     },
     onCancel() {
@@ -55,12 +51,6 @@ export default {
           .toString(16)
           .padEnd(6, '0')
       )
-    },
-    addPredefineColor() {
-      this.predefine.push(this.randomHex())
-    },
-    popPredefineColor() {
-      this.predefine.pop()
     }
   }
 }
