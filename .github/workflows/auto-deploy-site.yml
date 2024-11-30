@@ -31,7 +31,7 @@ jobs:
         with:
           version: 9
       - name: Install deps
-        run: pnpm -F @opentiny/vue-docs i --no-frozen-lockfile
+        run: pnpm -F @opentiny/vue-docs i --ignore-scripts --no-frozen-lockfile
       - name: Build site
         run: pnpm -F @opentiny/vue-docs build
       - name: Setup Pages
