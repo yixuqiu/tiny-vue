@@ -6,6 +6,7 @@
       show-history
       text-field="name"
       value-field="id"
+      :conditions="conditions"
       :multi="true"
       value-split="@"
       text-split="@"
@@ -16,7 +17,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Popeditor as TinyPopeditor } from '@opentiny/vue'
+import { TinyPopeditor } from '@opentiny/vue'
 
 const dataset = [
   {
@@ -81,13 +82,18 @@ const dataset = [
   }
 ]
 
+const conditions = ref([
+  { label: '公司名', field: 'name' },
+  { label: '城市', field: 'city' }
+])
+
 const value = ref('')
 const gridOp = ref({
   columns: [
     {
       field: 'id',
       title: 'ID',
-      width: 40
+      width: 50
     },
     {
       field: 'name',

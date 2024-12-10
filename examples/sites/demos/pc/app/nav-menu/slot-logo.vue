@@ -9,12 +9,12 @@
 </template>
 
 <script lang="jsx">
-import { NavMenu } from '@opentiny/vue'
+import { TinyNavMenu } from '@opentiny/vue'
 import { IconTotal } from '@opentiny/vue-icon'
 
 export default {
   components: {
-    TinyNavMenu: NavMenu,
+    TinyNavMenu,
     IconTotal: IconTotal()
   },
   data() {
@@ -319,10 +319,5 @@ export default {
 <style scoped>
 .preview {
   min-height: 450px;
-}
-
-.preview .icon-logo {
-  fill: white;
-  font-size: 24px;
 }
 </style>

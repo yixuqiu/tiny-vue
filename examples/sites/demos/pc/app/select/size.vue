@@ -1,22 +1,32 @@
 <template>
   <div>
-    <p>默认</p>
-    <tiny-select v-model="value1" multiple :options="options"></tiny-select>
     <p>medium</p>
+    <br />
     <tiny-select v-model="value2" size="medium" multiple :options="options"></tiny-select>
+    <br />
+    <br />
+    <p>默认</p>
+    <br />
+    <tiny-select v-model="value1" multiple :options="options"></tiny-select>
+    <br />
+    <br />
     <p>small</p>
+    <br />
     <tiny-select v-model="value3" size="small" multiple :options="options"> </tiny-select>
+    <br />
+    <br />
     <p>mini</p>
+    <br />
     <tiny-select v-model="value4" size="mini" multiple :options="options"> </tiny-select>
   </div>
 </template>
 
 <script>
-import { Select } from '@opentiny/vue'
+import { TinySelect } from '@opentiny/vue'
 
 export default {
   components: {
-    TinySelect: Select
+    TinySelect
   },
   data() {
     return {

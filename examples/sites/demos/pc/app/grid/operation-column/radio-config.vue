@@ -1,7 +1,6 @@
 <template>
   <tiny-grid ref="mytable" :radio-config="radioConfigData" :data="tableData">
-    <tiny-grid-column type="index" width="60"></tiny-grid-column>
-    <tiny-grid-column type="radio" width="60"></tiny-grid-column>
+    <tiny-grid-column type="radio" width="100"></tiny-grid-column>
     <tiny-grid-column field="name" title="名称"></tiny-grid-column>
     <tiny-grid-column field="area" title="所属区域"></tiny-grid-column>
     <tiny-grid-column field="address" title="地址"></tiny-grid-column>
@@ -10,12 +9,12 @@
 </template>
 
 <script lang="jsx">
-import { Grid, GridColumn } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn
+    TinyGrid,
+    TinyGridColumn
   },
   mounted() {
     const allData = this.$refs.mytable.getData()

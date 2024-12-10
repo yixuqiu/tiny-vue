@@ -145,7 +145,7 @@ export const inputProps = {
   },
   showEmptyValue: {
     type: Boolean,
-    default: false
+    default: undefined
   },
   textAlign: {
     type: String,
@@ -153,6 +153,16 @@ export const inputProps = {
   },
   width: {
     type: [String, Number] as PropType<string | number | null>
+  },
+  showTooltip: {
+    type: Boolean,
+    default: true
+  },
+  /** 输入框的边框模式，当值为underline时，只显示一条底部直线 */
+  inputBoxType: {
+    type: String,
+    default: 'normal',
+    validator: (value: string) => ['normal', 'underline'].includes(value)
   }
 }
 

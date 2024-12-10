@@ -3,8 +3,8 @@
     <template #toolbar>
       <tiny-grid-toolbar :buttons="toolbarButtons"></tiny-grid-toolbar>
     </template>
-    <tiny-grid-column type="index" width="60"></tiny-grid-column>
-    <tiny-grid-column type="selection" width="60"></tiny-grid-column>
+
+    <tiny-grid-column type="selection" width="40"></tiny-grid-column>
     <tiny-grid-column field="name" title="名称"></tiny-grid-column>
     <tiny-grid-column field="area" title="所属区域"></tiny-grid-column>
     <tiny-grid-column field="address" title="地址"></tiny-grid-column>
@@ -13,36 +13,36 @@
 </template>
 
 <script>
-import { Grid, GridColumn, GridToolbar } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyGridToolbar } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn,
-    TinyGridToolbar: GridToolbar
+    TinyGrid,
+    TinyGridColumn,
+    TinyGridToolbar
   },
   data() {
     return {
       toolbarButtons: [
         {
           code: 'clearSelection',
-          name: '手动取消多选行'
+          name: '取消多选行'
         },
         {
           code: 'setAllSelection',
-          name: '手动选中所有行'
+          name: '选中所有行'
         },
         {
           code: 'setSelection',
-          name: '手动选中指定行'
+          name: '选中指定行'
         },
         {
           code: 'toggleAllSelection',
-          name: '手动切换所有行选中状态'
+          name: '切换所有行选中状态'
         },
         {
           code: 'toggleRowSelection',
-          name: '手动切换指定行选中状态'
+          name: '切换指定行选中状态'
         }
       ],
       tableData: [
@@ -119,3 +119,19 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="less">
+:deep(.tiny-grid) {
+  &-header__column,
+  &-body__column {
+    &.col__selection,
+    &.col__radio {
+      padding: 0 8px 0 16px;
+      & + th,
+      + td {
+        padding-left: 0;
+      }
+    }
+  }
+}
+</style>

@@ -19,11 +19,11 @@
 </template>
 
 <script lang="ts">
-import { TimeLine } from '@opentiny/vue'
+import { TinyTimeLine } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTimeLine: TimeLine
+    TinyTimeLine
   },
   data() {
     return {
@@ -56,5 +56,7 @@ code {
 .timeline-box {
   width: 800px;
   height: 100px;
+  margin-top: 16px;
+  margin-bottom: 10px;
 }
 </style>

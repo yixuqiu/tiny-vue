@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { TimeLine as TinyTimeLine } from '@opentiny/vue'
+import { TinyTimeLine } from '@opentiny/vue'
 
 const active1 = ref(0)
 const active2 = ref(1)
@@ -49,5 +49,7 @@ code {
 .timeline-box {
   width: 800px;
   height: 100px;
+  margin-top: 16px;
+  margin-bottom: 10px;
 }
 </style>

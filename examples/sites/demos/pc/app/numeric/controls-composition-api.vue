@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Numeric as TinyNumeric } from '@opentiny/vue'
+import { TinyNumeric } from '@opentiny/vue'
 
 const controls = ref(false)
 const value1 = ref(1)
@@ -19,5 +19,10 @@ const value2 = ref(2)
 <style scoped>
 .numeric-class {
   margin: 4px 0px;
+}
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 16px 0;
 }
 </style>

@@ -1,33 +1,35 @@
 <template>
-  <tiny-milestone
-    :data="milestoneData"
-    :milestones-status="statusMap"
-    time-field="date"
-    name-field="name"
-    status-field="progress"
-    flag-status-field="progress"
-    flag-name-field="title"
-    completed-field="completed"
-    flag-content-field="describe"
-    flag-field="flags"
-  ></tiny-milestone>
+  <div class="demo-milestone">
+    <tiny-milestone
+      :data="milestoneData"
+      :milestones-status="statusMap"
+      time-field="date"
+      name-field="name"
+      status-field="progress"
+      flag-status-field="progress"
+      flag-name-field="title"
+      completed-field="completed"
+      flag-content-field="describe"
+      flag-field="flags"
+    ></tiny-milestone>
+  </div>
 </template>
 
 <script lang="jsx">
-import { Milestone } from '@opentiny/vue'
+import { TinyMilestone } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyMilestone: Milestone
+    TinyMilestone
   },
   data() {
     return {
       statusMap: {
-        completed: 'var(--ti-common-color-line-active)',
-        doing: '#7ED321',
-        back: '#f5222d',
+        completed: '#f0f7ff',
+        doing: '#e8faff',
+        back: '#edf7df',
         end: '#faad14',
-        cancel: '#d9d9d9'
+        cancel: '#f230301A'
       },
       milestoneData: [
         {
@@ -95,3 +97,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.demo-milestone ::v-deep .tiny-milestone__description-status {
+  margin-top: 4px;
+}
+</style>

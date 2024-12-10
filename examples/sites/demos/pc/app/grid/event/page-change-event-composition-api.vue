@@ -12,16 +12,16 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, Pager, Modal } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyPager, TinyModal } from '@opentiny/vue'
 
 const pager = ref({
-  component: Pager, // 引入ElementUI的分页组件
+  component: TinyPager, // 引入ElementUI的分页组件
   attrs: {
     currentPage: 1,
     pageSize: 5,
     pageSizes: [5, 10],
     total: 0,
-    layout: 'total, prev, pager, next, jumper, sizes'
+    layout: 'total, sizes, prev, pager, next, jumper'
   }
 })
 const fetchData = ref({
@@ -101,7 +101,7 @@ const tableData = ref([
 ])
 
 function pageChange() {
-  Modal.message({
+  TinyModal.message({
     message: '触发分页change事件',
     status: 'info'
   })

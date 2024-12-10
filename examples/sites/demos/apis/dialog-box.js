@@ -133,7 +133,7 @@ export default {
             'en-US': 'Achieve the maximum height of the window'
           },
           mode: ['pc'],
-          pcDemo: 'form-in-dialog'
+          pcDemo: 'dialog-width'
         },
         {
           name: 'modal',
@@ -227,7 +227,7 @@ export default {
         {
           name: 'visible',
           type: 'boolean',
-          defaultValue: 'true',
+          defaultValue: 'false',
           desc: {
             'zh-CN': '控制弹出框显示与关闭',
             'en-US': 'Control pop-up display and closing'

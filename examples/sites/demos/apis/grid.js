@@ -147,17 +147,8 @@ export default {
           name: 'custom-column-names',
           type: 'string[]',
           defaultValue: "['TinyGridColumn']",
-          metaData: {
-            experimental: {
-              version: '3.17.0'
-            }
-          },
-          versionTipOption: {
-            extendTip: {
-              'zh-CN': '该属性于3.17版本新增，封装 grid-column 时需要配置此字段，提供给表格收集配置',
-              'en-US':
-                'This field needs to be configured when encapsulating grid-column and is provided for table collection configuration'
-            }
+          meta: {
+            stable: '3.17.0'
           },
           desc: {
             'zh-CN': '封装 grid-column 时需要配置此字段，提供给表格收集配置',
@@ -699,7 +690,7 @@ export default {
         },
         {
           name: 'render-empty',
-          type: '()=> string | VNode',
+          type: '() => string | VNode',
           defaultValue: '',
           desc: {
             'zh-CN': '空数据渲染',
@@ -730,6 +721,25 @@ export default {
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-resize-column-width',
+          mfDemo: ''
+        },
+        {
+          name: 'resizable-config',
+          meta: {
+            stable: '3.19.0'
+          },
+          typeAnchorName: 'IResizableConfig',
+          type: 'IResizableConfig',
+          defaultValue: '',
+          metaData: {
+            new: '3.19.0'
+          },
+          desc: {
+            'zh-CN': '设置列宽拖拽参数',
+            'en-US': 'Set column width drag parameters'
+          },
+          mode: ['pc'],
+          pcDemo: 'grid-size#size-resizable-config',
           mfDemo: ''
         },
         {
@@ -1042,11 +1052,11 @@ export default {
         },
         {
           name: 'tooltip-config',
-          type: 'IToolTipConfig',
-          typeAnchorName: 'IToolTipConfig',
+          linkTo: 'tooltip#tooltip--props',
+          type: 'Tooltip.Props',
           defaultValue: '',
           desc: {
-            'zh-CN': 'Grid 内置 tooltip 配置项，请参考 Tooltip 组件属性说明',
+            'zh-CN': 'Grid 内置 tooltip 配置项，配置项将透传至 Tooltip，请参考 Tooltip 组件属性说明',
             'en-US':
               'Configuration item of the built-in tooltip of the Grid. For details, see the Tooltip Attribute Description.'
           },
@@ -1082,6 +1092,22 @@ export default {
         }
       ],
       events: [
+        {
+          name: 'after-refresh-column',
+          type: '()=> void',
+          meta: {
+            stable: '3.18.0'
+          },
+          defaultValue: '',
+          desc: {
+            'zh-CN': '在新增或者删除列后，列配置是异步更新的，列配置刷新后触发的回调',
+            'en-US':
+              'After adding or deleting a column, the column configuration is updated asynchronously, and the callback is triggered after the column configuration is refreshed.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-dynamically-columns#column-switching-scroll',
+          mfDemo: ''
+        },
         {
           name: 'before-page-change',
           typeAnchorName: 'IBeforePageChangeArgs',
@@ -1305,7 +1331,7 @@ export default {
         },
         {
           name: 'fullscreen',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '全屏时或关闭全屏时触发的时间',
@@ -1422,8 +1448,7 @@ export default {
         },
         {
           name: 'select-change',
-          typeAnchorName: 'ISelectChangeArgs',
-          type: '(args: ISelectChangeArgs, event: Event)=> void',
+          type: '(args: object, event: Event)=> void',
           defaultValue: '',
           desc: {
             'zh-CN': '只对 type=selection 有效，当手动勾选并且值发生改变时触发的事件',
@@ -1462,17 +1487,10 @@ export default {
         },
         {
           name: 'toggle-group-change',
-          typeAnchorName: 'IToggleGroupChangeArgs',
-          type: '(row: IRow)=> void',
+          type: '(row: IRow) => void',
           defaultValue: '',
-          metaData: {
-            experimental: '3.17.0'
-          },
-          versionTipOption: {
-            extendTip: {
-              'zh-CN': '该特性于3.17版本新增',
-              'en-US': 'This feature was added in version 3.17'
-            }
+          meta: {
+            stable: '3.17.0'
           },
           desc: {
             'zh-CN': '当分组的展开和收起时会触发该事件',
@@ -1526,7 +1544,7 @@ export default {
       methods: [
         {
           name: 'clearActived',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除单元格激活状态',
@@ -1548,7 +1566,7 @@ export default {
         },
         {
           name: 'clearAll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -1573,7 +1591,7 @@ export default {
         },
         {
           name: 'clearCurrentColumn',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前列，手动清空当前高亮的状态',
@@ -1595,7 +1613,7 @@ export default {
         },
         {
           name: 'clearCurrentRow',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前行，手动清空当前高亮的状态',
@@ -1666,7 +1684,7 @@ export default {
         },
         {
           name: 'clearRadioRow',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于单选行，手动清空用户的选择',
@@ -1688,7 +1706,7 @@ export default {
         },
         {
           name: 'clearRowExpand',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空展开行状态，数据会恢复成未展开的状态',
@@ -1710,7 +1728,7 @@ export default {
         },
         {
           name: 'clearScroll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除滚动相关信息，还原到初始状态',
@@ -1732,7 +1750,7 @@ export default {
         },
         {
           name: 'clearSelected',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除单元格选中状态',
@@ -1754,7 +1772,7 @@ export default {
         },
         {
           name: 'clearSelection',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于多选行，手动清空用户的选择',
@@ -1776,7 +1794,7 @@ export default {
         },
         {
           name: 'clearSort',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空排序条件，数据会恢复成未排序的状态',
@@ -1798,7 +1816,7 @@ export default {
         },
         {
           name: 'clearTreeExpand',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空树形节点的展开状态，数据会恢复成未展开的状态',
@@ -1821,7 +1839,7 @@ export default {
         },
         {
           name: 'closeFilter',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动关闭筛选面板（某些特殊场景可能会用到）',
@@ -1843,7 +1861,7 @@ export default {
         },
         {
           name: 'closeMenu',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动关闭快捷菜单（某些特殊场景可能会用到）',
@@ -1925,7 +1943,7 @@ export default {
         {
           name: 'fullValidate',
           typeAnchorName: 'IRow',
-          type: '(rows: IRow[], callback: ()=> void)=> Promise',
+          type: '(rows: IRow[], callback: () => void)=> Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '表格完整校验函数，和 validate 的区别就是会对全量数据的所有规则进行完整校验',
@@ -1949,7 +1967,7 @@ export default {
         {
           name: 'getActiveRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已激活的行数据',
@@ -2087,7 +2105,7 @@ export default {
         {
           name: 'getCurrentRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前行，获取当前行的数据',
@@ -2134,7 +2152,7 @@ export default {
         {
           name: 'getInsertRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取新增的数据',
@@ -2157,7 +2175,7 @@ export default {
         {
           name: 'getRadioRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '用于单选行，获取当已选中的数据',
@@ -2180,7 +2198,7 @@ export default {
         {
           name: 'getRecordset',
           typeAnchorName: 'IRecordset',
-          type: '()=> IRecordset',
+          type: '() => IRecordset',
           defaultValue: '',
           desc: {
             'zh-CN': '获取表格数据集（获取新增、删除、更改的数据，对于增删改查表格非常方便）',
@@ -2204,7 +2222,7 @@ export default {
         {
           name: 'getRemoveRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已删除的数据',
@@ -2294,12 +2312,27 @@ export default {
           mfDemo: ''
         },
         {
-          name: 'getSelectRecords',
+          name: 'getAllSelection',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
+          meta: {
+            stable: '3.19.0'
+          },
           defaultValue: '',
           desc: {
-            'zh-CN': '用于多选行，获取已选中的数据',
+            'zh-CN': '获取所有翻页中保存的已选中的数据',
+            'en-US': 'This command is used to select multiple lines to obtain the selected data.'
+          },
+          mode: ['pc'],
+          pcDemo: 'grid-operation-column#operation-column-grid-pager-reserve'
+        },
+        {
+          name: 'getSelectRecords',
+          typeAnchorName: 'IRow',
+          type: '() => IRow[]',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '用于多选行，获取当前页已选中的数据',
             'en-US': 'This command is used to select multiple lines to obtain the selected data.'
           },
           mode: ['pc'],
@@ -2319,7 +2352,7 @@ export default {
         {
           name: 'getTableColumn',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取当前表格的列（完整的全量表头列、处理条件之后的全量表头列、当前渲染中的表头列）',
@@ -2343,7 +2376,7 @@ export default {
         {
           name: 'getTableData',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -2369,7 +2402,7 @@ export default {
         {
           name: 'getUpdateRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已修改的数据',
@@ -2391,7 +2424,7 @@ export default {
         },
         {
           name: 'handleFetch',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '触发表格的 fetch-data ',
@@ -2626,7 +2659,7 @@ export default {
         },
         {
           name: 'recalculate',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '重新计算表格（对于某些特殊场景可能会用到，比如隐藏的表格、更新列宽...等）',
@@ -2649,7 +2682,7 @@ export default {
         },
         {
           name: 'refreshColumn',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '刷新列配置（对于显示/隐藏列场景下可能会用到）',
@@ -2672,7 +2705,7 @@ export default {
         },
         {
           name: 'refreshData',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -2746,7 +2779,7 @@ export default {
         },
         {
           name: 'removeSelecteds',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '删除已选中的所有行数据',
@@ -2768,7 +2801,7 @@ export default {
         },
         {
           name: 'resetAll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列的所有操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
@@ -2791,7 +2824,7 @@ export default {
         },
         {
           name: 'resetCustoms',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列的显示/隐藏操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
@@ -2814,7 +2847,7 @@ export default {
         },
         {
           name: 'resetResizable',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列宽拖动的操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
@@ -3202,7 +3235,7 @@ export default {
         },
         {
           name: 'toggleAllSelection',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '用于多选行，切换所有行的选中状态',
@@ -3294,7 +3327,7 @@ export default {
         {
           name: 'validate',
           typeAnchorName: 'IRow',
-          type: '(rows: IRow | IRow[], callback: ()=> void)=> Promise',
+          type: '(rows: IRow | IRow[], callback: () => void)=> Promise',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -3409,8 +3442,20 @@ export default {
           pcDemo: 'grid-editor#editor-custom-editor-select'
         },
         {
+          name: 'field',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '设置表格列的单元格显示字段',
+            'en-US': 'Set the cell display field for table columns'
+          },
+          mode: ['pc'],
+          pcDemo: 'grid#base-basic-usage'
+        },
+        {
           name: 'filter',
           type: 'boolean | IFilterConfig',
+          typeAnchorName: 'IFilterConfig',
           defaultValue: 'false',
           desc: {
             'zh-CN': '设置表格列的筛选配置信息。默认值为 false 不配置筛选信息',
@@ -3810,7 +3855,7 @@ export default {
       props: [
         {
           name: 'before-close-full-screen',
-          type: '()=> boolean',
+          type: '() => boolean',
           defaultValue: '',
           desc: {
             'zh-CN': '关闭全屏前的拦截方法，返回 false 则阻止关闭全屏，返回 true 则不阻止',
@@ -3822,7 +3867,7 @@ export default {
         },
         {
           name: 'before-open-full-screen',
-          type: '()=> boolean',
+          type: '() => boolean',
           defaultValue: '',
           desc: {
             'zh-CN': '全屏前的拦截方法，返回 false 则阻止全屏，返回 true 则不阻止',
@@ -3942,7 +3987,7 @@ export default {
         },
         {
           name: 'reset-setting',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '点击个性化面板的重置按钮触发该事件',
@@ -3997,13 +4042,14 @@ export default {
       code: `
 interface IRow {
   // 表格行数据
-  [filed: string]: any
+  [field: string]: any
 }
       `
     },
     {
       name: 'IColumnConfig',
       type: 'interface',
+      depTypes: ['IValidRules'],
       code: `
 interface IColumnConfig {
   type: 'index' | 'radio' | 'checkbox'
@@ -4042,7 +4088,7 @@ interface IPagerConfig {
     pageSize: number
     pageSizes: number[]
     total: number
-    // 分页组件布局默认值：'total, prev, pager, next, jumper, sizes'
+    // 分页组件布局默认值：'total, prev, pager, next, jumper'
     layout: string
   }
 }
@@ -4053,7 +4099,7 @@ interface IPagerConfig {
       type: 'type',
       code: `
 interface IDataHandler {
-  api: ()=> Promise
+  api: () => Promise
 }
       `
     },
@@ -4099,7 +4145,7 @@ interface IToolTipConfig {
   type?: 'normal' | 'warning' | 'error' | 'info' | 'success'
   effect?: 'dark' | 'light'
   // 自定义提示内容
-  contentMethod?: ()=> string | VNode
+  contentMethod?: () => string | VNode
 }
       `
     },
@@ -4121,7 +4167,7 @@ interface IContextMenuConfig {
   footer?: { 
     options: IMenuOptions
   }
-  visibleMethod?: ()=> boolean
+  visibleMethod?: () => boolean
 }
       `
     },
@@ -4130,7 +4176,7 @@ interface IContextMenuConfig {
       type: 'type',
       code: `
 interface IValidRules {
- [filed:string]: { 
+ [field:string]: { 
   type?: string
   required?: boolean
   validator?: () => boolean
@@ -4230,7 +4276,7 @@ interface IRadioConfig {
   // 默认选中指定行（只会在初始化时被触发一次，需要有 row-id）
   checkRowKey?: string
   // 是否允许选中的方法，该方法的返回值用来决定这一行的 Radio 是否可以选中
-  checkMethod?: ()=> boolean
+  checkMethod?: () => boolean
 }
       `
     },
@@ -4246,7 +4292,7 @@ interface ISelectConfig {
   // 默认勾选开指定行（只会在初始化时被触发一次，需要有 row-id）
   checkRowKeys?: string[] 
   // 是否允许选中的方法，该方法的返回值用来决定这一行的 checkbox 是否可以勾选
-  checkMethod?: ()=> boolean 
+  checkMethod?: () => boolean 
   // 默认勾选所有（只会在初始化时被触发一次）}
   checkAll?: boolean
   // 是否显示全选按钮（如果 checkStrictly=true 则默认为 false）
@@ -4333,7 +4379,7 @@ interface IScrollLoadConfig {
       type: 'type',
       code: `
 interface IEventsConfig {
-  [field: string]: ()=> void
+  [field: string]: () => void
 }
       `
     },
@@ -4349,7 +4395,7 @@ interface IDropConfig {
   // 开启列拖拽
   column: boolean
   // 拖拽前函数，返回 false 取消拖动
-  onBeforeMove?: ()=> boolean
+  onBeforeMove?: () => boolean
   // 拖拽触发源选择器一般是class类名
   trigger?: string
   // 根据行的类名来控制是否可以拖动
@@ -4372,6 +4418,8 @@ interface IEditConfig {
   showStatus?: boolean
   // 自定义编辑规则，返回true可以编辑返回false则禁止编辑
   activeMethod?: ({row: IRow, column: IColumnConfig})=> boolean
+  // （3.19新增）当mode为'row'时，行编辑激活状态下默认会忽略activeMethod，配置为true使其生效
+  activeStrictly?: boolean
 }
       `
     },
@@ -4395,7 +4443,7 @@ interface IPageChangeArgs {
   $grid: Component
   // 当前页码
   currentPage: number
-  //当前分页组件布局信息 'total, prev, pager, next, jumper, sizes'
+  //当前分页组件布局信息 'total, prev, pager, next, jumper'
   layout: string
   // 当前每页显示条数
   pageSize: number
@@ -4420,9 +4468,9 @@ interface IBeforePageChangeArgs {
   //当前的页大小
   currentPageSize: number
   //生效回调
-  callback: ()=> void
+  callback: () => void
   //失效回调
-  rollback: ()=> void
+  rollback: () => void
 }
       `
     },
@@ -4446,6 +4494,7 @@ interface IToolbarButtonClickArgs {
     {
       name: 'ICellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ICellClickArgs {
   // 当前行
@@ -4472,6 +4521,7 @@ interface ICellContextMenuArgs {
     {
       name: 'ICellArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ICellArgs {
   //当前行
@@ -4498,6 +4548,7 @@ interface ICurrentChangeArgs {
     {
       name: 'IEditActivedArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditActivedArgs {
   // 当前行
@@ -4510,6 +4561,7 @@ interface IEditActivedArgs {
     {
       name: 'IEditClosedArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditClosedArgs {
   // 当前行
@@ -4522,6 +4574,7 @@ interface IEditClosedArgs {
     {
       name: 'IEditDisabledArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditDisabledArgs {
   //当前行
@@ -4546,6 +4599,7 @@ interface IFilterChangeArgs {
     {
       name: 'IFooterCellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFooterCellClickArgs {
   $columnIndex: number
@@ -4563,6 +4617,7 @@ interface IFooterCellClickArgs {
     {
       name: 'IContextMenuArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IContextMenuArgs {
   $columnIndex: number
@@ -4584,6 +4639,7 @@ interface IContextMenuArgs {
     {
       name: 'IFooterCellDblClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFooterCellDblClickArgs {
   $columnIndex: number
@@ -4601,6 +4657,7 @@ interface IFooterCellDblClickArgs {
     {
       name: 'IHeaderCellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IHeaderCellClickArgs {
   $columnIndex: number
@@ -4622,6 +4679,7 @@ interface IHeaderCellClickArgs {
     {
       name: 'IHeaderCellDblClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IHeaderCellDblClickArgs {
   // 列数据
@@ -4638,6 +4696,7 @@ interface IHeaderCellDblClickArgs {
     {
       name: 'IResizableChangeArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IResizableChangeArgs {
   // table组件的vue 实例 
@@ -4648,6 +4707,16 @@ interface IResizableChangeArgs {
   columnIndex: number
   // 是否固定列
   fixed: boolean
+}
+      `
+    },
+    {
+      name: 'IResizableConfig',
+      type: 'type',
+      code: `
+interface IResizableConfig {
+  // 拖拽宽度限制函数，field: 当前拖拽的列名，width: 当前拖拽的宽度
+  limit: ({ field: string, width: number }) => number
 }
       `
     },
@@ -4674,6 +4743,7 @@ interface IScrollArgs {
     {
       name: 'ISelectAllArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISelectAllArgs {
   $columnIndex: number
@@ -4733,6 +4803,7 @@ interface IToggleTreeChangeArgs {
     {
       name: 'IValidErrorArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IValidErrorArgs { 
   // 校验的单元格信息对象
@@ -4749,6 +4820,7 @@ interface IValidErrorArgs {
     {
       name: 'ISortChangeArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISortChangeArgs { 
   // 表格实例对象信息
@@ -4767,6 +4839,7 @@ interface ISortChangeArgs {
     {
       name: 'IClassNameArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IClassNameArgs {
   seq: number
@@ -4782,6 +4855,7 @@ interface IClassNameArgs {
     {
       name: 'IIndexMethodArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IIndexMethodArgs {
   row: IRow
@@ -4794,6 +4868,7 @@ interface IIndexMethodArgs {
     {
       name: 'IFormatConfig',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFormatConfig {
   // 列数据源
@@ -4845,6 +4920,7 @@ interface ISettingConfigs {
     {
       name: 'ISpanMethodArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISpanMethodArgs {
   // 行标
@@ -4860,6 +4936,7 @@ interface ISpanMethodArgs {
     },
     {
       name: 'IExportCsvOptions',
+      depTypes: ['IRow'],
       type: 'type',
       code: `
 interface IExportCsvOptions {
@@ -4879,7 +4956,7 @@ interface IEditorConfig {
   component: 'input' | 'select' | Component
   // 传递给组件的事件集合
   events?: {
-    [event]: ()=> void
+    [event]: () => void
   }
   // 传递给编辑器组件的属性集合
   attrs?: {
@@ -4909,19 +4986,7 @@ interface IFilterConfig {
     label: string
     // 设置枚举数据的实际值属性字段， 默认'value'
     value: string 
-  }[] | ()=> Promise
-}
-      `
-    },
-    {
-      name: 'IOPConfig',
-      type: 'type',
-      code: `
-interface IOPConfig {
-  editConfig?: IEditConfig
-  pagerConfig?: IPagerConfig
-  columns: IColumnConfig[]
-  data: IRow[]
+  }[] | () => Promise
 }
       `
     },

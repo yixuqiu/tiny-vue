@@ -156,9 +156,9 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>通过 <code>search-icon</code> 属性自定义搜索图标， <code>prefix-icon</code> 自定义前置图标。</p>\n',
+          '<p>通过 <code>search-icon</code> 属性设置自定义搜索图标。</p>\n <p>通过 <code>suffix-icon</code> 属性全局设置带图标树形菜单。</p>\n',
         'en-US':
-          '<p>Customize the search icon through the <code>search-icon</code> attribute, and through the <code>prefix-icon</code> attribute customize prefix icon.</p>\n'
+          '<p>Set a custom search icon through the <code>search icon</code> attribute .</p> \n  <code>suffix icon</code> attribute global settings with icon tree menu</p>\n'
       },
       codeFiles: ['custom-icon.vue']
     },
@@ -221,9 +221,9 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>通过 <code>show-filter</code> 属性设置是否显示搜索框，<code>show-title</code> 属性设置节点是否有原生 title 属性提示。</p>\n',
+          '<p>通过 <code>show-filter</code> 属性设置是否显示搜索框， <code> highlight-query </code> 属性设置是否在匹配的节点中高亮搜索文字 ,<code>show-title</code> 属性设置节点是否有原生 title 属性提示。</p>\n',
         'en-US':
-          '<p>Set whether to display the search box through the <code>show-filter</code> attribute, and whether the node has a native title attribute through the <code>show-title</code> attribute.</p>\n'
+          '<p>Set whether to display the search box through the <code>show-filter</code> attribute,and Whether the attribute setting highlights the search text in the matching node  the <code>show-filter</code> attribute , and whether the node has a native title attribute through the <code>show-title</code> attribute.</p>\n'
       },
       codeFiles: ['show-filter.vue']
     },
@@ -359,6 +359,19 @@ export default {
           'Indicate whether to allow the search box clear button to be displayed by setting the<code>clearable</code>property'
       },
       codeFiles: ['clearable.vue']
+    },
+    {
+      demoId: 'width-adapt',
+      name: {
+        'zh-CN': '宽度自适应',
+        'en-US': 'Can the search box be cleared'
+      },
+      desc: {
+        'zh-CN': '通过 <code> widthAdapt </code> 属性，是否让组件宽度自适应父容器。默认为 <code> false </code>',
+        'en-US':
+          'The <code>widthAdapt </code> attribute specifies whether to enable the component width to adapt to the parent container.'
+      },
+      codeFiles: ['width-adapt.vue']
     }
   ]
 }

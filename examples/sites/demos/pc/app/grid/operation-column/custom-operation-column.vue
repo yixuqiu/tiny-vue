@@ -1,7 +1,6 @@
 <template>
   <tiny-grid :data="tableData">
-    <tiny-grid-column type="index" width="60"></tiny-grid-column>
-    <tiny-grid-column type="selection" width="60"></tiny-grid-column>
+    <tiny-grid-column type="selection" width="40"></tiny-grid-column>
     <tiny-grid-column field="name" title="名称"></tiny-grid-column>
     <tiny-grid-column field="area" title="所属区域"></tiny-grid-column>
     <tiny-grid-column field="address" title="地址"></tiny-grid-column>
@@ -18,13 +17,13 @@
 </template>
 
 <script lang="jsx">
-import { Grid, GridColumn, Modal } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyModal } from '@opentiny/vue'
 import { IconEdit, IconSearch } from '@opentiny/vue-icon'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn,
+    TinyGrid,
+    TinyGridColumn,
     IconEdit: IconEdit(),
     IconSearch: IconSearch()
   },
@@ -78,13 +77,13 @@ export default {
   },
   methods: {
     clickHandler(row) {
-      Modal.message({ message: JSON.stringify(row), status: 'success' })
+      TinyModal.message({ message: JSON.stringify(row), status: 'success' })
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .demo-custom-column {
   font-size: 0;
 }
@@ -98,5 +97,19 @@ export default {
 }
 .demo-custom-column svg:not(:last-child) {
   margin-right: 8px;
+}
+
+:deep(.tiny-grid) {
+  &-header__column,
+  &-body__column {
+    &.col__selection,
+    &.col__radio {
+      padding: 0 8px 0 16px;
+      & + th,
+      + td {
+        padding-left: 0;
+      }
+    }
+  }
 }
 </style>

@@ -3,17 +3,19 @@
     <tiny-rich-text-editor v-model="value"></tiny-rich-text-editor>
     <div class="result">
       <hr />
+      <textarea v-model="value" style="width: 100%" rows="5" />
+      <hr />
       <pre>{{ value }}</pre>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { RichTextEditor } from '@opentiny/vue'
+import { TinyRichTextEditor } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyRichTextEditor: RichTextEditor
+    TinyRichTextEditor
   },
   data() {
     return {

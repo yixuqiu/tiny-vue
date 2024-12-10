@@ -15,7 +15,7 @@ import template from 'virtual-template?pc|mobile|mobile-first'
 
 export const $constants = {
   ICON_MAP: {
-    leftWardArrow: 'icon-delta-left'
+    leftWardArrow: 'icon-left-ward-arrow'
   }
 }
 
@@ -84,6 +84,10 @@ export const dropdownItemProps = {
   tipPosition: {
     type: String,
     default: 'right'
+  },
+  effect: {
+    type: String,
+    default: 'light'
   }
 }
 

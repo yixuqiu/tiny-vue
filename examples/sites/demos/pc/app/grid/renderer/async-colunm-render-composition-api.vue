@@ -18,7 +18,7 @@
         value: 'value'
       }"
       :editor="{
-        component: Select,
+        component: TinySelect,
         attrs: { textField: 'text', clearable: true }
       }"
     ></tiny-grid-column>
@@ -30,17 +30,17 @@
 
 <script setup lang="jsx">
 import { ref, onMounted } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, Pager, Select } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyPager, TinySelect } from '@opentiny/vue'
 
 const options = ref([])
 const pagerConfig = ref({
-  component: Pager,
+  component: TinyPager,
   attrs: {
     currentPage: 1,
     pageSize: 5,
     pageSizes: [5, 10],
     total: 0,
-    layout: 'total, prev, pager, next, jumper, sizes'
+    layout: 'total, sizes, prev, pager, next, jumper'
   }
 })
 const fetchData = ref({

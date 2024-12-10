@@ -1,11 +1,14 @@
 <template>
   <div>
     <p>场景1：默认不可搜索时，获取焦点不下拉</p>
+    <br />
     <tiny-button @click="handleFocus1"> 点击获取焦点 </tiny-button>
     <tiny-select v-model="value" ref="selectOnlyFocusRef">
       <tiny-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </tiny-option>
     </tiny-select>
+    <br /><br />
     <p>场景2：设置不可搜索时，获取焦点并自动下拉</p>
+    <br />
     <tiny-button @click="handleFocus2"> 点击获取焦点 </tiny-button>
     <tiny-select v-model="value" ref="selectAutoDropRef" automatic-dropdown>
       <tiny-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </tiny-option>
@@ -14,13 +17,13 @@
 </template>
 
 <script>
-import { Select, Option, Button } from '@opentiny/vue'
+import { TinySelect, TinyOption, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinySelect: Select,
-    TinyOption: Option,
-    TinyButton: Button
+    TinySelect,
+    TinyOption,
+    TinyButton
   },
   data() {
     return {

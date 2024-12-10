@@ -6,13 +6,12 @@
 </template>
 
 <script>
-import { CheckboxButton, CheckboxGroup, Switch } from '@opentiny/vue'
+import { TinyCheckboxButton, TinyCheckboxGroup } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyCheckboxButton: CheckboxButton,
-    TinyCheckboxGroup: CheckboxGroup,
-    TinySwitch: Switch
+    TinyCheckboxButton,
+    TinyCheckboxGroup
   },
   data() {
     return {

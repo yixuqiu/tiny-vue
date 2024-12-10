@@ -6,6 +6,7 @@
       show-history
       text-field="name"
       value-field="id"
+      :conditions="conditions"
       :multi="true"
       value-split="@"
       text-split="@"
@@ -15,11 +16,11 @@
 </template>
 
 <script>
-import { Popeditor } from '@opentiny/vue'
+import { TinyPopeditor } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyPopeditor: Popeditor
+    TinyPopeditor
   },
   data() {
     const dataset = [
@@ -92,7 +93,7 @@ export default {
           {
             field: 'id',
             title: 'ID',
-            width: 40
+            width: 50
           },
           {
             field: 'name',
@@ -110,7 +111,11 @@ export default {
           }
         ],
         data: dataset
-      }
+      },
+      conditions: [
+        { label: '公司名', field: 'name' },
+        { label: '城市', field: 'city' }
+      ]
     }
   }
 }

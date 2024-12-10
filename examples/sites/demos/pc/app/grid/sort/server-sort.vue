@@ -10,23 +10,23 @@
 </template>
 
 <script>
-import { Grid, GridColumn, Pager, Modal } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyPager, TinyModal } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn
+    TinyGrid,
+    TinyGridColumn
   },
   data() {
     return {
       pager: {
-        component: Pager,
+        component: TinyPager,
         attrs: {
           currentPage: 1,
           pageSize: 15,
           total: 0,
           pageSizes: [5, 10, 15, 20],
-          layout: 'total, prev, pager, next, jumper, sizes'
+          layout: 'total, sizes, prev, pager, next, jumper'
         }
       },
       fetchData: {
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     sortChangeEvent({ order }) {
-      Modal.message({ message: `${order}`, status: 'info' })
+      TinyModal.message({ message: `${order || '取消排序'}`, status: 'info' })
     },
     getData({ page, filters }) {
       return new Promise((resolve) => {

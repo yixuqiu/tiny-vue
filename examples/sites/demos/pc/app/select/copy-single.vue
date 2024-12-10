@@ -1,12 +1,17 @@
 <template>
   <div>
     <p>场景1：单选无需配置可复制</p>
+    <br />
     <tiny-select v-model="value1" :options="options1"> </tiny-select>
+    <br /><br />
     <p>场景2：单选可搜索配置 allow-copy 可复制</p>
+    <br />
     <tiny-select ref="selectRef" v-model="value1" :options="options1" filterable :filter-method="filter" allow-copy>
     </tiny-select>
+    <br /><br />
 
     <p>场景3：单选远程搜索配置 allow-copy 可复制</p>
+    <br />
     <tiny-select
       v-model="value2"
       filterable
@@ -19,19 +24,21 @@
     >
       <tiny-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"> </tiny-option>
     </tiny-select>
+    <br /><br />
     <p class="font-style">粘贴至此处：</p>
+    <br />
     <tiny-input v-model="inputVal" type="text" class="custom"></tiny-input>
   </div>
 </template>
 
 <script>
-import { Select, Option, Input } from '@opentiny/vue'
+import { TinySelect, TinyOption, TinyInput } from '@opentiny/vue'
 
 export default {
   components: {
-    TinySelect: Select,
-    TinyOption: Option,
-    TinyInput: Input
+    TinySelect,
+    TinyOption,
+    TinyInput
   },
   data() {
     return {
@@ -103,6 +110,7 @@ export default {
       'Wisconsin',
       'Wyoming'
     ]
+
     this.list = states.map((item) => {
       return { value: item, label: item }
     })

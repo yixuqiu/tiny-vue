@@ -1,7 +1,10 @@
 <template>
   <div class="demo-box">
     <tiny-button @click="displayOnly = !displayOnly">display-only/{{ displayOnly }}</tiny-button>
+    <br />
+    <br />
     <p>边框为表单范围</p>
+    <br />
     <tiny-form class="custom-form" :inline="inline" label-position="top" :display-only="displayOnly">
       <tiny-form-item label="label 垂直布局">
         <div>
@@ -83,13 +86,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import {
-  Select as TinySelect,
-  Option as TinyOption,
-  Form as TinyForm,
-  FormItem as TinyFormItem,
-  Button as TinyButton
-} from '@opentiny/vue'
+import { TinySelect, TinyOption, TinyForm, TinyFormItem, TinyButton } from '@opentiny/vue'
 
 const options = ref([
   {

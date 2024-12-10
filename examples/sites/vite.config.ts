@@ -13,24 +13,51 @@ import vue3SvgPlugin from 'vite-svg-loader'
 import { getAlias, pathFromWorkspaceRoot, getOptimizeDeps } from '../../internals/cli/src/config/vite'
 import virtualTemplatePlugin from '@opentiny-internal/unplugin-virtual-template/vite'
 import tailwindCss from 'tailwindcss'
+import fg from 'fast-glob'
+import fs from 'fs-extra'
+
+const delStatic = () => {
+  let config
+  return {
+    name: 'inline-plugin-del-static',
+    apply: 'build',
+    configResolved(_config) {
+      config = _config
+    },
+    async closeBundle() {
+      const targetPath = path.join(config.build.outDir, '@demos')
+      const files = await fg(['**/*.spec.js', '**/*.spec.ts'], {
+        dot: true,
+        cwd: targetPath
+      })
+      files.forEach((filename) => {
+        const filePath = path.join(targetPath, filename)
+        fs.unlink(filePath)
+      })
+    }
+  }
+}
 
 export default defineConfig((config) => {
   const env = loadEnv(config.mode, process.cwd() + '/env', '')
   const isSaas = env.VITE_TINY_THEME === 'saas'
-  const menuPath = isSaas ? path.resolve('./demos/saas') : path.resolve(`./demos/${env.VITE_APP_MODE}`)
+  const isPlus = env.VITE_APP_MODE === 'plus'
+  const demosPath = isPlus ? '../plusdocs/pc' : `./demos/${env.VITE_APP_MODE}`
+  const apisPath = isPlus ? '../plusdocs/apis' : './demos/apis'
+  const menuPath = isSaas ? path.resolve('./demos/saas') : path.resolve(demosPath)
   const copyTarget = [
     {
-      src: `./demos/${env.VITE_APP_MODE}/**`,
+      src: `${demosPath}/*`,
       dest: '@demos'
     },
     {
-      src: `./demos/apis/**`,
+      src: `${apisPath}/*`,
       dest: '@demos/apis'
     }
   ]
   if (isSaas) {
     copyTarget.push({
-      src: `./demos/mobile-first/**`,
+      src: `./demos/mobile-first/*`,
       dest: '@demos/mobile-first'
     })
   }
@@ -43,7 +70,22 @@ export default defineConfig((config) => {
         include: [/\.vue$/, /\.md$/]
       }),
       vueJsx(),
-      vue3SvgPlugin(),
+      vue3SvgPlugin({
+        defaultImport: 'component',
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false
+                }
+              }
+            },
+            'prefixIds'
+          ]
+        }
+      }),
       importPlugin([
         {
           libraryName: '@opentiny/vue'
@@ -72,7 +114,8 @@ export default defineConfig((config) => {
       Unocss(UnoCssConfig),
       viteStaticCopy({
         targets: copyTarget
-      })
+      }),
+      delStatic()
     ],
     optimizeDeps: getOptimizeDeps(3),
     build: {
@@ -88,7 +131,7 @@ export default defineConfig((config) => {
       extensions: ['.js', '.ts', '.tsx', '.vue'],
       alias: {
         '@': path.resolve('src'),
-        '@demos': path.resolve(`./demos/${env.VITE_APP_MODE}`),
+        '@demos': path.resolve(`${demosPath}`),
         '@menu': menuPath,
         '@opentiny/vue-renderless/types': pathFromWorkspaceRoot('packages/renderless/types'),
         '@tiptap/vue': '@tiptap/vue-3',
@@ -108,7 +151,8 @@ export default defineConfig((config) => {
       __VUE_I18N_LEGACY_API__: true,
       __INTLIFY_PROD_DEVTOOLS__: false,
       __INTLIFY_JIT_COMPILATION__: false,
-      __INTLIFY_DROP_MESSAGE_COMPILER__: false
+      __INTLIFY_DROP_MESSAGE_COMPILER__: false,
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
     }
   }
 

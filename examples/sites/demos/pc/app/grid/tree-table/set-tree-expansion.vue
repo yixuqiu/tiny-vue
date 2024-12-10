@@ -7,7 +7,7 @@
     </div>
     <br />
     <tiny-grid :data="tableData" ref="grid" :tree-config="{ children: 'children' }">
-      <tiny-grid-column type="selection" width="100"></tiny-grid-column>
+      <tiny-grid-column type="selection" width="40"></tiny-grid-column>
       <tiny-grid-column field="name" title="公司名称" tree-node></tiny-grid-column>
       <tiny-grid-column field="area" title="区域"></tiny-grid-column>
       <tiny-grid-column field="employees" title="员工数"></tiny-grid-column>
@@ -16,13 +16,13 @@
 </template>
 
 <script>
-import { Grid, GridColumn, Button } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn,
-    TinyButton: Button
+    TinyGrid,
+    TinyGridColumn,
+    TinyButton
   },
   data() {
     const tableData = [
@@ -130,6 +130,7 @@ export default {
         ]
       }
     ]
+
     return {
       tableData
     }
@@ -147,3 +148,19 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="less">
+:deep(.tiny-grid) {
+  &-header__column,
+  &-body__column {
+    &.col__selection,
+    &.col__radio {
+      padding: 0 8px 0 16px;
+      & + th,
+      + td {
+        padding-left: 0;
+      }
+    }
+  }
+}
+</style>

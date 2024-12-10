@@ -290,7 +290,7 @@ export const handleDrag =
     vm
   }: Pick<IDialogBoxRenderlessParams, 'parent' | 'props' | 'state' | 'emit' | 'vm'>) =>
   (event: MouseEvent): void => {
-    if (!props.draggable) {
+    if (!props.draggable || state.isFull) {
       return
     }
 
@@ -348,8 +348,8 @@ export const handleDrag =
     document.onmouseup = () => {
       document.onmousemove = demMousemove
       document.onmouseup = demMouseup
+      props.draggable && state.move && emit('drag-end', event)
       state.move = false
-      props.draggable && emit('drag-end', event)
     }
   }
 

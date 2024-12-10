@@ -21,7 +21,7 @@ import type {
 } from '@/types'
 import { isBrowser } from '../common/browser'
 
-const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
+export const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
   if (hex.includes('var') && isBrowser) {
     hex = hex.replace(/var\(|\)/g, '')
     hex = getComputedStyle(document.documentElement).getPropertyValue(hex)
@@ -68,16 +68,58 @@ export const flagOperate =
 export const getMileIcon =
   ({ constants, props }: Pick<IMilestoneRenderlessParams, 'constants' | 'props'>) =>
   (node: IMilestoneNode): IMilestoneIconStyle => {
-    const status = props.milestonesStatus[node[props.statusField]] || constants.DEFAULT_COLOR
+    const smbConstants = {
+      STATUS_COLOR_MAP: {
+        DEFAULT: {
+          BORDER_COLOR: '#C2C2C2',
+          BACKGROUND_COLOR: '#FFFFFF',
+          COLOR: '#191919',
+          BOX_SHADOW_PX: '0px 0px 0px 4px',
+          FLAG_CONTENT_CLS: '.content'
+        },
+        COMPLETED: {
+          BORDER_COLOR: '#191919',
+          BACKGROUND_COLOR: '#FFFFFF',
+          COLOR: '#191919',
+          BOX_SHADOW_PX: '0px 0px 0px 4px',
+          FLAG_CONTENT_CLS: '.content'
+        },
+        DOING: {
+          BORDER_COLOR: '#191919',
+          BACKGROUND_COLOR: '#191919',
+          COLOR: '#FFFFFF',
+          BOX_SHADOW_PX: '0px 0px 0px 4px',
+          FLAG_CONTENT_CLS: '.content'
+        }
+      }
+    }
+    const status = node[props.statusField]
+    // 状态色
+    const statusColor = props.milestonesStatus[status]
 
-    const isCompleted = node[props.statusField] === props.completedField
-    const switchColor = isCompleted && !props.solid
-    const { r, g, b } = hexToRgb(status)
+    if (props.solid || status === constants.STATUS_MAP.DOING) {
+      return {
+        'background-color': statusColor || smbConstants.STATUS_COLOR_MAP.DOING.BACKGROUND_COLOR + '!important',
+        color: smbConstants.STATUS_COLOR_MAP.DOING.COLOR + '!important',
+        'border-color': statusColor || smbConstants.STATUS_COLOR_MAP.DOING.BORDER_COLOR,
+        boxShadow: 'unset'
+      }
+    }
+
+    if (status === constants.STATUS_MAP.COMPLETED) {
+      return {
+        'background-color': smbConstants.STATUS_COLOR_MAP.COMPLETED.BACKGROUND_COLOR + '!important',
+        color: statusColor || smbConstants.STATUS_COLOR_MAP.COMPLETED.COLOR + '!important',
+        'border-color': statusColor || smbConstants.STATUS_COLOR_MAP.COMPLETED.BORDER_COLOR,
+        boxShadow: 'unset'
+      }
+    }
 
     return {
-      background: (switchColor ? constants.DEFAULT_BACK_COLOR : status) + '!important',
-      color: (switchColor ? status : constants.DEFAULT_BACK_COLOR) + '!important',
-      boxShadow: `rgba(${r},${g},${b},.4) ${constants.BOX_SHADOW_PX}`
+      background: smbConstants.STATUS_COLOR_MAP.DEFAULT.BACKGROUND_COLOR + '!important',
+      color: statusColor || smbConstants.STATUS_COLOR_MAP.DEFAULT.COLOR + '!important',
+      'border-color': statusColor || smbConstants.STATUS_COLOR_MAP.DEFAULT.BORDER_COLOR,
+      boxShadow: 'unset'
     }
   }
 
@@ -115,4 +157,14 @@ export const handleFlagClick =
   ({ idx, flag }: IMilestoneHandleFlagClickParams) => {
     emit('flagclick', idx, flag) // deprecated 原事件flagclick v3.5.0废弃，v3.17.0移除；移除原因：命名规范
     emit('flag-click', idx, flag)
+  }
+
+export const getFlagStyle =
+  (props) =>
+  ({ index, idx }) => {
+    return {
+      left: `calc(${(100 / props.data[props.flagBefore ? index : index + 1][props.flagField].length) * idx}%  + ${
+        idx * 8
+      }px)`
+    }
   }

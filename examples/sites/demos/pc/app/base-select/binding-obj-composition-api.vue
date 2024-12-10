@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { BaseSelect as TinyBaseSelect, Option as TinyOption } from '@opentiny/vue'
+import { TinyBaseSelect, TinyOption } from '@opentiny/vue'
 
 const options = ref([
   { obj: { val: '选项1', id: 1 }, text: '北京' },
@@ -30,5 +30,6 @@ const value = ref({ val: '选项3', id: 3 })
 p {
   font-size: 14px;
   line-height: 1.5;
+  padding: 16px 0;
 }
 </style>

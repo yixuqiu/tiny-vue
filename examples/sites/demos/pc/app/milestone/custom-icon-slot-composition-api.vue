@@ -1,14 +1,16 @@
 <template>
-  <tiny-milestone :data="milestoneData" :milestones-status="statusMap">
-    <template #icon="data">
-      <component :is="data.slotScope.icon" class="custom"> </component>
-    </template>
-  </tiny-milestone>
+  <div class="demo-milestone">
+    <tiny-milestone :data="milestoneData" :milestones-status="statusMap">
+      <template #icon="data">
+        <component :is="data.slotScope.icon" class="custom-milestone"> </component>
+      </template>
+    </tiny-milestone>
+  </div>
 </template>
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Milestone as TinyMilestone } from '@opentiny/vue'
+import { TinyMilestone } from '@opentiny/vue'
 import { iconShare, iconYes, iconDel, iconAscending, iconWriting } from '@opentiny/vue-icon'
 
 // 里程碑样式
@@ -62,7 +64,7 @@ const milestoneData = ref([
 </script>
 
 <style>
-.custom {
+.custom-milestone {
   width: 16px;
   height: 16px;
   line-height: 16px;
@@ -75,5 +77,11 @@ const milestoneData = ref([
   color: #000;
   cursor: pointer;
   z-index: 15;
+}
+</style>
+
+<style scoped>
+.demo-milestone ::v-deep .tiny-milestone__description-status {
+  margin-top: 4px;
 }
 </style>

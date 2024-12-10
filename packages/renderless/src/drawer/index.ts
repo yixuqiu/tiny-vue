@@ -1,13 +1,6 @@
 import debounce from '../common/deps/debounce'
 import { addClass, removeClass } from '../common/deps/dom'
-import type {
-  IDrawerState,
-  IDrawerProps,
-  IDrawerApi,
-  IDrawerCT,
-  ISharedRenderlessParamUtils,
-  IDrawerRenderlessParams
-} from '@/types'
+import type { IDrawerState, IDrawerApi, IDrawerCT, ISharedRenderlessParamUtils, IDrawerRenderlessParams } from '@/types'
 
 export const computedWidth =
   ({
@@ -24,9 +17,23 @@ export const computedWidth =
     return props.width || designConfig?.constants?.DEFAULT_WIDTH || (constants as IDrawerCT).DEFAULT_WIDTH
   }
 
+export const computedHeight =
+  ({
+    state,
+    designConfig,
+    props,
+    constants
+  }: Pick<IDrawerRenderlessParams, 'state' | 'designConfig' | 'props' | 'constants'>) =>
+  (): string => {
+    if (state.height) {
+      return state.height + 'px'
+    }
+    return props.height || designConfig?.constants?.DEFAULT_HEIGHT || (constants as IDrawerCT).DEFAULT_HEIGHT
+  }
+
 export const close =
   ({ api }: { api: IDrawerApi }) =>
-  (force = false) => {
+  (force = true) => {
     api.handleClose('close', typeof force === 'boolean' ? force : false)
   }
 
@@ -88,7 +95,7 @@ export const mousedown =
     state.dragEvent.offsetHeight = drawerBox.offsetHeight
   }
 
-export const mousemove = ({ state, props }: { state: IDrawerState; props: IDrawerProps }) =>
+export const mousemove = ({ state, props, emit }: Pick<IDrawerRenderlessParams, 'state' | 'props' | 'emit'>) =>
   debounce(1, (event) => {
     if (!state.dragEvent.isDrag) {
       return
@@ -118,6 +125,8 @@ export const mousemove = ({ state, props }: { state: IDrawerState; props: IDrawe
       const height = offsetHeight - offsetY
       state.height = height > 10 ? height : 10
     }
+
+    emit('drag', { width: state.width, height: state.height })
   }) as Parameters<Document['removeEventListener']>['1']
 
 export const mouseup =

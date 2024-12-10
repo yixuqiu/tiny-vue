@@ -19,8 +19,8 @@
         </tiny-grid-toolbar>
       </template>
       <tiny-grid-column type="selection" width="100"></tiny-grid-column>
-      <tiny-grid-column type="index" width="80" tree-node></tiny-grid-column>
-      <tiny-grid-column field="name" title="公司名称"></tiny-grid-column>
+      <tiny-grid-column type="index" width="80"></tiny-grid-column>
+      <tiny-grid-column field="name" title="公司名称" tree-node></tiny-grid-column>
       <tiny-grid-column field="area" title="区域" :editor="{ component: 'input', autoselect: true }"></tiny-grid-column>
       <tiny-grid-column
         field="employees"
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="jsx">
-import { Grid, GridColumn, Button, GridToolbar, Modal } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyButton, TinyGridToolbar, TinyModal } from '@opentiny/vue'
 
 function canRemove(node, nodes) {
   let flag = false
@@ -88,10 +88,10 @@ function copy(nodes1, nodes2) {
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn,
-    TinyButton: Button,
-    TinyGridToolbar: GridToolbar
+    TinyGrid,
+    TinyGridColumn,
+    TinyButton,
+    TinyGridToolbar
   },
   data() {
     return {
@@ -282,12 +282,12 @@ export default {
     getRemoveEvent() {
       let removeRecords = this.removeList
 
-      Modal.alert(removeRecords.length)
+      TinyModal.alert(removeRecords.length)
     },
     getUpdateEvent() {
       let updateRecords = this.$refs.tree.getUpdateRecords()
 
-      Modal.alert(updateRecords.length)
+      TinyModal.alert(updateRecords.length)
     },
     clearTreeExpand() {
       this.$refs.tree.clearTreeExpand()

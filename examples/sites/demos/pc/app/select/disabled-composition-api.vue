@@ -63,12 +63,13 @@
       <tiny-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"> </tiny-option>
     </tiny-select>
     <br />
+    <br />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { Select as TinySelect, Option as TinyOption } from '@opentiny/vue'
+import { TinySelect, TinyOption } from '@opentiny/vue'
 
 const options1 = ref([
   { value: '选项1', label: '北京' },

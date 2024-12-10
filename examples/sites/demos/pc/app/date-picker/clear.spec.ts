@@ -12,10 +12,7 @@ test('[DatePicker] 测试清除输入', async ({ page }) => {
   // 默认显示清除按钮
   await datePickerDefaultClearIcon.hover()
   await expect(clearIcon).toBeVisible()
-  await expect(clearIcon.locator('path')).toHaveAttribute(
-    'd',
-    'm13.4 12 6.3-6.3c.4-.4.4-1 0-1.4-.4-.4-1-.4-1.4 0L12 10.6 5.7 4.3c-.4-.4-1-.4-1.4 0-.4.4-.4 1 0 1.4l6.3 6.3-6.3 6.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3l6.3-6.3 6.3 6.3c.2.2.4.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4L13.4 12z'
-  )
+  await expect(clearIcon.locator('path').nth(0)).toHaveAttribute('d', /^M12\.49 3\.3a.+22\.71 0Z$/)
 
   // 隐藏清除按钮
   await datePickerHideClearIcon.hover()
@@ -24,10 +21,7 @@ test('[DatePicker] 测试清除输入', async ({ page }) => {
   // 自定义清除图标
   await datePickerCustomClearIcon.hover()
   await expect(clearIcon).toBeVisible()
-  await expect(clearIcon.locator('path')).toHaveAttribute(
-    'd',
-    'm13.4 12 6.3-6.3c.4-.4.4-1 0-1.4-.4-.4-1-.4-1.4 0L12 10.6 5.7 4.3c-.4-.4-1-.4-1.4 0-.4.4-.4 1 0 1.4l6.3 6.3-6.3 6.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3l6.3-6.3 6.3 6.3c.2.2.4.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4L13.4 12z'
-  )
+  await expect(clearIcon.locator('path').nth(0)).toHaveAttribute('d', /^M12\.49 3\.3a.+22\.71 0Z$/)
 
   // 测试清除功能
   await expect(datePickerCustomClearIcon).toHaveValue('2023-05-24')

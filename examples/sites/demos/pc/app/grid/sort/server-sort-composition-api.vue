@@ -11,16 +11,16 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, Pager, Modal } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyPager, TinyModal } from '@opentiny/vue'
 
 const pager = ref({
-  component: Pager,
+  component: TinyPager,
   attrs: {
     currentPage: 1,
     pageSize: 15,
     total: 0,
     pageSizes: [5, 10, 15, 20],
-    layout: 'total, prev, pager, next, jumper, sizes'
+    layout: 'total, sizes, prev, pager, next, jumper'
   }
 })
 const fetchData = ref({
@@ -87,7 +87,7 @@ const tableData = ref([
 ])
 
 function sortChangeEvent({ order }) {
-  Modal.message({ message: `${order || '取消排序'}`, status: 'info' })
+  TinyModal.message({ message: `${order || '取消排序'}`, status: 'info' })
 }
 
 function getData({ page, filters }) {

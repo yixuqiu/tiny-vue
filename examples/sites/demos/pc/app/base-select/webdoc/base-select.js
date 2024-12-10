@@ -1,9 +1,6 @@
 export default {
   column: '2',
   owner: '',
-  metaData: {
-    experimental: '3.16.0'
-  },
   demos: [
     {
       demoId: 'basic-usage',

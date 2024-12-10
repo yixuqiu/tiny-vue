@@ -10,7 +10,7 @@
 
     <div class="mt-20">
       <tiny-radio-group v-model="radio2">
-        <tiny-radio-button label="1">日度</tiny-radio-button>
+        <tiny-radio-button disabled label="1">日度</tiny-radio-button>
         <tiny-radio-button disabled label="2">月度</tiny-radio-button>
         <tiny-radio-button label="3">年度</tiny-radio-button>
       </tiny-radio-group>
@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Radio as TinyRadio, RadioButton as TinyRadioButton, RadioGroup as TinyRadioGroup } from '@opentiny/vue'
+import { TinyRadio, TinyRadioButton, TinyRadioGroup } from '@opentiny/vue'
 
 const radio = ref('禁用')
 const radio1 = ref('6')

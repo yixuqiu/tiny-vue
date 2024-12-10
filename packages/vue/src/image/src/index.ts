@@ -67,6 +67,10 @@ export const imageProps = {
   keepStyle: {
     type: Boolean,
     default: false
+  },
+  appendToBody: {
+    type: Boolean,
+    default: true
   }
 }
 export default defineComponent({

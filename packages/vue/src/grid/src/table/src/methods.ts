@@ -25,6 +25,7 @@
 import { getColumnList, assemColumn } from '@opentiny/vue-renderless/grid/utils'
 import { toDecimal } from '@opentiny/vue-renderless/common/string'
 import { addClass, removeClass, isDisplayNone } from '@opentiny/vue-renderless/common/deps/dom'
+import { isNull } from '@opentiny/vue-renderless/common/type'
 import debounce from '@opentiny/vue-renderless/common/deps/debounce'
 import { fastdom } from '@opentiny/vue-renderless/common/deps/fastdom'
 import {
@@ -159,10 +160,10 @@ const sortMultiple = (rows, columns, _vm) => {
 }
 
 // 创建快速缓存
-const buildCache = (tableData, treeConfig = {}) => {
+const buildCache = (tableData, { treeConfig, treeOrdered }) => {
   const backupMap = new WeakMap()
-  const { children, ordered, temporaryIndex = '_$index_' } = treeConfig || {}
-  const isTreeOrderedFalse = treeConfig && !ordered
+  const { children, temporaryIndex = '_$index_' } = treeConfig || {}
+  const isTreeOrderedFalse = treeConfig && !treeOrdered
 
   const traverse = (arr, rowLevel, parentIndex) => {
     const backup = []
@@ -210,10 +211,24 @@ const Methods = {
   },
   clearAll(silent) {
     const { fetchOption = {} } = this.$grid
-    const { isReloadFilter } = fetchOption
+    const { isReloadFilter, isReloadScroll = false } = fetchOption
 
-    run(['clearScroll', 'clearSort', 'clearCurrentRow', 'clearCurrentColumn'], this)
-    run(['clearSelection', 'clearRowExpand', 'clearTreeExpand'], this)
+    let functionNames = [
+      'clearScroll',
+      'clearSort',
+      'clearCurrentRow',
+      'clearCurrentColumn',
+      'clearSelection',
+      'clearRowExpand',
+      'clearTreeExpand'
+    ]
+
+    // 存在配置时，移除 clearScroll, 重载数据时不清除滚动位置
+    if (isReloadScroll) {
+      functionNames = functionNames.filter((i) => i !== 'clearScroll')
+    }
+
+    run(functionNames, this)
 
     if (typeof isReloadFilter === 'undefined' ? TINYGrid._filter : !isReloadFilter) {
       this.clearFilter(silent)
@@ -266,9 +281,11 @@ const Methods = {
   },
   // 全量加载表格数据
   loadTableData(datas, notRefresh) {
-    let { $refs, editStore, height, maxHeight, treeConfig } = this as any
-    let { lastScrollLeft, lastScrollTop } = this as any
-    let { scrollY } = this.optimizeOpts
+    let { $grid, $refs, editStore, height, maxHeight, treeConfig, lastScrollLeft, lastScrollTop, optimizeOpts } =
+      this as any
+    let { fetchOption = {} } = $grid
+    let { isReloadScroll = false } = fetchOption
+    let { scrollY } = optimizeOpts
     // 浅拷贝原始全量数据
     let tableFullData = isArray(datas) ? datas.slice(0) : []
     // 是否开启纵向的虚拟滚动，默认大于等于500条开启纵向的虚拟滚动
@@ -282,7 +299,7 @@ const Methods = {
     // 缓存数据
     this.updateCache(true)
     // 深拷贝原始数据，并建立表格行数据和行数据对应的原始数据的映射关系，可以极大的提高检查编辑态单元格status和还原行数据的速度
-    const { backupData, backupMap } = buildCache(tableFullData, treeConfig)
+    const { backupData, backupMap } = buildCache(tableFullData, this)
     // tableSynchData：用户传递拖来的原始数据，tableSourceData：深拷贝用户传递过来的初始原始数据
     Object.assign(this, { tableSynchData: datas, tableSourceData: backupData, backupMap, scrollYLoad })
 
@@ -291,7 +308,7 @@ const Methods = {
     }
 
     // 如果notRefresh为true表示不刷新表格状态，所以也不需要清除滚动状态
-    if (!notRefresh) {
+    if (!notRefresh && !isReloadScroll) {
       this.clearScroll()
     }
 
@@ -303,7 +320,7 @@ const Methods = {
     let second = () => {
       // 让表格滚动条滚动到最后一次滚动到的位置
       if (lastScrollLeft || lastScrollTop) {
-        return this.scrollTo(lastScrollLeft, lastScrollTop)
+        return this.attemptRestoreScoll({ lastScrollLeft, lastScrollTop })
       } else {
         // 重置表头滚动条位置
         let headerElem = $refs.tableHeader ? $refs.tableHeader.$el : null
@@ -362,7 +379,7 @@ const Methods = {
     let rowKey = getTableRowKey(this)
     let buildRowCache = (row, index) => {
       let rowId = getRowid(this, row)
-      if (!rowId) {
+      if (isNull(rowId) || rowId === '') {
         rowId = getRowUniqueId()
         set(row, rowKey, rowId)
       }
@@ -479,7 +496,8 @@ const Methods = {
       }
     })
     // 如果行数据的唯一主键不存在，则生成
-    if (!get(row, rowKey)) {
+    const rowId = get(row, rowKey)
+    if (isNull(rowId) || rowId === '') {
       set(row, rowKey, getRowUniqueId())
     }
     return row
@@ -756,6 +774,12 @@ const Methods = {
       })
       this.collectColumn = collectColumn
     }
+
+    const toolbarVm = this.getVm('toolbar')
+    // 合并更新toolbar的Column配置
+    if (toolbarVm) {
+      toolbarVm.updateColumn(fullColumn)
+    }
     this.$emit('update:customs', fullColumn)
   },
   resetAll() {
@@ -894,10 +918,19 @@ const Methods = {
     this.visibleColumnChanged = true
 
     this.columnAnchor && this.$grid.buildColumnAnchorParams()
-    return this.$nextTick().then(() => {
-      this.updateFooter()
-      this.recalculate()
-    })
+    return this.$nextTick()
+      .then(() => {
+        this.updateFooter()
+        this.recalculate()
+      })
+      .then(() => {
+        // 在列初始化、列动态改变后都会抛出
+        this.$emit('after-refresh-column')
+        // 在列动态改变后都会尝试恢复滚动位置
+        if (this.isColumnReady) {
+          this.attemptRestoreScoll()
+        }
+      })
   },
   // 指定列宽的列进行拆分
   analyColumnWidth() {
@@ -977,8 +1010,8 @@ const Methods = {
   },
   // 列宽计算
   autoCellWidth(headerEl, bodyEl, footerEl) {
-    // 列宽最少限制 40px, x-design为72px
-    let minCellWidth = this.$grid?.designConfig?.minWidth || 40
+    // 列宽最少限制 72px, saas为40px
+    let minCellWidth = this.$grid?.designConfig?.minWidth || 72
     let { fit, columnStore, columnChart, isGroup } = this
     let tableHeight = bodyEl.offsetHeight
     let overflowY = bodyEl.scrollHeight > bodyEl.clientHeight
@@ -1029,8 +1062,6 @@ const Methods = {
     return this.recalculate()
   },
   updateStyle() {
-    // 窗口resize后，手动调用recalculate父容器高度还是初始值，需要update一下
-    this.updateParentHeight()
     let { columnStore, currentRow, height, maxHeight, minHeight, parentHeight, tableColumn, scrollbarWidth } = this
     const { scrollYLoad, scrollXLoad, scrollLoad } = this
     let layoutList = ['header', 'body', 'footer']
@@ -1077,12 +1108,13 @@ const Methods = {
     end && end()
   },
   blurOutside({ row, args, column }, event) {
+    const { editConfig, getEventTargetNode, $el } = this
     if (column && row) {
       const { editor } = column
       if (typeof editor.blurOutside === 'function') {
-        return !!editor.blurOutside({ cell: args.cell, event })
+        return Boolean(editor.blurOutside({ cell: args.cell, event }))
       }
-      const blurClassConfig = editor.blurClass || this.editConfig.blurClass
+      const blurClassConfig = editor.blurClass || editConfig.blurClass
       if (blurClassConfig) {
         let blurClass = []
         if (typeof blurClassConfig === 'string') {
@@ -1090,10 +1122,14 @@ const Methods = {
         } else if (isArray(blurClassConfig)) {
           blurClass = blurClassConfig.slice(0)
         }
-        return (
-          (args.cell && args.cell.contains(event.target)) ||
-          blurClass.some((cls) => !this.getEventTargetNode(event, document.body, cls).flag)
-        )
+
+        if (args?.cell.contains(event.target)) {
+          return true
+        }
+        if (editConfig.mode === 'row' && getEventTargetNode(event, $el, 'tiny-grid-body__column').flag) {
+          return true
+        }
+        return blurClass.every((cls) => !getEventTargetNode(event, document.body, cls).flag)
       }
     }
   },
@@ -2019,6 +2055,36 @@ const Methods = {
     traverse(this.childColumns)
 
     return columnIds.join(',')
+  },
+  // 获取所有多选数据状态
+  getAllSelection() {
+    return this.selection
+  },
+  // 尝试恢复滚动位置，规范了最大滚动位置的取值
+  attemptRestoreScoll(options) {
+    let { lastScrollTop, lastScrollLeft } = options || this
+
+    const { scrollXLoad, scrollYLoad, elemStore } = this
+    const tableBodyElem = elemStore['main-body-wrapper']
+
+    if ((lastScrollTop || lastScrollLeft) && tableBodyElem) {
+      fastdom.measure(() => {
+        const maxScrollTop = tableBodyElem.scrollHeight - tableBodyElem.offsetHeight
+        const maxScrollLeft = tableBodyElem.scrollWidth - tableBodyElem.offsetWidth
+
+        lastScrollTop = Math.min(lastScrollTop, maxScrollTop)
+        lastScrollLeft = Math.min(lastScrollLeft, maxScrollLeft)
+
+        fastdom.mutate(() => {
+          this.scrollTo(lastScrollLeft, lastScrollTop)
+
+          scrollXLoad && this.triggerScrollXEvent()
+          scrollYLoad && this.triggerScrollYEvent({ target: { scrollTop: lastScrollTop } })
+        })
+      })
+    }
+
+    return this.$nextTick()
   }
 }
 funcs.forEach((name) => {

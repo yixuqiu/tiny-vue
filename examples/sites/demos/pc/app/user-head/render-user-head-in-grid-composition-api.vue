@@ -2,7 +2,13 @@
   <tiny-grid :data="tableData" border :edit-config="{ trigger: 'click', mode: 'cell', showStatus: true }">
     <tiny-grid-column type="index" width="60"></tiny-grid-column>
     <tiny-grid-column type="selection" width="60"></tiny-grid-column>
-    <tiny-grid-column field="employees" title="公司员工数" :renderer="renderUserHead"></tiny-grid-column>
+    <tiny-grid-column
+      field="employees"
+      title="公司员工数"
+      :renderer="renderUserHead"
+      class-name="demo-gird"
+      width="230"
+    ></tiny-grid-column>
     <tiny-grid-column field="createdDate" title="创建日期"></tiny-grid-column>
     <tiny-grid-column field="city" title="城市"></tiny-grid-column>
     <tiny-grid-column
@@ -17,7 +23,7 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, UserHead } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyUserHead } from '@opentiny/vue'
 
 const mockData = [
   {
@@ -85,6 +91,7 @@ const mockData = [
     employees: 540
   }
 ]
+
 const tableData = ref(mockData)
 
 function checkboxEdit(h, { row, column }) {
@@ -100,7 +107,7 @@ function checkboxEdit(h, { row, column }) {
 }
 
 function renderUserHead(h, { row }) {
-  const UserHeadImg = UserHead
+  const UserHeadImg = TinyUserHead
 
   return (
     <span>
@@ -122,6 +129,17 @@ function renderUserHead(h, { row }) {
 
 .demo-user-head {
   float: left;
+  margin-right: 10px;
+}
+</style>
+
+<style>
+.demo-gird .tiny-grid-cell span {
+  display: flex;
+  align-items: center;
+  margin: 8px 4px;
+}
+.demo-gird .demo-user-head {
   margin-right: 10px;
 }
 </style>

@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { Numeric as TinyNumeric } from '@opentiny/vue'
+import { TinyNumeric } from '@opentiny/vue'
 
 const value = ref(1)
 const precision = ref(2)
@@ -30,5 +30,10 @@ const format = reactive({
 <style scoped>
 .numeric-class {
   margin: 4px 0px;
+}
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 16px 0;
 }
 </style>

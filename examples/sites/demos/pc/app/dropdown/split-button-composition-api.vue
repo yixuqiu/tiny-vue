@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="demo-drop">
     <div>场景1：设置按钮类型</div>
     <br />
     <tiny-dropdown split-button>
@@ -34,9 +34,5 @@
 </template>
 
 <script setup>
-import {
-  Dropdown as TinyDropdown,
-  DropdownMenu as TinyDropdownMenu,
-  DropdownItem as TinyDropdownItem
-} from '@opentiny/vue'
+import { TinyDropdown, TinyDropdownMenu, TinyDropdownItem } from '@opentiny/vue'
 </script>

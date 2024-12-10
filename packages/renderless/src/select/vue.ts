@@ -63,6 +63,7 @@ import {
   buildRadioConfig,
   onMouseenterNative,
   onMouseleaveNative,
+  onMouseenterSelf,
   onCopying,
   gridOnQueryChange,
   defaultOnQueryChange,
@@ -106,11 +107,15 @@ import {
   clearNoMatchValue,
   handleDebouncedQueryChange,
   onClickCollapseTag,
-  computedIsExpand
+  computedIsExpand,
+  computedShowTagText,
+  isTagClosable,
+  computedCurrentSizeMap
 } from './index'
 import debounce from '../common/deps/debounce'
 import { isNumber } from '../common/type'
 import { isBrowser } from '../common/browser'
+import { useUserAgent } from '../common/deps/useUserAgent'
 
 export const api = [
   'state',
@@ -164,6 +169,7 @@ export const api = [
   'buildRadioConfig',
   'onMouseenterNative',
   'onMouseleaveNative',
+  'onMouseenterSelf',
   'onCopying',
   'handleDropdownClick',
   'handleEnterTag',
@@ -171,7 +177,9 @@ export const api = [
   'loadTreeData',
   'updateModelValue',
   'clearSearchText',
-  'onClickCollapseTag'
+  'onClickCollapseTag',
+  'computedShowTagText',
+  'isTagClosable'
 ]
 
 const initState = ({ reactive, computed, props, api, emitter, parent, constants, useBreakpoint, vm, designConfig }) => {
@@ -182,7 +190,6 @@ const initState = ({ reactive, computed, props, api, emitter, parent, constants,
     datas: [],
     initDatas: [],
     query: '',
-    magicKey: 0,
     options: [],
     visible: false,
     showCopy: computed(() => api.computedShowCopy()),
@@ -237,13 +244,16 @@ const initState = ({ reactive, computed, props, api, emitter, parent, constants,
         return designConfig.state.autoHideDownIcon
       }
       return true // tiny 默认为true
-    })()
+    })(),
+    designConfig,
+    currentSizeMap: computed(() => api.computedCurrentSizeMap())
   })
 
   return state
 }
 
 const initStateAdd = ({ computed, props, api, parent }) => {
+  const { isIOS } = useUserAgent()
   return {
     selectedTags: [],
     tips: '',
@@ -288,6 +298,8 @@ const initStateAdd = ({ computed, props, api, parent }) => {
     formItemSize: computed(() => (parent.formItem || { state: {} }).state.formItemSize),
     selectDisabled: computed(() => api.computedSelectDisabled()),
     isDisplayOnly: computed(() => props.displayOnly || (parent.form || {}).displayOnly),
+    isDisabled: computed(() => props.disabled || (parent.form || {}).disabled),
+    isShowTagText: computed(() => api.computedShowTagText()),
     gridCheckedData: computed(() => api.getcheckedData()),
     isExpandAll: computed(() => api.computedIsExpandAll()),
     searchSingleCopy: computed(() => props.allowCopy && !props.multiple && (props.filterable || props.searchable)),
@@ -296,6 +308,7 @@ const initStateAdd = ({ computed, props, api, parent }) => {
     isHidden: false,
     defaultCheckedKeys: [],
     optionIndexArr: [],
+    isIOS,
     showCollapseTag: false,
     exceedMaxVisibleRow: false, // 是否超出默认最大显示行数
     toHideIndex: Infinity // 第一个超出被隐藏的索引
@@ -364,6 +377,7 @@ const initApi = ({
     buildRadioConfig: buildRadioConfig({ props, state }),
     onMouseenterNative: onMouseenterNative({ state }),
     onMouseleaveNative: onMouseleaveNative({ state }),
+    onMouseenterSelf: onMouseenterSelf({ state }),
     onCopying: onCopying({ state, vm }),
     gridOnQueryChange: gridOnQueryChange({ props, vm, constants, state }),
     watchHoverIndex: watchHoverIndex({ state }),
@@ -380,9 +394,9 @@ const initApi = ({
     computedShowNewOption: computedShowNewOption({ props, state }),
     computedShowCopy: computedShowCopy({ props, state }),
     computedOptionsAllDisabled: computedOptionsAllDisabled(state),
-    computedDisabledTooltipContent: computedDisabledTooltipContent(state),
+    computedDisabledTooltipContent: computedDisabledTooltipContent({ props, state }),
 
-    computedSelectDisabled: computedSelectDisabled({ props, parent }),
+    computedSelectDisabled: computedSelectDisabled({ state }),
     computedIsExpand: computedIsExpand({ props, state }),
     computedIsExpandAll: computedIsExpandAll(props),
     watchInitValue: watchInitValue({ props, emit }),
@@ -391,7 +405,10 @@ const initApi = ({
     computedGetIcon: computedGetIcon({ designConfig, props }),
     computedGetTagType: computedGetTagType({ designConfig, props }),
     clearSearchText: clearSearchText({ state, api }),
-    clearNoMatchValue: clearNoMatchValue({ props, emit })
+    clearNoMatchValue: clearNoMatchValue({ props, emit }),
+    computedShowTagText: computedShowTagText({ state }),
+    isTagClosable: isTagClosable(),
+    computedCurrentSizeMap: computedCurrentSizeMap({ state, designConfig })
   })
 
   addApi({ api, props, state, emit, constants, parent, nextTick, dispatch, vm, isMobileFirstMode, designConfig })

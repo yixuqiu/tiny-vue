@@ -10,7 +10,7 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { NavMenu as TinyNavMenu } from '@opentiny/vue'
+import { TinyNavMenu } from '@opentiny/vue'
 import { iconTotal } from '@opentiny/vue-icon'
 
 const menuData = ref([
@@ -312,10 +312,5 @@ const TinyIconTotal = iconTotal()
 <style scoped>
 .preview {
   min-height: 450px;
-}
-
-.preview .icon-logo {
-  fill: white;
-  font-size: 24px;
 }
 </style>

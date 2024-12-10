@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-import { Numeric } from '@opentiny/vue'
+import { TinyNumeric } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyNumeric: Numeric
+    TinyNumeric
   },
   data() {
     return {
@@ -27,5 +27,10 @@ export default {
 <style scoped>
 .numeric-class {
   margin: 4px 0px;
+}
+p {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 16px 0;
 }
 </style>

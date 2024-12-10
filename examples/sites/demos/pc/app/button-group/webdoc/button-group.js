@@ -18,8 +18,8 @@ export default {
     {
       demoId: 'size',
       name: {
-        'zh-CN': '组件尺寸大小',
-        'en-US': 'Set Component Size'
+        'zh-CN': '组件尺寸',
+        'en-US': 'Component Size'
       },
       desc: {
         'zh-CN':
@@ -83,20 +83,6 @@ export default {
       codeFiles: ['show-more.vue']
     },
     {
-      demoId: 'show-edit',
-      name: {
-        'zh-CN': '编辑按钮',
-        'en-US': 'Display Edit Button'
-      },
-      desc: {
-        'zh-CN':
-          '<p>设置了显示更多按钮后，可以通过 <code>show-edit</code> 设置是否显示编辑按钮。点击编辑按钮后触发 <code>edit</code> 事件。</p>',
-        'en-US':
-          '<p>After setting up to display more buttons, You can set whether to display the edit button through <code>show edit</code> . After clicking the edit button, the <code>edit</code> event is triggered.</p>'
-      },
-      codeFiles: ['show-edit.vue']
-    },
-    {
       demoId: 'slot-default',
       name: {
         'zh-CN': '默认插槽',
@@ -113,12 +99,15 @@ export default {
     {
       demoId: 'slot-empty',
       name: {
-        'zh-CN': '空数据插槽',
-        'en-US': 'Empty slot'
+        'zh-CN': '空数据',
+        'en-US': 'No data'
+      },
+      meta: {
+        mark: '3.17.1'
       },
       desc: {
-        'zh-CN': '<p>当数据为空时，默认会显示暂无数据，通过默认插槽自定义内容。</p>',
-        'en-US': '<p>When the data is empty, customize the content via the <code>empty</code> slot.</p>'
+        'zh-CN': '<p>当数据为空时，默认会显示"暂无数据"，通过 <code>empty</code> 插槽自定义内容。</p>',
+        'en-US': '<p>Show "No data" when the data is empty, customize the content via the <code>empty</code> slot.</p>'
       },
       codeFiles: ['slot-empty.vue']
     },
@@ -136,26 +125,13 @@ export default {
       codeFiles: ['button-group-multiple.vue']
     },
     {
-      demoId: 'border',
-      name: {
-        'zh-CN': '边框',
-        'en-US': 'Border'
-      },
-      desc: {
-        'zh-CN': '<p>通过 <code>border</code> 设置有无边框。</p>',
-        'en-US': '<p>Set whether there is a border through <code>border</code> .</p>'
-      },
-      codeFiles: ['border.vue']
-    },
-    {
       demoId: 'sup',
       name: {
         'zh-CN': '选块角标',
         'en-US': ''
       },
       desc: {
-        'zh-CN':
-          '<p>通过 <code>data</code> 的 <code>sup</code> 属性配置选块角标，详见 <a href="IButtonGroupData">IButtonGroupData</a> 。</p>',
+        'zh-CN': '<p>通过 <code>data</code> 的 <code>sup</code> 属性配置选块角标。</p>',
         'en-US': ''
       },
       codeFiles: ['sup.vue']

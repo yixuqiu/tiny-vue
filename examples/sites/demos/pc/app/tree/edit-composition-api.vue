@@ -14,12 +14,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Tree as TinyTree, Button as TinyButton } from '@opentiny/vue'
+import { TinyTree, TinyButton } from '@opentiny/vue'
 
 const data = ref([
   {
     id: '1',
     label: '数据 1',
+    disabled: true,
     children: [
       { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
       { id: '1-2', label: '数据 1-2' }

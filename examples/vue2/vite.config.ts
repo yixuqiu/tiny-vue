@@ -29,18 +29,35 @@ export default defineConfig((config) => {
         include: [/\.vue$/, /\.md$/]
       }),
       scriptSetupPlugin(),
-      vue2SvgPlugin(),
-      importPlugin([
-        {
-          libraryName: '@opentiny/vue'
-        },
-        ...['icon', 'icon-saas'].map((lib) => ({
-          libraryName: `@opentiny/vue-${lib}`,
-          customName: (name: string) => {
-            return name === 'default' ? `@opentiny/vue-${lib}$` : `@opentiny/vue-${lib}/${name.replace(/^icon-/, '')}`
-          }
-        }))
-      ]),
+      vue2SvgPlugin({
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false
+                }
+              }
+            },
+            'prefixIds'
+          ]
+        }
+      }),
+      importPlugin({
+        options: [
+          {
+            libraryName: '@opentiny/vue'
+          },
+          ...['icon', 'icon-saas'].map((lib) => ({
+            libraryName: `@opentiny/vue-${lib}`,
+            customName: (name: string) => {
+              return name === 'default' ? `@opentiny/vue-${lib}$` : `@opentiny/vue-${lib}/${name.replace(/^icon-/, '')}`
+            }
+          }))
+        ],
+        exclude: [/\.md\?.+\.js/]
+      }),
       dynamicImportPlugin(),
       Unocss({
         include: [/\.js$/, /\.ts$/, /\.vue$/, /\.html$/, /\.jsx$/, /\.tsx$/], // 增加js ,ts扫描

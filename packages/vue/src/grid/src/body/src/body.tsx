@@ -57,6 +57,7 @@ const classMap = {
   colActived: 'col__actived',
   rowNew: 'row__new',
   rowSelected: 'row__selected',
+  rowRadio: 'row__radio',
   rowActived: 'row__actived',
   isScrollload: 'is__scrollload'
 }
@@ -133,7 +134,8 @@ function buildColumnProps(args) {
 
 function buildColumnChildren(args) {
   let { h, hasDefaultTip, params, row, validError, column, $table } = args
-  let { showEllipsis, showTip, showTitle, showTooltip, validStore, dropConfig } = args
+  let { showEllipsis, showTip, showTitle, showTooltip, validStore } = args
+  const dropConfig = args.dropConfig || {}
   const { validOpts } = $table
   let cellNode: any[] = []
   let validNode: any = null
@@ -399,7 +401,8 @@ function renderColumn(args1) {
   let validated = validatedMap[`${column.id}-${row[rowId]}`]
   let validError = validStore.row === row && validStore.column === column
   let hasDefaultTip = editRules && (isMessageDefault ? height || tableData.length > 1 : isMessageInline)
-  let { align, className, editor, showTip } = column
+  let { align, editor, showTip } = column
+  const className = column.own.className
   let cellAlign = align || allAlign
   let columnActived =
     editConfig && editor && actived.row === row && (actived.column === column || editConfig.mode === 'row')
@@ -531,7 +534,8 @@ function renderRow(args) {
   let { $rowIndex, $seq, $table, _vm, editStore } = args
   let { h, row, rowActived } = args
   let { rowClassName, rowIndex, rowKey, rowLevel, rowid, rows } = args
-  let { selection, seq, tableColumn, trOn, treeConfig, isNotRenderRow } = args
+  let { seq, trOn, isNotRenderRow } = args
+  const { selection, tableColumn, treeConfig, selectRow } = $table
 
   if (isNotRenderRow) {
     return
@@ -547,6 +551,7 @@ function renderRow(args) {
             [`row__level-${rowLevel}`]: treeConfig,
             [classMap.rowNew]: editStore.insertList.includes(row),
             [classMap.rowSelected]: selection.includes(row),
+            [classMap.rowRadio]: selectRow === row,
             [classMap.rowActived]: rowActived
           },
           rowClassName
@@ -666,12 +671,12 @@ function renderRowTree(args, renderRows) {
 function renderRows({ h, _vm, $table, $seq, rowLevel, tableData, tableColumn, seqCount }) {
   let { rowKey, rowClassName, treeConfig, treeExpandeds } = $table
   let { groupData, scrollYLoad, scrollYStore, editConfig, editStore, expandConfig = {} } = $table
-  let { expandeds, selection, rowGroup, hasVirtualRow, afterFullData, visibleColumn } = $table
+  let { expandeds, selection, rowGroup, hasVirtualRow, afterFullData, treeOrdered } = $table
   let rows = []
   let expandMethod = expandConfig.activeMethod
   let startIndex = scrollYStore.startIndex
   // 子级索引是否按数字递增显示：true(子级索引按数字递增显示，父级1，子级2)；false(子级索引在父级索引基础上增加，父级1，子级1.1)
-  let isOrdered = treeConfig ? Boolean(treeConfig.ordered) : false
+  let isOrdered = treeConfig ? Boolean(treeOrdered) : false
   seqCount = seqCount || { value: 0 }
   let treeShowKey = getTreeShowKey({ scrollYLoad, treeConfig })
   let { hideMethod } = treeConfig || {}

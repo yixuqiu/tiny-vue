@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Autocomplete as TinyAutocomplete } from '@opentiny/vue'
+import { TinyAutocomplete } from '@opentiny/vue'
 
 const restaurants = ref([])
 const value = ref('')
@@ -69,18 +69,15 @@ function loadAll() {
 </script>
 
 <style>
-.my-autocomplete li {
-  line-height: normal !important;
-  padding: 7px !important;
-}
-
 .my-autocomplete li .name {
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .my-autocomplete li .addr {
+  display: block;
   font-size: 12px;
-  color: #a29b91;
+  line-height: 18px;
+  color: #c2c2c2;
 }
 </style>

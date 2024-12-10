@@ -2,8 +2,7 @@
   <tiny-grid :data="tableData" resizable :edit-config="{ trigger: 'click', mode: 'cell', showStatus: true }">
     <tiny-grid-column title="操作" header-align="center">
       <tiny-grid-column type="index" width="40"></tiny-grid-column>
-      <tiny-grid-column type="selection" width="40"></tiny-grid-column>
-      <tiny-grid-column :renderer="rendererCellOperate" width="100"></tiny-grid-column>
+      <tiny-grid-column type="selection" width="48"></tiny-grid-column>
     </tiny-grid-column>
     <tiny-grid-column :title="renderHeaderDescription" header-align="center">
       <tiny-grid-column field="name" title="名称" show-tip sortable></tiny-grid-column>
@@ -17,7 +16,7 @@
     <tiny-grid-column :title="renderHeaderRelation" header-align="center">
       <tiny-grid-column
         field="address"
-        :title="renderHeaderAddress"
+        title="地址"
         :editor="{ component: 'input', autoselect: true }"
         sortable
       ></tiny-grid-column>
@@ -34,22 +33,13 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn } from '@opentiny/vue'
-import {
-  iconAdministrator,
-  iconVersiontree,
-  iconMarkOn,
-  iconUser,
-  iconAssociation,
-  iconHelpful
-} from '@opentiny/vue-icon'
+import { TinyGrid, TinyGridColumn } from '@opentiny/vue'
+import { iconAdministrator, iconVersiontree, iconMarkOn } from '@opentiny/vue-icon'
 
 const IconVersiontree = iconVersiontree()
 const IconAdministrator = iconAdministrator()
 const IconMarkOn = iconMarkOn()
-const IconUser = iconUser()
-const IconAssociation = iconAssociation()
-const IconHelpful = iconHelpful()
+
 const tableData = ref([
   {
     id: '1',
@@ -100,17 +90,18 @@ const options = ref([
   { label: '华南区', value: '华南区' }
 ])
 
-function renderHeaderDescription(h) {
+function renderHeaderDescription() {
   return (
-    <span>
-      {' '}
+    <>
       <IconAdministrator />
-      Description
-    </span>
+      <span class="tiny-grid-cell-text" style="margin-left: 4px">
+        Description
+      </span>
+    </>
   )
 }
 
-function renderHeaderRelation(h) {
+function renderHeaderRelation() {
   return (
     <span>
       <IconVersiontree />
@@ -118,32 +109,14 @@ function renderHeaderRelation(h) {
   )
 }
 
-// eslint-disable-next-line
-function renderHeaderArea(h) {
+function renderHeaderArea() {
   return (
-    <span>
-      <IconMarkOn />
-      Description
-    </span>
-  )
-}
-
-function renderHeaderAddress(h) {
-  return (
-    <span>
-      <IconUser />
-      Description
-    </span>
-  )
-}
-
-function rendererCellOperate(h) {
-  return (
-    <div style="text-align: center; font-size: 16px;">
-      <IconHelpful />
-      &nbsp;&nbsp;
-      <IconAssociation />
-    </div>
+    <>
+      <IconMarkOn style="order: -1; margin-right: 4px;" />
+      <span class="tiny-grid-cell-text" style="order: -1;">
+        Description
+      </span>
+    </>
   )
 }
 </script>

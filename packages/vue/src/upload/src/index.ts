@@ -83,6 +83,18 @@ export const uploadProps = {
   isHwh5: {
     type: Boolean,
     default: false
+  },
+  tipMessage: {
+    type: String,
+    default: ''
+  },
+  promptTip: {
+    type: Boolean,
+    default: false
+  },
+  showFileList: {
+    type: Boolean,
+    default: true
   }
 }
 

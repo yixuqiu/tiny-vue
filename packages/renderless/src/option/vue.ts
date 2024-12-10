@@ -36,7 +36,6 @@ const initState = ({ reactive, computed, props, api, markRaw, select, parent }) 
     disabled: computed(() => props.disabled || state.groupDisabled),
     isObject: computed(() => Object.prototype.toString.call(props.value).toLowerCase() === '[object object]'),
     currentLabel: computed(() => props.label || (state.isObject ? '' : props.value)),
-    showTitle: false,
     currentValue: computed(() => props.value || props.label || ''),
 
     itemSelected: computed(() => {

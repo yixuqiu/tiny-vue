@@ -30,14 +30,14 @@
       :page-sizes="[5, 10, 20, 50]"
       @current-change="currentChange"
       @size-change="sizeChange"
-      layout="total, prev, pager, next, jumper, sizes"
+      layout="total, sizes, prev, pager, next, jumper"
     ></tiny-pager>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, Pager as TinyPager } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyPager } from '@opentiny/vue'
 
 const custPager = ref({
   currentPage: 1,

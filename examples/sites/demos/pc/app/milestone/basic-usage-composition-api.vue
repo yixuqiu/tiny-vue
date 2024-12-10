@@ -1,24 +1,39 @@
 <template>
-  <tiny-milestone :data="milestoneData" :milestones-status="statusMap"></tiny-milestone>
+  <div class="demo-milestone">
+    <div>场景1： 默认</div>
+    <br />
+    <tiny-milestone :data="milestoneData"></tiny-milestone>
+    <br />
+    <br />
+    <div>场景2： 自定义状态色</div>
+    <br />
+    <tiny-milestone :data="milestoneData" :milestones-status="statusMap"></tiny-milestone>
+    <br />
+    <br />
+    <div>场景3： 自定义状态色 + 实心显示</div>
+    <br />
+    <tiny-milestone :data="milestoneData" :milestones-status="statusMap" solid></tiny-milestone>
+  </div>
 </template>
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Milestone as TinyMilestone } from '@opentiny/vue'
+import { TinyMilestone } from '@opentiny/vue'
 
 // statusMap 对应 milestoneData的status；显示的背景色样式（可以是旗，可以是步骤条）
 const statusMap = ref({
   // 对应 status = completed
-  completed: 'var(--ti-common-color-line-active)',
+  completed: '#1890ff',
   // 对应 status = doing
-  doing: '#7ED321',
+  doing: '#e8faff',
   // 对应 status = back
-  back: '#f5222d',
+  back: '#edf7df',
   // 对应 status = end
   end: '#faad14',
   // 对应 status = cancel
-  cancel: '#d9d9d9'
+  cancel: '#f230301A'
 })
+
 // 数据源
 const milestoneData = ref([
   {
@@ -68,7 +83,7 @@ const milestoneData = ref([
     status: 'end',
     flags: [
       {
-        status: 'completed',
+        status: 'cancel',
         content: 'test6'
       }
     ]

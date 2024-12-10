@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p>默认：</p>
+  <div class="demo-drop">
+    <p class="demo-dropdown">默认：</p>
     <tiny-dropdown split-button type="primary">
       默认尺寸
       <template #dropdown>
@@ -13,7 +13,7 @@
         </tiny-dropdown-menu>
       </template>
     </tiny-dropdown>
-    <p>其他尺寸：</p>
+    <p class="demo-dropdown">其他尺寸：</p>
     <tiny-dropdown size="medium" split-button type="primary">
       中等尺寸
       <template #dropdown>
@@ -56,11 +56,7 @@
 </template>
 
 <script setup>
-import {
-  Dropdown as TinyDropdown,
-  DropdownMenu as TinyDropdownMenu,
-  DropdownItem as TinyDropdownItem
-} from '@opentiny/vue'
+import { TinyDropdown, TinyDropdownMenu, TinyDropdownItem } from '@opentiny/vue'
 </script>
 
 <style lang="less" scoped>
@@ -71,5 +67,8 @@ p {
 
 .tiny-dropdown {
   margin: 0 10px 10px 0;
+}
+.demo-dropdown {
+  margin-bottom: 8px;
 }
 </style>

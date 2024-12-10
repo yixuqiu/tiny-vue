@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import { Autocomplete } from '@opentiny/vue'
+import { TinyAutocomplete } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyAutocomplete: Autocomplete
+    TinyAutocomplete
   },
   data() {
     return {
@@ -77,18 +77,15 @@ export default {
 </script>
 
 <style>
-.my-autocomplete li {
-  line-height: normal !important;
-  padding: 7px !important;
-}
-
 .my-autocomplete li .name {
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .my-autocomplete li .addr {
+  display: block;
   font-size: 12px;
-  color: #a29b91;
+  line-height: 18px;
+  color: #c2c2c2;
 }
 </style>

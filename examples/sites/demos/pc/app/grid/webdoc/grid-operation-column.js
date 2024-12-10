@@ -56,18 +56,17 @@ export default {
       'name': { 'zh-CN': '翻页后保留选中状态', 'en-US': 'Manually select a line' },
       'desc': {
         'zh-CN':
-          '<p>通过配置<code>select-config</code>中的<code>reserve</code>为<code>true</code> 并设置<code>row-id</code>，开启翻页后保留选中状态功能。</p>\n',
+          '<p>通过设置 <code>select-config</code> 中的 <code>reserve</code> 为 <code>true</code> 并设置 <code>row-id</code>，开启翻页后保留选中状态功能。通过 <code>getAllSelection</code> 获取所有翻页选中数据。</p>\n',
         'en-US':
-          '<p> <code>setRadioRow(row)</code> is used to select a single line and set the selected status of a line. </p>\n'
+          '<p>By setting the <code>reserve</code> in <code>select-config</code> to <code>true</code> and setting <code>row-id</code>, you can enable the function of keeping the selected state after page turning. Get all flip selection data via <code>getAllSelection</code>.</p>\n'
       },
       'codeFiles': ['operation-column/grid-pager-reserve.vue']
     },
     {
       'demoId': 'operation-column-custom-operation-column',
-      'name': { 'zh-CN': '自定义操作列内容。', 'en-US': '' },
+      'name': { 'zh-CN': '自定义操作列内容', 'en-US': '' },
       'desc': {
-        'zh-CN':
-          '<p>通过插槽设置自定义操作列，即 <code>&lt;tiny-grid-column&gt;</code> 自定义操作列内容 <code>&lt;/tiny-grid-column&gt;</code> 。</p>\n',
+        'zh-CN': '<p>通过默认插槽设置自定义操作列。</p>\n',
         'en-US': ''
       },
       'codeFiles': ['operation-column/custom-operation-column.vue']

@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Popeditor as TinyPopeditor } from '@opentiny/vue'
+import { TinyPopeditor } from '@opentiny/vue'
 
 const value = ref('')
 const gridOp = ref({
@@ -20,7 +20,7 @@ const gridOp = ref({
     {
       field: 'id',
       title: 'ID',
-      width: 40
+      width: 50
     },
     {
       field: 'name',
@@ -39,10 +39,11 @@ const gridOp = ref({
   ],
   data: [],
   pagerOp: {
+    size: 'mini',
     pageSize: 4,
     pageSizes: [4, 5, 10],
     total: 10,
-    layout: 'total, prev, pager, next, jumper, sizes'
+    layout: 'total, sizes, prev, pager, next, jumper'
   }
 })
 
@@ -111,6 +112,7 @@ function handlePageChange() {
       city: '深圳'
     }
   ]
+
   gridOp.value.data = dataset
 }
 </script>

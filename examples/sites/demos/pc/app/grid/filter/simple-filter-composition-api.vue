@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn, Modal, Input } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyModal, TinyInput } from '@opentiny/vue'
 
 const filteData = [
   { label: '福州', value: '福州' },
@@ -113,14 +113,14 @@ const nameFilter = ref({
   multi: true,
   simpleFilter: {
     searchConfig: {
-      component: Input,
+      component: TinyInput,
       // 搜索框默认值
-      serachValue: 'WWW'
+      searchValue: 'WWW'
     }
   }
 })
 
 function filterChangeEvent({ filters }) {
-  Modal.message({ message: `${JSON.stringify(filters)}`, status: 'info' })
+  TinyModal.message({ message: `${JSON.stringify(filters)}`, status: 'info' })
 }
 </script>

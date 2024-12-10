@@ -47,38 +47,38 @@
 
 <script>
 import {
-  Collapse,
-  CollapseItem,
-  Layout,
-  Form,
-  FormItem,
-  Row,
-  Col,
-  Input,
-  Numeric,
-  IpAddress,
-  Select,
-  Option,
-  Grid,
-  GridColumn
+  TinyCollapse,
+  TinyCollapseItem,
+  TinyLayout,
+  TinyForm,
+  TinyFormItem,
+  TinyRow,
+  TinyCol,
+  TinyInput,
+  TinyNumeric,
+  TinyIpAddress,
+  TinySelect,
+  TinyOption,
+  TinyGrid,
+  TinyGridColumn
 } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyCollapse: Collapse,
-    TinyCollapseItem: CollapseItem,
-    TinyLayout: Layout,
-    TinyForm: Form,
-    TinyFormItem: FormItem,
-    TinyRow: Row,
-    TinyCol: Col,
-    TinyInput: Input,
-    TinyNumeric: Numeric,
-    TinySelect: Select,
-    TinyOption: Option,
-    TinyIpAddress: IpAddress,
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn
+    TinyCollapse,
+    TinyCollapseItem,
+    TinyLayout,
+    TinyForm,
+    TinyFormItem,
+    TinyRow,
+    TinyCol,
+    TinyInput,
+    TinyNumeric,
+    TinySelect,
+    TinyOption,
+    TinyIpAddress,
+    TinyGrid,
+    TinyGridColumn
   },
   data() {
     return {
@@ -159,9 +159,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.demo-collapse-wrap {
-  .tiny-collapse-item__content > * {
-    line-height: 1.8;
-  }
+.demo-collapse-wrap ::v-deep .tiny-collapse-item__content > * {
+  line-height: 1.6;
 }
 </style>

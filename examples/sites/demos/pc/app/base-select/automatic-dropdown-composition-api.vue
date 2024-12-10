@@ -15,7 +15,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { BaseSelect as TinyBaseSelect, Option as TinyOption, Button as TinyButton } from '@opentiny/vue'
+import { TinyBaseSelect, TinyOption, TinyButton } from '@opentiny/vue'
 
 const options = ref([
   { value: '选项1', label: '北京' },
@@ -44,6 +44,7 @@ const handleFocus2 = () => {
 p {
   font-size: 14px;
   line-height: 1.5;
+  padding: 16px 0;
 }
 .tiny-button {
   margin-right: 10px;

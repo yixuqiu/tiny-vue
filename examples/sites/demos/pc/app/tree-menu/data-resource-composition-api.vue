@@ -2,6 +2,7 @@
   <div>
     <p>场景1：静态数据</p>
     <tiny-tree-menu :data="treeData"></tiny-tree-menu>
+    <br />
     <p>场景2：服务端数据</p>
     <tiny-tree-menu :get-menu-data-sync="getMenuDataSync"></tiny-tree-menu>
   </div>
@@ -9,7 +10,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { TreeMenu as TinyTreeMenu } from '@opentiny/vue'
+import { TinyTreeMenu } from '@opentiny/vue'
 
 const treeData = ref([
   {

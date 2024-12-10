@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { BaseSelect, Option } from '@opentiny/vue'
+import { TinyBaseSelect, TinyOption } from '@opentiny/vue'
 import Memorize from '@opentiny/vue-renderless/common/deps/memorize'
 
 const MemorizeInstance = new Memorize({ key: 'test456' })
@@ -32,8 +32,8 @@ const options = MemorizeInstance.assemble([
 
 export default {
   components: {
-    TinyBaseSelect: BaseSelect,
-    TinyOption: Option
+    TinyBaseSelect,
+    TinyOption
   },
   data() {
     return {
@@ -61,5 +61,6 @@ export default {
 p {
   font-size: 14px;
   line-height: 1.5;
+  padding: 16px 0;
 }
 </style>

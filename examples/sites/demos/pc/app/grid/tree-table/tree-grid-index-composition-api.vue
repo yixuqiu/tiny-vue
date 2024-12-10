@@ -8,8 +8,8 @@
       :select-config="{ labelField: 'index' }"
     >
       <tiny-grid-column type="selection" width="100"></tiny-grid-column>
-      <tiny-grid-column type="index" width="80" tree-node></tiny-grid-column>
-      <tiny-grid-column field="name" title="公司名称"></tiny-grid-column>
+      <tiny-grid-column type="index" width="80"></tiny-grid-column>
+      <tiny-grid-column field="name" title="公司名称" tree-node></tiny-grid-column>
       <tiny-grid-column field="area" title="区域" :editor="{ component: 'input', autoselect: true }"></tiny-grid-column>
       <tiny-grid-column
         field="employees"
@@ -22,7 +22,7 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Grid as TinyGrid, GridColumn as TinyGridColumn } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn } from '@opentiny/vue'
 
 const tableData = ref([
   {
