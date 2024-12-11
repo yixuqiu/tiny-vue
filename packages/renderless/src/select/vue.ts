@@ -114,6 +114,7 @@ import {
 } from './index'
 import debounce from '../common/deps/debounce'
 import { isNumber } from '../common/type'
+import { isBrowser } from '../common/browser'
 import { useUserAgent } from '../common/deps/useUserAgent'
 
 export const api = [
@@ -205,7 +206,7 @@ const initState = ({ reactive, computed, props, api, emitter, parent, constants,
     optionsAllDisabled: computed(() => api.computedOptionsAllDisabled()),
     collapseTagSize: computed(() => api.computedCollapseTagSize()),
     showNewOption: computed(() => api.computedShowNewOption()),
-    selectSize: computed(() => props.size || state.formItemSize),
+    selectSize: computed(() => (isBrowser ? props.size || state.formItemSize : 0)),
     optimizeOpts: computed(() => api.computeOptimizeOpts()),
     optimizeStore: { valueIndex: 0, recycleScrollerHeight: computed(() => api.recycleScrollerHeight()) },
 
