@@ -58,6 +58,7 @@ export const inputProps = {
     type: Object,
     default: () => $constants
   },
+  title: String,
   name: String,
   size: String,
   form: String,
