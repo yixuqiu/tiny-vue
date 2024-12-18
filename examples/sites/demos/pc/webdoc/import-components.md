@@ -80,6 +80,54 @@ module.exports = defineConfig({
 })
 ```
 
+#### 关于函数式组件
+
+TinyModal，TinyNotify，TinyLoading 可使用函数形式调用，在使用时，需使用 `unplugin-auto-import` 实现自动导入。
+
+Vite
+
+```js
+// vite.config.js
+import Components from 'unplugin-vue-components/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import { TinyVueResolver } from '@opentiny/unplugin-tiny-vue'
+
+module.exports = defineConfig({
+  configureWebpack: {
+    plugins: [
+      Components({
+        resolvers: [TinyVueResolver]
+      }),
+      AutoImport({
+        resolvers: [TinyVueResolver]
+      })
+    ]
+  }
+})
+```
+
+Webpack
+
+```js
+// webpack.config.js
+const Components = require('unplugin-vue-components/webpack').default
+const AutoImport = require('unplugin-auto-import/webpack').default
+const TinyVueResolver = require('@opentiny/unplugin-tiny-vue').TinyVueResolver
+
+module.exports = defineConfig({
+  configureWebpack: {
+    plugins: [
+      Components({
+        resolvers: [TinyVueResolver]
+      }),
+      AutoImport({
+        resolvers: [TinyVueResolver]
+      })
+    ]
+  }
+})
+```
+
 想了解更多自动按需导入的信息，请参考：[unplugin-vue-components](https://github.com/antfu/unplugin-vue-components) 和 [unplugin-auto-import](https://github.com/antfu/unplugin-auto-import)。
 
 ## 多组件引入
