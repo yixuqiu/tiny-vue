@@ -134,7 +134,7 @@ module.exports = defineConfig({
 
 <div class="tip custom-block">
 <br />
-温馨提示：带有Tiny前缀的组件导出自3.17.0开始支持。若使用之前版本，需使用别名。
+温馨提示：带有 Tiny 前缀的组件导出自 3.17.0 开始支持。若使用之前版本，需使用别名。
 <br />
 <p>例如：<code>import { Button as TinyButton } from '@opentiny/vue'</code></p>
 </div>
@@ -197,7 +197,7 @@ export default {
           }
         }
       ],
-      'pc' // 此配置非必选，按需配置(pc|mobile|mobile-first)
+      'pc' // 此配置非必选，按需配置 (pc|mobile|mobile-first)
     )
   ],
   define: {
