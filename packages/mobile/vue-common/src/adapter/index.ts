@@ -11,7 +11,7 @@
  */
 import * as hooks from 'vue'
 
-import { camelize, capitalize, hyphenate } from '@opentiny/mobile-utils/string'
+import { camelize, capitalize, hyphenate } from '@mobile-root/utils/string'
 import { bindFilter, emitter, getElementCssClass, getElementStatusClass } from './utils'
 
 const Teleport = hooks.Teleport
@@ -473,7 +473,6 @@ export const createComponentFn = (design) => {
     return createVm({}, vnode.component)
   }
 }
-
 export const defineComponent = hooks.defineComponent
 
 export default hooks
