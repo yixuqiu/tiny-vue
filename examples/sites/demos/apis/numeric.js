@@ -72,7 +72,7 @@ export default {
           type: 'string',
           defaultValue: '',
           desc: {
-            'zh-CN': '加减按钮位置，可选值为 <code>right</code>，表示加减按钮均位于最右侧',
+            'zh-CN': '加减按钮位置，可选值为 right，表示加减按钮均位于最右侧',
             'en-US': 'Control button position; The optional value of this attribute is right'
           },
           mode: ['pc', 'mobile', 'mobile-first'],
@@ -145,8 +145,8 @@ export default {
           type: 'string',
           defaultValue: '',
           desc: {
-            'zh-CN': '组件<code>arial-label</code>属性取值',
-            'en-US': 'The value of <code>arial-label</code> attribute'
+            'zh-CN': '组件 arial-label 属性取值',
+            'en-US': 'The value of arial-label attribute'
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: '',
@@ -281,7 +281,7 @@ export default {
           defaultValue: '',
           desc: {
             'zh-CN': '计数器尺寸，该属性的可选值为 medium | small | mini',
-            'en-US': 'Counter size.The optional values of this attribute are medium | small | mini'
+            'en-US': 'Counter size,The optional values of this attribute are medium | small | mini'
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'numeric-size',
@@ -289,8 +289,12 @@ export default {
         },
         {
           name: 'step',
-          type: 'number',
+          type: 'number | string | IStepStrategy',
+          typeAnchorName: 'IStepStrategy',
           defaultValue: '1',
+          meta: {
+            stable: '3.20.0'
+          },
           desc: {
             'zh-CN': '步长',
             'en-US': 'Increment or decrement value each time'
@@ -305,17 +309,17 @@ export default {
           type: 'boolean',
           defaultValue: 'false',
           desc: {
-            'zh-CN': '是否只能输入 <code>step</code> 的倍数',
+            'zh-CN': '是否只能输入 step 的倍数',
             'en-US': 'Whether to enter only multiples of step'
           },
           mode: ['pc', 'mobile', 'mobile-first'],
-          pcDemo: '',
+          pcDemo: 'about-step',
           mobileDemo: 'step',
           mfDemo: ''
         },
         {
           name: 'strict-input',
-          type: 'Boolean',
+          type: 'boolean',
           defaultValue: '',
           desc: {
             'zh-CN': '严格控制输入，包含合法性输入与小数点长度验证，不允许输入超过精度设置',
@@ -511,6 +515,16 @@ interface INumericFormat {
   fractionGroupSize: 0, // 小数部分分组间隔
   fractionGroupSeparator: '', // 小数分组分隔符
   suffix: '@' // 后置标识
+}
+      `
+    },
+    {
+      name: 'IStepStrategy',
+      type: 'interface',
+      code: `
+interface IStepStrategy {
+  value: number | string, // 5 或者 '5'
+  mode: 'strictly' | 'restore'
 }
       `
     }

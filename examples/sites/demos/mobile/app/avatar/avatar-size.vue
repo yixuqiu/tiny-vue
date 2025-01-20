@@ -20,11 +20,11 @@
 </template>
 
 <script lang="jsx">
-import { Avatar } from '@opentiny/vue'
+import { TinyAvatar } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyAvatar: Avatar
+    TinyAvatar
   },
   data() {
     return {
@@ -58,5 +58,9 @@ export default {
   height: calc(100% - 118px);
   overflow: hidden;
   overflow-y: auto;
+}
+
+.tiny-mobile-avatar {
+  margin-right: 4px;
 }
 </style>

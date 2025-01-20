@@ -60,8 +60,12 @@ const onRejected = (opt, _this) => {
       cb ? resolve() : reject(args)
     }
 
-    const funcPosAndFinish = (params, finish) => () => {
-      getCell(_this, params).then((activeCell) => {
+    const funcPosAndFinish = (params, finish) => async () => {
+      // 如果是虚拟滚动，则先滚动到对应单元格且渲染后再显示提示
+      if (_this.scrollXLoad) {
+        await _this.scrollToColumn(params.column, true)
+      }
+      return getCell(_this, params).then((activeCell) => {
         params.cell = activeCell
         _this.handleValidError(params)
         finish()
@@ -258,15 +262,7 @@ export default {
     return new Promise(executor).then(onFulfilled).catch(onRejected)
   },
   _clearValidate() {
-    let src = {
-      column: null,
-      content: '',
-      row: null,
-      rule: null,
-      visible: false
-    }
-
-    Object.assign(this.validStore, src)
+    Object.assign(this.validStore, { column: null, content: '', isArrow: false, row: null, rule: null, visible: false })
     this.clostValidTooltip(undefined)
 
     return this.$nextTick()
@@ -313,8 +309,8 @@ export default {
     let { cell, column, row, rule } = params
     let content = rule.message
     let validTip = $refs.validTip
-    let msgCfg = validOpts.message
-    let showMsg = msgCfg === 'tooltip' || (msgCfg === 'default' && !height && tableData.length < 2)
+    let { isMessageTooltip, isMessageDefault, isMessageInline } = validOpts
+    let showMsg = isMessageTooltip || (isMessageDefault && !height && tableData.length < 2)
 
     this.$nextTick(() => {
       // 这里不能进行深拷贝，会对表格校验的判断造成影响，也不需要进行深拷贝
@@ -336,6 +332,8 @@ export default {
         validTip.setExpectedState(true)
 
         this.activateTooltipValid(validTip)
+      } else if (isMessageInline) {
+        this.$nextTick(() => this.recalculate())
       }
 
       emitEvent(this, 'valid-error', [params])

@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div>场景1：过滤器模式(默认)</div>
+    <div>场景 1：过滤器模式 (默认)</div>
     <br />
-    <tiny-select v-model="value" label="食物品类" shape="filter" :drop-style="{ width: '200px', 'min-width': '200px' }">
+    <tiny-select v-model="value" label="地区名称" shape="filter" :drop-style="{ width: '200px', 'min-width': '200px' }">
       <tiny-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </tiny-option>
     </tiny-select>
     <br />
     <br />
     <br />
-    <div>场景2：过滤器模式(透明)</div>
+    <div>场景 2：过滤器模式 (透明)</div>
     <br />
     <tiny-select
       v-model="value"
-      label="食物品类"
+      label="地区名称"
       shape="filter"
       :drop-style="{ width: '200px', 'min-width': '200px' }"
       blank
@@ -23,36 +23,21 @@
 </template>
 
 <script>
-import { Select, Option } from '@opentiny/vue'
+import { TinySelect, TinyOption } from '@opentiny/vue'
 
 export default {
   components: {
-    TinySelect: Select,
-    TinyOption: Option
+    TinySelect,
+    TinyOption
   },
   data() {
     return {
       options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
+        { value: '选项 1', label: '北京' },
+        { value: '选项 2', label: '上海' },
+        { value: '选项 3', label: '天津' },
+        { value: '选项 4', label: '重庆' },
+        { value: '选项 5', label: '深圳' }
       ],
       value: ''
     }

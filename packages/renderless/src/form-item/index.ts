@@ -249,7 +249,13 @@ export const computedFieldValue =
 export const mounted =
   ({ api, vm, props, state }: Pick<IFormItemRenderlessParams, 'api' | 'vm' | 'props' | 'state'>) =>
   (): void => {
-    state.tooltip = vm.$refs.tooltip
+    // 初始化tooltip信息
+    const tooltip = vm.$refs.tooltip
+    if (tooltip) {
+      const content = vm.$refs.content
+      tooltip.state.referenceElm = state.isMultiple ? content : content?.children[0]
+      state.tooltip = tooltip
+    }
 
     if (props.prop) {
       api.dispatch('Form', 'form:addField', vm)
@@ -270,6 +276,7 @@ export const unmounted =
   (): void => {
     state.canShowTip = false
     api.dispatch('Form', 'form:removeField', vm)
+    api.removeValidateEvents()
   }
 
 export const validate =
@@ -446,7 +453,9 @@ export const addValidateEvents =
   }
 
 export const removeValidateEvents = (vm: IFormItemRenderlessParams['vm']) => (): void => {
-  vm.$off()
+  vm.$off('form.blur')
+  vm.$off('form.change')
+  vm.$off('displayed-value-changed')
 }
 
 export const updateTip =

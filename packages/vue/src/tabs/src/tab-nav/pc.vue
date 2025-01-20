@@ -15,62 +15,12 @@ import { t } from '@opentiny/vue-locale'
 import { renderless, api } from '@opentiny/vue-renderless/tab-nav/vue'
 import Dropdown from '@opentiny/vue-dropdown'
 import DropdownMenu from '@opentiny/vue-dropdown-menu'
-import DropdownItem from '@opentiny/vue-dropdown-item'
+import TabDropdownItem from './tab-dropdown-item.vue'
 import Tooltip from '@opentiny/vue-tooltip'
 import { iconChevronLeft, iconChevronRight, iconClose } from '@opentiny/vue-icon'
 import type { ITabNavApi } from '@opentiny/vue-renderless/types/tab-nav.type'
 import TabBar from './tab-bar.vue'
 import { tabNavPcProps } from './index'
-
-const getOrderedPanes = (state, panes) => {
-  const slotDefault = state.rootTabs.$slots.default
-  let orders
-
-  if (typeof slotDefault === 'function') {
-    orders = []
-
-    const tabVnodes = slotDefault()
-    const handler = ({ type, componentOptions, props }) => {
-      let componentName = type && type.componentName
-
-      if (!componentName) componentName = componentOptions && componentOptions.Ctor.extendOptions.componentName
-
-      if (componentName === 'TabItem') {
-        const paneName = (props && props.name) || (componentOptions && componentOptions.propsData.name)
-
-        orders.push(paneName)
-      }
-    }
-
-    tabVnodes.forEach(({ type, componentOptions, props, children }) => {
-      if (
-        type &&
-        (type.toString() === 'Symbol(Fragment)' || // vue@3.3之前的开发模式
-          type.toString() === 'Symbol(v-fgt)' || //   vue@3.3.1 的变更
-          type.toString() === 'Symbol()') //          构建后
-      ) {
-        Array.isArray(children) &&
-          children.forEach(({ type, componentOptions, props }) => handler({ type, componentOptions, props }))
-      } else {
-        handler({ type, componentOptions, props })
-      }
-    })
-  }
-
-  if (orders) {
-    let tmpPanes = []
-
-    orders.forEach((paneName) => {
-      let pane = panes.find((pane) => pane.name === paneName)
-
-      if (pane) tmpPanes.push(pane)
-    })
-
-    panes = tmpPanes
-  }
-
-  return panes
-}
 
 export default defineComponent({
   name: $prefix + 'TabNav',
@@ -78,7 +28,7 @@ export default defineComponent({
     TabBar,
     Dropdown,
     DropdownMenu,
-    DropdownItem,
+    TabDropdownItem,
     Tooltip,
     IconChevronLeft: iconChevronLeft(),
     IconChevronRight: iconChevronRight(),
@@ -119,11 +69,11 @@ export default defineComponent({
 
     const spans = [
       <span class={['tiny-tabs__nav-prev', state.scrollable.prev ? '' : 'is-disabled']} onClick={scrollPrev}>
-        <icon-chevron-left />
+        <IconChevronLeft />
       </span>,
       !showMoreTabs ? (
         <span class={['tiny-tabs__nav-next', state.scrollable.next ? '' : 'is-disabled']} onClick={scrollNext}>
-          <icon-chevron-right />
+          <IconChevronRight />
         </span>
       ) : null
     ]
@@ -147,26 +97,21 @@ export default defineComponent({
           ? dropdowpList.map((pane, index) => {
               const tabName = pane.name || pane.state.index || index
               const tabLabelContent = pane.$slots.title || pane.title
-              const tabindex = pane.state.active ? 0 : -1
 
               pane.state.index = `${index + showPanesCount}`
 
-              return (
-                <dropdown-item
-                  class="tiny-tabs__more-item"
-                  tabindex={tabindex}
-                  onFocus={() => {
-                    setFocus()
-                  }}
-                  onBlur={() => {
-                    removeFocus()
-                  }}
-                  onClick={(e) => {
-                    removeFocus()
-                    onTabClick(pane, tabName, e)
-                  }}>
-                  {typeof tabLabelContent === 'function' ? tabLabelContent() : tabLabelContent}
-                </dropdown-item>
+              return h(
+                TabDropdownItem,
+                {
+                  class: 'tiny-tabs__more-item',
+                  attrs: {
+                    itemClick(e) {
+                      removeFocus()
+                      onTabClick(pane, tabName, e)
+                    }
+                  }
+                },
+                [typeof tabLabelContent === 'function' ? tabLabelContent() : tabLabelContent]
               )
             })
           : null
@@ -198,7 +143,7 @@ export default defineComponent({
       )
     }
 
-    const tabs = getOrderedPanes(state, panes).map((pane, index) => {
+    const tabs = panes.map((pane, index) => {
       let tabName = pane.name || pane.state.index || index
       const withClose = pane.state.isClosable || editable
 
@@ -206,7 +151,7 @@ export default defineComponent({
 
       const btnClose = withClose ? (
         <span class="tiny-tabs__icon-close">
-          <icon-close
+          <IconClose
             onClick={(e) => {
               onTabRemove(pane, e)
             }}
@@ -297,7 +242,11 @@ export default defineComponent({
             }
           }
         },
-        [overflowTitle ? getTabTitle(tabLabelContent) : tabLabelContent, btnClose, state.separator && itemsSeparator]
+        [
+          overflowTitle ? getTabTitle(tabLabelContent) : tabLabelContent,
+          btnClose,
+          (state.separator || tabStyle === 'button-card') && itemsSeparator
+        ]
       )
     })
 
@@ -327,7 +276,7 @@ export default defineComponent({
             style={state.navStyle}
             role="tablist"
             on-keydown={changeTab}>
-            {!tabStyle ? <tab-bar ref="tabBar" tabs={panes} /> : null}
+            {!tabStyle ? <TabBar ref="tabBar" tabs={panes} /> : null}
             {tabs}
           </div>
         </div>

@@ -7,7 +7,7 @@ export default {
       props: [
         {
           name: 'value',
-          type: 'number',
+          type: 'number | string',
           defaultValue: '0',
           desc: {
             'zh-CN': '数字显示内容',
@@ -20,7 +20,7 @@ export default {
         {
           name: 'precision',
           type: 'number',
-          defaultValue: '0',
+          defaultValue: '',
           desc: {
             'zh-CN': '精度值',
             'en-US': 'Take precision value'
@@ -31,23 +31,12 @@ export default {
         },
         {
           name: 'title',
-          type: 'string | array',
+          type: 'string | ITitleType',
+          typeAnchorName: 'ITitleType',
           defaultValue: '',
           desc: {
             'zh-CN': '设置数字内容标题',
             'en-US': 'Set digital content titles'
-          },
-          mode: ['pc'],
-          pcDemo: 'basic-usage',
-          mfDemo: ''
-        },
-        {
-          name: 'group-separator',
-          type: 'string',
-          defaultValue: ',',
-          desc: {
-            'zh-CN': '设置千分位标志符',
-            'en-US': 'Set Millennial Flag'
           },
           mode: ['pc'],
           pcDemo: 'basic-usage',
@@ -78,27 +67,15 @@ export default {
           mfDemo: ''
         },
         {
-          name: 'formatter',
-          type: '(value) => {}',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '设置自定义数字格式化',
-            'en-US': 'Set custom number formatting'
-          },
-          mode: ['pc'],
-          pcDemo: 'basic-usage',
-          mfDemo: ''
-        },
-        {
           name: 'value-style',
-          type: 'string | object | array',
+          type: 'object | array',
           defaultValue: '',
           desc: {
             'zh-CN': '设置数字样式',
             'en-US': 'Set Number Style'
           },
           mode: ['pc'],
-          pcDemo: 'basic-usage',
+          pcDemo: 'prefix-suffix-slot',
           mfDemo: ''
         }
       ],
@@ -114,6 +91,7 @@ export default {
             'en-US': 'Digital content front slot'
           },
           mode: ['pc'],
+          pcDemo: 'prefix-suffix-slot',
           mfDemo: ''
         },
         {
@@ -125,6 +103,7 @@ export default {
             'en-US': 'Digital content rear slot'
           },
           mode: ['pc'],
+          pcDemo: 'prefix-suffix-slot',
           mfDemo: ''
         },
         {
@@ -136,9 +115,22 @@ export default {
             'en-US': 'Digital content title slot'
           },
           mode: ['pc'],
+          pcDemo: 'statistic-slot',
           mfDemo: ''
         }
       ]
+    }
+  ],
+  types: [
+    {
+      name: 'ITitleType',
+      type: '',
+      code: `
+interface ITitleType {
+  value?: string       // 标题文本
+  position?: string    // 标题位置，取值：top | bottom
+}
+`
     }
   ]
 }

@@ -1,12 +1,5 @@
 <template>
-  <tiny-file-upload
-    ref="upload"
-    :action="action"
-    :display="false"
-    :file-list="fileList"
-    :auto-upload="false"
-    :header-show="false"
-  >
+  <tiny-file-upload ref="upload" :action="action" :file-list="fileList" :auto-upload="false" :header-show="false">
     <template #trigger>
       <tiny-button type="primary">选取文件</tiny-button>
     </template>
@@ -15,12 +8,12 @@
 </template>
 
 <script lang="jsx">
-import { FileUpload, Button } from '@opentiny/vue'
+import { TinyFileUpload, TinyButton } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyFileUpload: FileUpload,
-    TinyButton: Button
+    TinyFileUpload,
+    TinyButton
   },
   data() {
     return {

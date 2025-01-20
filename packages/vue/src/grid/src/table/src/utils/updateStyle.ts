@@ -142,7 +142,7 @@ function layoutBodyWrapper({
     if (maxHeight) {
       maxHeight = isScale(maxHeight) ? Math.floor((parseInt(maxHeight) / 100) * parentHeight) : toNumber(maxHeight)
 
-      const contentHeight = maxHeight - headerHeight
+      const contentHeight = maxHeight - headerHeight - footerHeight
 
       wrapperElem.style.maxHeight = `${contentHeight}px`
     }
@@ -150,15 +150,7 @@ function layoutBodyWrapper({
     if (minHeight) {
       minHeight = isScale(minHeight) ? Math.floor((parseInt(minHeight) / 100) * parentHeight) : toNumber(minHeight)
 
-      if (maxHeight) {
-        const outerHeight = headerHeight + scrollbarWidth
-
-        if (maxHeight - minHeight < outerHeight) {
-          minHeight = maxHeight - outerHeight
-        }
-      }
-
-      wrapperElem.style.minHeight = `${minHeight}px`
+      wrapperElem.style.minHeight = `${minHeight - headerHeight - footerHeight}px`
     }
   }
 

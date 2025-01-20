@@ -14,6 +14,7 @@ import { on, off, isDisplayNone } from './dom'
 import PopupManager from './popup-manager'
 import globalConfig from '../global'
 import { typeOf } from '../type'
+import { isBrowser } from '../browser'
 
 const positions = ['left', 'right', 'top', 'bottom']
 const modifiers = ['shift', 'offset', 'preventOverflow', 'keepTogether', 'arrow', 'flip', 'applyStyle']
@@ -267,9 +268,23 @@ const getOffsetRect = (el: HTMLElement) => {
   return elementRect
 }
 
+/** 阻止popper层上的 wheel事件 */
 const stopFn = (ev: Event) => {
   ev.stopPropagation()
 }
+
+/** 全局的resize观察器， 监听popper的大小改变  */
+const resizeOb =
+  isBrowser && typeof ResizeObserver === 'function'
+    ? new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.target.popperVm && entry.contentRect.height > 50) {
+            entry.target.popperVm.update()
+          }
+        })
+      })
+    : null
+
 interface PopperOptions {
   arrowOffset: number
   arrowElement: string
@@ -361,14 +376,18 @@ class Popper {
     this._options.modifierFns = modifiers.map((modifier) => {
       return this[modifier]
     })
-    this._popper.setAttribute('x-placement', this._options.placement)
 
-    this.state.position = this._getPopperPositionByRefernce(this._reference)
-
-    setStyle(this._popper, { position: this.state.position, top: 0 })
-
-    this.update()
-    this._setupEventListeners()
+    if (isBrowser) {
+      this._popper.setAttribute('x-placement', this._options.placement)
+      this.state.position = this._getPopperPositionByRefernce(this._reference)
+      setStyle(this._popper, { position: this.state.position, top: 0 })
+      if (this._popper) {
+        this._popper.popperVm = this
+        resizeOb && resizeOb.observe(this._popper)
+      }
+      this.update()
+      this._setupEventListeners()
+    }
   }
 
   destroy() {
@@ -499,6 +518,11 @@ class Popper {
 
   // 校正popper的位置在boundaries 的内部
   preventOverflow(data: UpdateData) {
+    // popover嵌套多层级时，防止第三个placement=top属性失效
+    if (this._options.ignoreBoundaries) {
+      return data
+    }
+
     let order = this._options.preventOverflowOrder
     let popper = getPopperClientRect(data.offsets.popper)
 
@@ -759,7 +783,7 @@ class Popper {
       if (this._options.updateHiddenPopperOnScroll) {
         this.state.updateBoundFn()
       } else {
-        if (isDisplayNone(this._popper)) return
+        if (isDisplayNone(this._reference)) return
         this.state.updateBoundFn()
       }
     }
@@ -767,7 +791,7 @@ class Popper {
     on(window, 'resize', this.state.updateBoundFn)
 
     if (this._options.boundariesElement !== 'window') {
-      let target: HTMLElement = getScrollParent(this._reference)
+      let target: HTMLElement = this._options.scrollParent || getScrollParent(this._reference)
       const customTargets = []
 
       // 如果下拉框组件存在于多端表单中，需要同时监听上一层scroll元素的滚动

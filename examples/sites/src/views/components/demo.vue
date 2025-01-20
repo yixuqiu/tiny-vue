@@ -1,69 +1,107 @@
 <template>
-  <div :id="demo.demoId" class="ti-b-a ti-br-sm ti-wp100" :class="currDemoId === demo.demoId ? 'b-a-success' : ''">
-    <div class="ti-px24 ti-py20">
-      <!-- DEMO 的标题 + 说明desc+  示例wcTag -->
-      <div class="ti-f-r ti-f-pos-between ti-f-box-end ti-pb20">
-        <div class="ti-f18 ti-cur-hand">{{ demo.name[langKey] }}</div>
-        <div>
-          <tiny-tooltip placement="top" :append-to-body="false" :content="copyTip">
-            <i
-              :class="copyIcon"
-              class="h:c-success ti-w16 ti-h16 ti-cur-hand"
-              @click="copyCode(demo)"
-              @mouseout="resetTip()"
-            />
-          </tiny-tooltip>
-          <tiny-tooltip
-            placement="top"
-            :append-to-body="false"
-            :content="demo.isOpen ? i18nByKey('hideCode') : i18nByKey('showCode')"
-          >
-            <i
-              :class="!!demo.isOpen ? 'i-ti-codeslash' : 'i-ti-code'"
-              class="ti-ml8 h:c-success ti-w16 ti-h16 ti-cur-hand"
-              @click="toggleDemoCode(demo)"
-            />
-          </tiny-tooltip>
-          <tiny-tooltip placement="top" :append-to-body="false" :content="i18nByKey('playground')">
-            <i class="i-ti-playground ml8 h:c-success ti-w16 ti-h16 ti-cur-hand" @click="openPlayground(demo)" />
-          </tiny-tooltip>
+  <div ref="demoContainer" :id="demo.demoId" class="demo-container">
+    <div
+      v-if="isIntersecting"
+      class="ti-br-sm ti-wp100"
+      :class="currDemoId === demo.demoId ? 'b-a-success is-current' : ''"
+    >
+      <div class="demo-content">
+        <!-- DEMO 的标题 + 说明desc + 示例wcTag -->
+        <div class="ti-f-r ti-f-pos-between ti-f-box-end">
+          <h2 class="demo-title">{{ demo.name[langKey] }}</h2>
+          <div class="demo-options">
+            <tiny-tooltip
+              placement="top"
+              effect="light"
+              popper-class="docs-tooltip"
+              :append-to-body="false"
+              :content="copyTip"
+            >
+              <i
+                :class="copyIcon"
+                class="h:c-success ti-w16 ti-h16 ti-cur-hand"
+                @click="copyCode(demo)"
+                @mouseout="resetTip()"
+              />
+            </tiny-tooltip>
+            <tiny-tooltip
+              placement="top"
+              effect="light"
+              popper-class="docs-tooltip"
+              :append-to-body="false"
+              :content="demo.isOpen ? i18nByKey('hideCode') : i18nByKey('showCode')"
+            >
+              <i
+                :class="!!demo.isOpen ? 'i-ti-codeslash' : 'i-ti-code'"
+                class="ti-ml8 h:c-success ti-w16 ti-h16 ti-cur-hand"
+                @click="toggleDemoCode(demo)"
+              />
+            </tiny-tooltip>
+            <tiny-tooltip
+              placement="top"
+              effect="light"
+              popper-class="docs-tooltip"
+              :append-to-body="false"
+              :content="i18nByKey('playground')"
+            >
+              <i class="i-ti-playground ml8 h:c-success ti-w16 ti-h16 ti-cur-hand" @click="openPlayground(demo)" />
+            </tiny-tooltip>
+          </div>
         </div>
-      </div>
-      <component :is="getDescMd(demo)" class="ti-mb16 ti-f14" />
+        <component :is="getDescMd(demo)" class="demo-desc markdown-body" />
 
-      <div v-if="isMobileFirst" class="pc-demo-container">
-        <tiny-button @click="openPlayground(demo, false)">多端预览</tiny-button>
-      </div>
-      <div v-else-if="demoConfig.isMobile" class="phone-container">
-        <div class="mobile-view-container">
-          <component :is="cmp" />
+        <div v-if="isMobileFirst" class="pc-demo-container">
+          <tiny-button @click="openPlayground(demo, false)">多端预览</tiny-button>
+        </div>
+        <div v-else-if="demoConfig.isMobile" class="phone-container-flex">
+          <div class="mobile-view-btn">
+            <tiny-button>{{ i18nByKey('yan-shi') }}</tiny-button>
+          </div>
+          <div class="mobile-view-container phone-container">
+            <!-- 移动端展示内容 -->
+          </div>
+        </div>
+        <div v-else class="pc-demo-container">
+          <div class="pc-demo">
+            <component :is="cmp" />
+          </div>
         </div>
       </div>
-      <div v-else class="pc-demo-container">
-        <div class="pc-demo">
-          <component :is="cmp" />
+      <!-- demo 打开后的示例代码  细滚动时，width:fit-content; -->
+      <div v-if="demo.isOpen" class="ti-px24 ti-py20 ti-b-t-lightless demo-code">
+        <template v-if="files?.length">
+          <tiny-tabs v-model="tabValue" class="code-tabs">
+            <tiny-tab-item v-for="(file, idx) in files" :key="file.fileName" :name="'tab' + idx" :title="file.fileName">
+              <async-highlight :code="file.code"></async-highlight>
+            </tiny-tab-item>
+          </tiny-tabs>
+        </template>
+        <div v-else-if="files[0]">
+          <async-highlight :code="files[0].code"></async-highlight>
         </div>
-      </div>
-    </div>
-    <!-- demo 打开后的示例代码  细滚动时，width:fit-content; -->
-    <div v-if="demo.isOpen" class="ti-px24 ti-py20 ti-b-t-lightless">
-      <div>
-        <tiny-tabs v-model="tabValue" class="code-tabs">
-          <tiny-tab-item v-for="(file, idx) in files" :key="file.fileName" :name="'tab' + idx" :title="file.fileName">
-            <async-highlight :code="file.code"></async-highlight>
-          </tiny-tab-item>
-        </tiny-tabs>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="jsx">
-import { defineComponent, reactive, computed, toRefs, shallowRef, onMounted, watch, nextTick, inject, ref } from 'vue'
+import {
+  defineComponent,
+  reactive,
+  computed,
+  toRefs,
+  shallowRef,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick,
+  inject,
+  ref
+} from 'vue'
 import { i18nByKey, getWord } from '@/i18n'
 import { $split, appData, fetchDemosFile } from '@/tools'
 import { Tooltip as TinyTooltip, Tabs as TinyTabs, TabItem as TinyTabItem, Button as TinyButton } from '@opentiny/vue'
-import { languageMap, vueComponents, getWebdocPath, staticDemoPath } from './cmpConfig'
+import { languageMap, vueComponents, getWebdocPath, staticDemoPath } from './cmp-config'
 import { router } from '@/router.js'
 import demoConfig from '@demos/config.js'
 import { useApiMode, useTemplateMode } from '@/tools'
@@ -74,7 +112,8 @@ const { apiModeState, apiModeFn } = useApiMode()
 
 export default defineComponent({
   name: 'Demo',
-  props: ['demo'],
+  props: ['demo', 'currDemoId', 'observer', 'isIntersecting'],
+  emits: ['mounted'],
   components: {
     TinyTooltip,
     TinyTabs,
@@ -82,7 +121,7 @@ export default defineComponent({
     TinyButton,
     AsyncHighlight
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { templateModeState } = useTemplateMode()
     const { currentThemeKey } = useTheme()
     const isMobileFirst = computed(() => {
@@ -115,31 +154,26 @@ export default defineComponent({
       }
       return demo.files
     }
+
+    const demoContainer = ref(null)
+
     const state = reactive({
       tabValue: 'tab0',
       cmpId: router.currentRoute.value.params.cmpId,
       langKey: getWord('zh-CN', 'en-US'),
-      currDemoId: computed(() => {
-        let hash = router.currentRoute.value.hash?.slice(1)
-
-        // 兼容/#hashName这种模式
-        if (hash.includes('/')) {
-          hash = hash.slice(1)
-        }
-        return hash
-      }),
       copyTip: i18nByKey('copyCode'),
       copyIcon: 'i-ti-copy'
     })
 
     const cmp = shallowRef(null)
-
     const showPreview = inject('showPreview')
 
     const fn = {
       getDescMd(demo) {
         // desc字段是一段html
+
         const desc = demo.desc[state.langKey].trim()
+
         return <div class="demo-desc" v-html={desc}></div>
       },
       async toggleDemoCode(demo) {
@@ -179,12 +213,12 @@ export default defineComponent({
       },
       openPlayground(demo, open = true) {
         const cmpId = router.currentRoute.value.params.cmpId
-        const tinyTheme = templateModeState.isSaas ? 'saas' : currentThemeKey.value.split('-')[1]
+        const tinyTheme = templateModeState.isSaas ? 'saas' : currentThemeKey.value.split('-')[0]
         const openModeQuery = open ? '' : '&openMode=preview'
         // TODO: 目前mf只有Options写法，后续再放开compositon
-        const url = `${import.meta.env.VITE_PLAYGROUND_URL}?cmpId=${cmpId}&fileName=${
-          demo.codeFiles[0]
-        }&apiMode=Options&mode=${templateModeState.mode}&theme=${tinyTheme}${openModeQuery}`
+        const url = `${import.meta.env.VITE_PLAYGROUND_URL}?cmpId=${cmpId}&fileName=${demo.codeFiles[0]}&apiMode=${
+          isMobileFirst.value ? 'Options' : apiModeState.apiMode
+        }&mode=${templateModeState.mode}&theme=${tinyTheme}${openModeQuery}`
 
         if (open) {
           window.open(url)
@@ -194,19 +228,40 @@ export default defineComponent({
       }
     }
 
-    onMounted(async () => {
-      const demoName = apiModeFn.getDemoName(`${getWebdocPath(state.cmpId)}/${props.demo.codeFiles[0]}`)
+    onMounted(() => {
+      if (demoContainer.value) {
+        props.observer?.observe?.(demoContainer.value)
+      }
 
-      if (vueComponents[demoName]) {
-        cmp.value = (await vueComponents[demoName]()).default
-      } else {
-        const log = `${demoName}示例资源不存在，请检查文件名是否正确？`
-        cmp.value = <div>{log}</div>
+      nextTick(() => {
+        emit('mounted')
+      })
+    })
+
+    onBeforeUnmount(() => {
+      if (demoContainer.value) {
+        props.observer?.unobserve?.(demoContainer.value)
       }
     })
 
     const demos = ref(props.demo)
     const files = ref([])
+
+    watch(
+      () => props.isIntersecting,
+      async () => {
+        if (props.isIntersecting) {
+          const demoName = apiModeFn.getDemoName(`${getWebdocPath(state.cmpId)}/${props.demo.codeFiles[0]}`)
+          if (vueComponents[demoName]) {
+            cmp.value = (await vueComponents[demoName]()).default
+          } else {
+            const log = `${demoName}示例资源不存在，请检查文件名是否正确？`
+            cmp.value = <div>{log}</div>
+          }
+        }
+      },
+      { immediate: true }
+    )
 
     watch(
       () => props.demo,
@@ -230,16 +285,36 @@ export default defineComponent({
       }
     )
 
-    return { ...toRefs(state), ...fn, appData, vueComponents, demoConfig, cmp, isMobileFirst, i18nByKey, files }
+    return {
+      ...toRefs(state),
+      ...fn,
+      appData,
+      vueComponents,
+      demoConfig,
+      cmp,
+      isMobileFirst,
+      i18nByKey,
+      files,
+      demoContainer
+    }
   }
 })
 </script>
 
 <style lang="less" scoped>
+.demo-container {
+  min-height: 200px;
+  width: 100%;
+}
+
+.is-current {
+  padding: 20px 24px;
+}
+
 .demo-desc {
   font-size: 16px;
   line-height: 1.7em;
-  margin: 12px 0;
+  margin: 8px 0 24px;
 
   :deep(code) {
     color: #476582;
@@ -292,13 +367,59 @@ export default defineComponent({
   }
 }
 
+@media screen and (max-width: 640px) {
+  .pc-demo-container {
+    overflow: auto;
+  }
+}
+
 .pc-demo-container {
   display: flex;
   flex-direction: column;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #dcdfe6;
+  padding: 26px 18px 42px;
+
   .pc-demo {
     flex: 1;
+    padding: 6px;
   }
 }
+
+.demo-content {
+  position: relative;
+
+  .demo-title {
+    font-size: 20px;
+    color: #191919;
+    font-weight: bold;
+  }
+
+  .demo-desc {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #595959;
+    line-height: 30px;
+  }
+
+  .demo-options {
+    height: 16px;
+    position: absolute;
+    right: 32px;
+    bottom: 16px;
+  }
+}
+
+.demo-code {
+  border: 1px solid #efeff4;
+}
+
+.phone-container-flex {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .phone-container {
   margin: auto;
   width: 395px;
@@ -330,6 +451,5 @@ export default defineComponent({
 .code-preview-box {
   overflow: auto;
   padding: 20px 5px;
-  background-color: #f5f6f8;
 }
 </style>

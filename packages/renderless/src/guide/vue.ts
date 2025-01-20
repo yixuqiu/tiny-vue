@@ -1,8 +1,13 @@
-import { createShepherd, mounted } from './index'
+import { createShepherd, mounted, beforeUnmount } from './index'
 
 export const api = ['state']
 
-export const renderless = (props, { reactive, onMounted, watch }, utils, { Shepherd, offset }) => {
+export const renderless = (
+  props,
+  { reactive, onMounted, onBeforeUnmount, watch },
+  { designConfig },
+  { Shepherd, offset }
+) => {
   const state = reactive({
     tour: null,
     tour1: null,
@@ -20,16 +25,19 @@ export const renderless = (props, { reactive, onMounted, watch }, utils, { Sheph
 
   let baseApi = {
     state,
-    createShepherd: createShepherd({ state, props, Shepherd, offset })
+    createShepherd: createShepherd({ state, props, Shepherd, offset, designConfig })
   }
 
   const api = {
     ...baseApi,
-    mounted: mounted({ state, api: baseApi })
+    mounted: mounted({ state, api: baseApi }),
+    beforeUnmount: beforeUnmount(state)
   }
 
   watch(() => props.showStep, api.createShepherd)
 
   onMounted(api.mounted)
+  onBeforeUnmount(api.beforeUnmount)
+
   return api
 }

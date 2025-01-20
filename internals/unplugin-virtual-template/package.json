@@ -75,15 +75,15 @@
     "bumpp": "^8.2.1",
     "chalk": "^5.2.0",
     "eslint": "^8.29.0",
-    "esno": "^0.16.3",
+    "esno": "^4.7.0",
     "fast-glob": "^3.2.12",
     "nodemon": "^2.0.20",
     "rimraf": "^3.0.2",
     "rollup": "^3.7.3",
     "tsup": "7.2.0",
-    "typescript": "^5.0.0",
-    "vite": "^4.3.8",
-    "vitest": "^0.31.0",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
     "webpack": "^5.75.0"
   }
 }

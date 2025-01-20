@@ -15,7 +15,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'accept-file-image',
-          mobileDemo: 'accept-file-image',
+          mobileDemo: 'accept-file',
           mfDemo: ''
         },
         {
@@ -71,7 +71,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'prevent-delete-file',
-          mobileDemo: 'custom-prefix',
+          mobileDemo: 'prevent-delete-file',
           mfDemo: ''
         },
         {
@@ -86,7 +86,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'before-upload-limit',
-          mobileDemo: 'custom-prefix',
+          mobileDemo: 'upload-request',
           mfDemo: ''
         },
         {
@@ -159,7 +159,7 @@ export default {
             'en-US': 'display different button'
           },
           mode: ['mobile'],
-          mobileDemo: 'manual-upload'
+          mobileDemo: ''
         },
         {
           name: 'display-only',
@@ -177,7 +177,7 @@ export default {
           type: 'Object',
           defaultValue: '',
           desc: {
-            'zh-CN': '配置 EDM 下载功能所需的参数,例如：edm:{download:{token:()=>{}}},token为鉴权token',
+            'zh-CN': '配置 EDM 下载功能所需的参数,例如：edm:{download:{token:() =>{}}},token为鉴权token',
             'en-US': ''
           },
           mode: ['mobile-first'],
@@ -219,17 +219,6 @@ export default {
           pcDemo: 'encrypt-config'
         },
         {
-          name: 'ext-icons',
-          type: 'Object',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '<p>设置自定义文件类型图标，根据扩展名定义，默认由组件内部提供。</p>',
-            'en-US': 'display different button'
-          },
-          mode: ['mobile'],
-          mobileDemo: 'placeholder'
-        },
-        {
           name: 'file-icon-list',
           type: 'Array',
           defaultValue: '',
@@ -262,7 +251,8 @@ export default {
             'zh-CN': '限制文件大小，单位为 KB；当为 Number 类型时，小于该值停止上传；为数组时[min,max] 设置上传范围',
             'en-US': ''
           },
-          mode: ['mobile-first'],
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'file-size',
           mfDemo: ''
         },
         {
@@ -274,7 +264,7 @@ export default {
             'en-US': 'display different button'
           },
           mode: ['mobile'],
-          mobileDemo: 'file-title'
+          mobileDemo: 'header-show'
         },
         {
           name: 'header-show',
@@ -303,8 +293,8 @@ export default {
         },
         {
           name: 'http-request',
-          type: '(file: IFile) => Promise<any>',
-          typeAnchorName: 'IFile',
+          type: '(file: ICustomParam) => Promise<any>',
+          typeAnchorName: 'ICustomParam',
           defaultValue: '',
           desc: {
             'zh-CN': '覆盖默认的上传行为，可以自定义上传的实现; 由于 TinyVue 官网为 Mock 上传不能执行上传',
@@ -323,6 +313,18 @@ export default {
           desc: {
             'zh-CN': '在we码小程序中，可配置 hwh5属性 进行原生的上传和下载',
             'en-US': ''
+          },
+          mode: ['mobile-first'],
+          mfDemo: ''
+        },
+        {
+          name: 'image-bg-color',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '配置 `list-type` 等于 `picture-single` 或 `picture-card` 模式下图片的背景色。',
+            'en-US':
+              'Configure the background color of the image when `list-type` is set to `picture-single` or `picture-card`.'
           },
           mode: ['mobile-first'],
           mfDemo: ''
@@ -357,7 +359,7 @@ export default {
           defaultValue: '',
           desc: {
             'zh-CN':
-              '配置为 true,启用 EDM 上传文件夹的功能，最多只能上传 5 层;{edm:upload:{isFolder:true,token:()=>{}}}',
+              '配置为 true,启用 EDM 上传文件夹的功能，最多只能上传 5 层;{edm:upload:{isFolder:true,token:() =>{}}}',
             'en-US': ''
           },
           mode: ['mobile-first'],
@@ -373,7 +375,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'max-file-count',
-          mobileDemo: 'upload-limit',
+          mobileDemo: 'max-file-count',
           mfDemo: ''
         },
         {
@@ -398,19 +400,8 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'upload-file-list-thumb',
-          mobileDemo: 'file-picture-card',
+          mobileDemo: 'picture-card',
           mfDemo: ''
-        },
-        {
-          name: 'max_file_count',
-          type: 'Number',
-          defaultValue: 'Infinity',
-          desc: {
-            'zh-CN': '<p>设置文件上传数量的最大值，默认无限制，要大于0的正整数。</p>',
-            'en-US': 'display different button'
-          },
-          mode: ['mobile'],
-          mobileDemo: ''
         },
         {
           name: 'max-name-length',
@@ -512,7 +503,7 @@ export default {
           type: 'Function',
           defaultValue: '',
           desc: {
-            'zh-CN': '配置 EDM 批量打包下载的 token；配置结构为 edm:{download:packageToken:()=>{}},返回一个 Promise',
+            'zh-CN': '配置 EDM 批量打包下载的 token；配置结构为 edm:{download:packageToken:() =>{}},返回一个 Promise',
             'en-US': ''
           },
           mode: ['mobile-first'],
@@ -547,11 +538,26 @@ export default {
           defaultValue: '',
           desc: {
             'zh-CN':
-              "配置 EDM 预览功能所需的参数,例如：edm:{preview:{plugin：util.default,previewUrl:./_index.html?appid=应用Id,packageName: 'jslib',token:()=>{}}}",
+              "配置 EDM 预览功能所需的参数,例如：edm:{preview:{plugin：util.default,previewUrl:./_index.html?appid=应用Id,packageName: 'jslib',token:() =>{}}}",
             'en-US': ''
           },
           mode: ['mobile-first'],
           mfDemo: ''
+        },
+        {
+          name: 'prompt-tip',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '设置提示是否为 tip 类型，悬浮图标时显示 tip 提示',
+            'en-US': 'Set whether the prompt is of the tip type. The tip is displayed when the icon is suspended.'
+          },
+          metaData: {
+            new: '3.19.0'
+          },
+          mode: ['pc', 'mobile-first'],
+          mfDemo: 'prompt-tip',
+          pcDemo: 'prompt-tip'
         },
         {
           name: 're-upload-tip',
@@ -586,7 +592,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'upload-file-list',
-          mobileDemo: 'upload-user-head',
+          mobileDemo: 'upload-file-list',
           mfDemo: ''
         },
         {
@@ -642,7 +648,7 @@ export default {
             'en-US': 'display different button'
           },
           mode: ['mobile'],
-          mobileDemo: ''
+          mobileDemo: 'prevent-delete-file'
         },
         {
           name: 'thumb-option',
@@ -706,7 +712,7 @@ export default {
           type: 'Object',
           defaultValue: '',
           desc: {
-            'zh-CN': '配置 EDM 上传功能所需的参数,例如：edm:{upload:{token:()=>{}}}',
+            'zh-CN': '配置 EDM 上传功能所需的参数,例如：edm:{upload:{token:() =>{}}}',
             'en-US': ''
           },
           mode: ['mobile-first'],
@@ -891,7 +897,7 @@ export default {
           },
           mode: ['pc', 'mobile', 'mobile-first'],
           pcDemo: 'abort-quest',
-          mobileDemo: 'event',
+          mobileDemo: 'abort-quest',
           mfDemo: ''
         },
         {
@@ -1032,6 +1038,22 @@ interface IFile {
       `
     },
     {
+      name: 'ICustomParam',
+      type: 'interface',
+      code: `
+interface ICustomParam {
+  action: string
+  data: IData // 上传时附带的额外参数
+  file: IFile
+  filename: string
+  headers: object // 头部请求信息
+  onError: (error: any) => void // 上传失败回调函数，自定义入参
+  onProgress: (event: any) => void // 上传中回调函数
+  onSuccess: (res: any) => void // 上传成功回调函数
+  withCredentials: boolean // 是否支持发送 cookie 凭证信息
+}`
+    },
+    {
       name: 'IEncryptConfig',
       type: 'interface',
       code: `
@@ -1067,7 +1089,7 @@ interface IHeaders {
       name: 'IListType',
       type: 'type',
       code: `
-type IListType = 'text' | 'picture' | 'picture-card' | 'thumb' | 'saas'
+type IListType = 'text' | 'picture' | 'picture-card' | 'thumb' | 'saas' // saas为3.14.0版本新增
       `
     },
     {

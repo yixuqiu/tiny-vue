@@ -1,13 +1,13 @@
 <template>
-  <tiny-progress type="dashboard" :percentage="percentage" :color="tinyColors"> </tiny-progress>
+  <tiny-progress type="dashboard" :percentage="percentage" :color="tinyColors" :width="124"> </tiny-progress>
 </template>
 
 <script lang="jsx">
-import { Progress } from '@opentiny/vue'
+import { TinyProgress } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyProgress: Progress
+    TinyProgress
   },
   data() {
     return {

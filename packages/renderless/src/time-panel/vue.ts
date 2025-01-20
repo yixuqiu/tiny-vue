@@ -47,6 +47,8 @@ const initState = ({ reactive, computed, api }) => {
     maxTime: '',
     width: 0,
     lastEmitValue: '',
+    isFilter: false,
+    filterVal: '',
     items: computed(() => api.computItems()),
     default: computed(() => state.defaultValue || state.defaultTime || ''),
     value: computed({
@@ -54,7 +56,7 @@ const initState = ({ reactive, computed, api }) => {
       set: (value) => {
         const valid = state.items.some((item) => item.value === value)
 
-        state.realValue = valid ? value : ''
+        state.realValue = state.lastEmitValue = valid ? value : ''
       }
     })
   })

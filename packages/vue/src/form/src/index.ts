@@ -33,7 +33,8 @@ export const formProps = {
   size: String,
   disabled: Boolean,
   validateOnRuleChange: {
-    type: Boolean,
+    type: [Boolean, String],
+    validator: (value: string | boolean) => typeof value === 'boolean' || ['deep'].includes(value),
     default: true
   },
   hideRequiredAsterisk: {
@@ -106,6 +107,14 @@ export const formProps = {
   overflowTitle: {
     type: Boolean,
     default: false
+  },
+  wrapFragment: {
+    type: String,
+    default: 'div'
+  },
+  tooltipConfig: {
+    type: Object,
+    default: () => ({})
   }
 }
 

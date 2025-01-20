@@ -119,6 +119,20 @@ export default {
           mfDemo: ''
         },
         {
+          name: 'show-title',
+          type: 'boolean',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': '是否显示标题，在 size 为 large 时有效',
+            'en-US': 'Display title,valid when size is large'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'title',
+          meta: {
+            stable: '3.21.0'
+          }
+        },
+        {
           name: 'single-line',
           type: 'String',
           defaultValue: '',
@@ -248,7 +262,7 @@ export default {
           type: '',
           defaultValue: '',
           desc: {
-            'zh-CN': '组件默认插槽，当 size 设置为 large 后有效',
+            'zh-CN': '组件默认插槽，当 size 设置为 large 时有效，显示在 <code>description</code>下方 ',
             'en-US': 'The default slot for the component is valid when size is set to large'
           },
           mode: ['pc', 'mobile', 'mobile-first'],
@@ -261,7 +275,7 @@ export default {
           type: '',
           defaultValue: '',
           desc: {
-            'zh-CN': '提示内容',
+            'zh-CN': '提示内容插槽',
             'en-US': 'Prompt Content'
           },
           mode: ['pc', 'mobile-first'],

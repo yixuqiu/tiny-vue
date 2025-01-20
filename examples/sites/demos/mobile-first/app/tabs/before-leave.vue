@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import { Tabs, TabItem } from '@opentiny/vue'
+import { TinyTabs, TinyTabItem } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTabs: Tabs,
-    TinyTabItem: TabItem
+    TinyTabs,
+    TinyTabItem
   },
   data() {
     return {
@@ -24,6 +24,9 @@ export default {
   },
   methods: {
     beforeLeave() {
+      // 以下写法均为禁用切换
+      // return Promise.resolve(false)
+      // return Promise.reject()
       return false
     }
   }

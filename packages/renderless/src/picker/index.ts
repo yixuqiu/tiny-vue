@@ -227,7 +227,7 @@ export const getTimezone =
     const setting = utils.getDateFormat && utils.getDateFormat()
     const { DbTimezone, Timezone, TimezoneOffset } = setting || {}
     const cur = getLocalTimezone()
-    const isTzNumber = (z) => typeof z === 'number' && z >= -12 && z <= 12
+    const isTzNumber = (z) => typeof z === 'number' && z >= -12 && z <= 14
 
     if (!~type.indexOf('datetime')) {
       return { from: cur, to: cur }
@@ -544,6 +544,12 @@ export const handleInput =
       const val = event.target.value
       state.userInput = val
     }
+
+    // time-selelt 组件中，输入值开启过滤逻辑，将值传递给生成选项数据的计算属性中生成过滤后的数据面板
+    if (state.type === 'time-select') {
+      state.picker.state.isFilter = true
+      state.picker.state.filterVal = state.userInput
+    }
   }
 
 export const formatInputValue =
@@ -579,15 +585,41 @@ const getSelectionStart = ({ value, format, regx, event }) => {
   return { selectionStart, I }
 }
 
+// 获取有效的日期格式 2020 --> 2020-01-01
+const getEffectiveDateString = (formatStr) => {
+  // 需要一个有序的格式化顺序，月份、日期最小值应该是从1开始，如果是0则会显示上个月或者上一天的日期，会造成输入和预期不符的bug
+  const serializationList = [{ 'MM': '01' }, { 'M': '1' }, { 'dd': '01' }, { 'd': '1' }]
+  let result = formatStr
+  serializationList.forEach((item) => {
+    const itemKey = Object.keys(item)[0]
+    if (result.includes(itemKey)) {
+      result = result.replace(itemKey, item[itemKey])
+    }
+  })
+  return result
+}
+
 const getNum = (value, format, regx) => {
   let len = value.length
+  let formatStr = ''
   if (format && regx) {
     const formatMatchArr = format.match(regx)
-    len = Math.max(len, formatMatchArr.join('').length)
+    formatStr = formatMatchArr.join('')
+    len = Math.max(len, formatStr.length)
   }
-  let num = { str: '', arr: [] }
+
+  const num = { str: '', arr: [] }
   for (let i = 0; i < len; i++) {
-    let char = value.charAt(i) ? value.charAt(i) : '00'
+    // 填补字符串
+    let fillStr = '0'
+    if (formatStr && len > value.length) {
+      const validStr = getEffectiveDateString(formatStr)
+      if (/[0-9]/.test(validStr[i])) {
+        fillStr = validStr[i]
+      }
+    }
+
+    const char = value.charAt(i) ? value.charAt(i) : fillStr
 
     if (/[0-9]/.test(char)) {
       num.str += char
@@ -595,6 +627,7 @@ const getNum = (value, format, regx) => {
       num.arr[i] = 1
     }
   }
+
   return num
 }
 
@@ -959,6 +992,11 @@ export const handleKeydown =
     // Enter
     if (keyCode === 13) {
       if (state.userInput === '' || api.isValidValue(api.parseString(state.displayValue))) {
+        // time-select组件中，对输入的数据进行校验，如果有效则取默认过滤后数据的第一个。
+        if (state.type === 'time-select') {
+          state.userInput = state.picker.state.items.length ? state.picker.state.items[0].value : ''
+        }
+
         api.handleChange()
         state.pickerVisible = state.picker.state.visible = false
         api.blur()
@@ -983,6 +1021,10 @@ export const hidePicker =
   ({ destroyPopper, state }) =>
   () => {
     if (state.picker) {
+      // time-select组件中，选中面板关闭则清除过滤，保证下次面板打开时原始items数据。
+      if (state.type === 'time-select') {
+        state.picker.state.isFilter = false
+      }
       state.picker.resetView && state.picker.resetView()
       state.pickerVisible = state.picker.visible = state.picker.state.visible = false
       destroyPopper()
@@ -1211,6 +1253,7 @@ export const isValidValue =
     return true
   }
 
+// TODO: 这个方法有问题
 export const watchIsRange =
   ({ api, state, TimePanel, TimeRangePanel }) =>
   (value) => {
@@ -1300,7 +1343,7 @@ export const initPopper = ({ props, hooks, vnode }) => {
     props: {
       ...props,
       popperOptions: Object.assign({ boundariesPadding: 0, gpuAcceleration: false }, props.popperOptions),
-      visibleArrow: true,
+      visibleArrow: false,
       offset: 0,
       boundariesPadding: 5,
       arrowOffset: 35,

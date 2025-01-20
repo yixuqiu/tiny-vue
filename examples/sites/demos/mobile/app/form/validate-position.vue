@@ -9,7 +9,7 @@
         <tiny-form-item label="优秀" prop="users" vertical>
           <tiny-input v-model="createData.users" placeholder="请输入内容" type="form"></tiny-input>
         </tiny-form-item>
-        <tiny-form-item label="优秀" vertical>
+        <tiny-form-item label="优秀" vertical prop="user">
           <tiny-input
             v-model="createData.user"
             is-select
@@ -35,15 +35,15 @@
 </template>
 
 <script lang="jsx">
-import { Form, FormItem, Input, Button, DialogBox } from '@opentiny/vue'
+import { TinyForm, TinyFormItem, TinyInput, TinyButton, TinyDialogBox } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyForm: Form,
-    TinyFormItem: FormItem,
-    TinyInput: Input,
-    TinyButton: Button,
-    TinyDialogBox: DialogBox
+    TinyForm,
+    TinyFormItem,
+    TinyInput,
+    TinyButton,
+    TinyDialogBox
   },
   data() {
     return {
@@ -71,7 +71,8 @@ export default {
         user: ''
       },
       rules: {
-        users: [{ required: true, message: '必填', trigger: 'change' }]
+        users: [{ required: true, message: '必填', trigger: 'change' }],
+        user: [{ required: true, message: '必填', trigger: 'change' }]
       },
       boxVisibility: false
     }

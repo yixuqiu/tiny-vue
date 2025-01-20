@@ -40,7 +40,10 @@ export const renderComponent = ({
   return () =>
     hooks.h(
       (view && view.value) || component,
-      Object.assign({ props, attrs, [extend.isSvg ? 'nativeOn' : 'on']: on, scopedSlots: { ...slots } }, extend)
+      Object.assign(
+        { props, attrs, [extend.isSvg ? 'nativeOn' : 'on']: on, ref: 'modeTemplate', scopedSlots: { ...slots } },
+        extend
+      )
     )
 }
 
@@ -298,6 +301,7 @@ export const directive = (directives) => {
   for (const name in directives) {
     const content = directives[name]
 
+    mapping(content, 'mounted', 'inserted')
     mapping(content, 'beforeMount', 'bind')
     mapping(content, 'updated', 'update')
     mapping(content, 'unmounted', 'unbind')

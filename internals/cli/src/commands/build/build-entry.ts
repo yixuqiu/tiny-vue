@@ -58,11 +58,11 @@ function getMainTemplate({ mode }) {
   export const version = '${version}'
   
   export {
-    {{{components}}}
+    {{{exportComponents}}}
   }
   
   export default {
-    {{{components}}},
+    {{{defaultComponents}}},
     install
   } as any
   `
@@ -93,11 +93,32 @@ const createEntry = (mode) => {
     fs.writeFileSync(PKG_PATH, JSON.stringify(PKGContent, null, 2))
   }
 
+  const joinStr = ',' + endOfLine
   const template = handlebarsRender({
     template: MAIN_TEMPLATE,
     data: {
       include: includeTemplate.join(endOfLine),
-      components: componentsTemplate.join(',' + endOfLine)
+      components: componentsTemplate.join(joinStr),
+      exportComponents: componentsTemplate
+        .map((component) => {
+          if (component.includes('Hui')) {
+            return `${component}${joinStr}${component} as ${component
+              .replace('Huicharts', 'Chart')
+              .trim()}${joinStr}${component} as Tiny${component.trim()}`
+          }
+          return `${component}${joinStr}${component} as Tiny${component.trim()}`
+        })
+        .join(joinStr),
+      defaultComponents: componentsTemplate
+        .map((component) => {
+          if (component.includes('Hui')) {
+            return `${component}${joinStr}${component
+              .replace('Huicharts', 'Chart')
+              .trim()}: ${component}${joinStr}Tiny${component.trim()}: ${component}`
+          }
+          return `${component}${joinStr}Tiny${component.trim()}: ${component}`
+        })
+        .join(joinStr)
     }
   })
 

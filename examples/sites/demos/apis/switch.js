@@ -30,6 +30,20 @@ export default {
           mfDemo: ''
         },
         {
+          name: 'loading',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '是否加载中状态',
+            'en-US': 'Loading status'
+          },
+          meta: {
+            stable: '3.19.0'
+          },
+          mode: ['pc'],
+          pcDemo: 'loading'
+        },
+        {
           name: 'false-value',
           type: 'boolean | string | number',
           defaultValue: 'false',
@@ -174,6 +188,30 @@ export default {
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'custom-open-close',
+          mfDemo: ''
+        },
+        {
+          name: 'active-icon',
+          type: '',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '开启时开关的图标',
+            'en-US': 'Icon of the switch when turned on'
+          },
+          mode: ['pc'],
+          pcDemo: 'custom-open-close-icon',
+          mfDemo: ''
+        },
+        {
+          name: 'inactive-icon',
+          type: '',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '关闭时开关的图标',
+            'en-US': 'Icon of the switch when turned off'
+          },
+          mode: ['pc'],
+          pcDemo: 'custom-open-close-icon',
           mfDemo: ''
         }
       ]

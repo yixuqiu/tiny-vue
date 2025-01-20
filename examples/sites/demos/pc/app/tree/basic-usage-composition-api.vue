@@ -36,7 +36,7 @@
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { Tree as TinyTree, RadioGroup as TinyRadioGroup, Radio as TinyRadio } from '@opentiny/vue'
+import { TinyTree, TinyRadioGroup, TinyRadio } from '@opentiny/vue'
 
 const showLine = ref('hide')
 const size = ref('medium')
@@ -45,7 +45,10 @@ const data = ref([
   {
     id: '1',
     label: '数据 1',
-    children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+    children: [
+      { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+      { id: '1-2', label: '数据 1-2' }
+    ]
   },
   {
     id: '2',
@@ -72,8 +75,5 @@ function nodeClick(data, node, vm) {
   align-items: center;
   margin-top: 16px;
   margin-bottom: 16px;
-}
-.option-row > span {
-  font-size: 18px;
 }
 </style>

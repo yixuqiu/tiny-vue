@@ -16,12 +16,12 @@
 </template>
 
 <script lang="jsx">
-import { DropdownMenu, DropdownItem } from '@opentiny/vue'
+import { TinyDropdownMenu, TinyDropdownItem } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyDropdownMenu: DropdownMenu,
-    TinyDropdownItem: DropdownItem
+    TinyDropdownMenu,
+    TinyDropdownItem
   },
   data() {
     return {
@@ -68,6 +68,9 @@ export default {
 </script>
 
 <style>
+.title-class {
+  background-color: #ddd;
+}
 .dropdownMenu {
   width: 356px;
   height: calc(100% - 0px);

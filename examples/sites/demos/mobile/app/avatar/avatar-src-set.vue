@@ -9,12 +9,12 @@
 </template>
 
 <script lang="jsx">
-import { Avatar } from '@opentiny/vue'
+import { TinyAvatar } from '@opentiny/vue-mobile'
 import { iconClockWork } from '@opentiny/vue-icon'
 
 export default {
   components: {
-    TinyAvatar: Avatar
+    TinyAvatar
   },
   data() {
     const urlPrefix = import.meta.env.VITE_APP_BUILD_BASE_URL
@@ -35,6 +35,9 @@ export default {
 <style>
 .avatar-wrap {
   padding: 20px;
+}
+.tiny-mobile-avatar {
+  margin-right: 4px;
 }
 .avatar-wrap svg {
   height: 100%;

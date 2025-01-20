@@ -32,7 +32,7 @@ export default {
       },
       desc: {
         'zh-CN': `
-          通过<code>trigger</code> 属性设定弹出框的4种触发方式， 默认值为 <code> click </code>。<br>
+          通过<code>trigger</code> 属性设定弹出框的 4 种触发方式，默认值为 <code> click </code>。<br>
           当触发方式为<code> manual</code>时，通过设置<code>v-model</code> 属性，动态控制显示和隐藏弹出框。
           `,
         'en-US': `
@@ -80,7 +80,7 @@ export default {
       },
       desc: {
         'zh-CN': `
-          通过<code>arrow-offset</code> 设置箭头的在弹窗层上的偏移量。箭头默认至少会保留8px的空间， 以保证箭头不会贴在弹窗层两边。<br>
+          通过<code>arrow-offset</code> 设置箭头的在弹窗层上的偏移量。箭头默认至少会保留 8px 的空间，以保证箭头不会贴在弹窗层两边。<br>
           通过<code> offset</code> 设置弹框的偏移量，来改变弹框的位置。
           `,
         'en-US': `
@@ -118,8 +118,8 @@ export default {
       },
       desc: {
         'zh-CN': `
-          通过 <code>open-delay</code> 弹出框打开时延迟的时长，默认值为0，单位为毫秒。<br>
-          通过 <code>close-delay</code> 弹出框关闭时延迟的时长，默认值为200，单位为毫秒。<br>
+          通过 <code>open-delay</code> 弹出框打开时延迟的时长，默认值为 0，单位为毫秒。<br>
+          通过 <code>close-delay</code> 弹出框关闭时延迟的时长，默认值为 200，单位为毫秒。<br>
           <div class="tip custom-block">只有在触发方式为 hover 时，延迟控制功能才生效。</div>
           `,
         'en-US': `
@@ -155,6 +155,24 @@ export default {
           'Run the <code>popper-options</code> command to configure the advanced pop-up options. For details, see the IPopperOption description at the bottom'
       },
       codeFiles: ['popper-options.vue']
+    },
+    {
+      demoId: 'ignore-boundaries',
+      name: {
+        'zh-CN': '忽略边界判断',
+        'en-US': 'Ignore boundary judgment'
+      },
+      desc: {
+        'zh-CN': `
+          由于 Popper 会判断是否超出 offsetParent 从而调整弹框弹出的位置，有些时候并不能达到我们想要的效果。<br>
+          因此提供一个在<code>popper-options</code>上新增一个属性<code>ignoreBoundaries: true</code> ，可以让 Popper 忽略边界判断，弹出的位置始终是我们设置的 placement 值。
+        `,
+        'en-US': `
+          Because Popper determines whether the offsetParent is exceeded and adjusts the position of the pop-up dialog box, sometimes it doesn't achieve the desired effect.<br>
+          Therefore, the <code>ignoreBoundaries: true</code> attribute is added to <code>popper-options</code> so that the Popper ignores boundary judgment and the pop-up position is always the placement value.
+          `
+      },
+      codeFiles: ['ignore-boundaries.vue']
     },
     {
       demoId: 'events',

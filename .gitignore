@@ -4,7 +4,6 @@ dist/
 dist2/
 dist2.7/
 dist3/
-dist-react/
 allDist/
 packages/**/runtime
 coverage/
@@ -18,11 +17,11 @@ test-results
 /packages/vue-icon-saas/src
 /packages/vue-icon-saas/index.ts
 
-/packages/react/index.ts
-/packages/react/pc.ts
-/packages/react/mobile.ts
-/packages/react/app.ts
-/packages/react/mobile-first.ts
+/packages/vue-runtime/pc.ts
+/packages/vue-runtime/mobile.ts
+/packages/vue-runtime/mobile-first.ts
+/packages/vue-runtime/all.ts
+/packages/vue-runtime/simple.ts
 
 /examples/**/playwright-report
 /examples/**/test-results
@@ -52,18 +51,25 @@ yarn-error.log*
 tgzs
 *.tgz
 
-
-packages/theme/scripts/theme.json
-packages/theme/scripts/theme-result.txt
-packages/theme/scripts/themeExcel.xlsx
-
-packages/theme/src/theme/*-theme/component.js
+# theme 的汇总文件是自动生成的
+packages/theme/src/old-theme-index.less
+packages/theme/src/index.less
 
 pnpm-lock.yaml
 gulp/bundle.json
+
+# 屏蔽测试用例报告相关文件
+allure-report
+allure-results
+test-results
 
 # 本地构建的saas相关资源文件
 examples/sites/public/tiny-vue*.js
 examples/sites/public/tiny-vue*.mjs
 examples/sites/public/tailwind.css
 examples/sites/public/index.css
+
+
+# next 屏蔽
+next/cloud-icons/categorys.ts
+next/scene-theme/docs/.vitepress/cache

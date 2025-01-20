@@ -12,17 +12,23 @@
       :visible="boxVisibility"
       @update:visible="boxVisibility = $event"
       content-position
-    ></tiny-action-sheet>
+    >
+      <template #item="data">
+        <div>
+          {{ data.item.label }}
+        </div>
+      </template>
+    </tiny-action-sheet>
   </div>
 </template>
 
 <script lang="jsx">
-import { ActionSheet, Button } from '@opentiny/vue'
+import { TinyActionSheet, TinyButton } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyActionSheet: ActionSheet,
-    TinyButton: Button
+    TinyActionSheet,
+    TinyButton
   },
   data() {
     return {

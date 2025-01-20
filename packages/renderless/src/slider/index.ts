@@ -117,6 +117,8 @@ export const bindMouseDown =
       return
     }
 
+    api.bindResize()
+
     on(window, 'mouseup', api.bindMouseUp)
     on(window, 'mousemove', api.bindMouseMove)
     on(window, 'touchend', api.bindMouseUp)
@@ -639,7 +641,7 @@ export const updateSlotValue =
 
 export const handleSlotInput =
   ({ state, api }: Pick<ISliderRenderlessParams, 'api' | 'state'>) =>
-  (event: Event, isLeftInput: boolean = true): void => {
+  (event: Event, isLeftInput = true): void => {
     const inputValue = (event.target as HTMLInputElement).value
 
     api.changeActiveValue(state.isDouble ? isLeftInput : true)
@@ -649,9 +651,9 @@ export const handleSlotInput =
 
 export const inputOnChange =
   ({ api, emit, props, state }: Pick<ISliderRenderlessParams, 'api' | 'state' | 'props' | 'emit'>) =>
-  (event: Event) => {
+  (currentValue: string) => {
     if (!props.changeCompat) {
-      if (!/^\d+$/.test(event.target.value)) {
+      if (!/^\d+$/.test(currentValue)) {
         state.activeValue = state.leftBtnValue
         return
       }

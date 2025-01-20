@@ -1,5 +1,11 @@
 <template>
-  <tiny-file-upload ref="upload" :action="action" :file-list="fileList" :file-icon-list="iconList">
+  <tiny-file-upload
+    ref="upload"
+    :action="action"
+    file-title="我是标题"
+    :file-list="fileList"
+    :file-icon-list="iconList"
+  >
     <template #trigger>
       <icon-upload></icon-upload>
     </template>
@@ -7,12 +13,12 @@
 </template>
 
 <script lang="jsx">
-import { FileUpload } from '@opentiny/vue'
+import { TinyFileUpload } from '@opentiny/vue-mobile'
 import { iconUpload } from '@opentiny/vue-icon'
 
 export default {
   components: {
-    TinyFileUpload: FileUpload,
+    TinyFileUpload,
     IconUpload: iconUpload()
   },
   data() {

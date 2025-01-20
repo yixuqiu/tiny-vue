@@ -3,9 +3,9 @@
     <div class="title">尺寸</div>
     <div class="item-content">
       <tiny-user-head type="label" v-model="name" :size="80" round></tiny-user-head>
-      <tiny-user-head type="label" v-model="name" size="large" round></tiny-user-head>
-      <tiny-user-head type="label" v-model="name" size="medium" round></tiny-user-head>
-      <tiny-user-head type="label" v-model="namePrefix" size="small" round></tiny-user-head>
+      <tiny-user-head type="label" v-model="name" :size="70" round></tiny-user-head>
+      <tiny-user-head type="label" v-model="name" :size="60" round></tiny-user-head>
+      <tiny-user-head type="label" v-model="name" :size="50" round></tiny-user-head>
     </div>
 
     <div class="title">类型</div>
@@ -26,17 +26,16 @@
 </template>
 
 <script lang="jsx">
-import { UserHead } from '@opentiny/vue'
+import { TinyUserHead } from '@opentiny/vue-mobile'
 
 export default {
   components: {
-    TinyUserHead: UserHead
+    TinyUserHead
   },
   data() {
     return {
       imageUrl: `${import.meta.env.VITE_APP_BUILD_BASE_URL}static/images/fruit.jpg`,
-      name: '小明',
-      namePrefix: '小'
+      name: '小明'
     }
   }
 }

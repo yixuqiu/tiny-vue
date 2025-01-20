@@ -9,3 +9,31 @@
 * A PARTICULAR PURPOSE. SEE THE APPLICABLE LICENSES FOR MORE DETAILS.
 *
 */
+
+@import '../custom.less';
+@import './vars.less';
+
+@drop-times-prefix-cls: ~'@{css-prefix}drop-times';
+@select-dropdown-prefix-cls: ~'@{css-prefix}select-dropdown__item';
+
+
+.@{drop-times-prefix-cls} {
+  .inject-DropTimes-vars();
+
+  .@{select-dropdown-prefix-cls} {
+    font-size: var(--tv-DropTimes-item-font-size);
+    padding: var(--tv-DropTimes-item-padding);
+
+  
+    &:not(.disabled):hover {
+      background-color: var(--tv-DropTimes-item-hover-bg-color);
+    }
+
+    &.selected:not(.disabled) {
+      font-weight: var(--tv-DropTimes-item-selected-font-weight);
+      color: var(--tv-DropTimes-item-selected-color);
+      background-color: var(--tv-DropTimes-item-select-hover-bg-color);
+    }
+
+  }
+}

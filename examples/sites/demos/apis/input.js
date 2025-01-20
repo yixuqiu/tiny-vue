@@ -129,7 +129,7 @@ export default {
           type: 'string',
           defaultValue: '',
           desc: {
-            'zh-CN': '设置只读态时的文本内容区，如果没有则会使用 modelVale 的值作为只读文本',
+            'zh-CN': '设置只读态时的文本内容区，如果没有则会使用 modelValue 的值作为只读文本',
             'en-US':
               "Sets the text content area in the read-only state, if not, modelVale's value is used as the read-only text"
           },
@@ -397,11 +397,26 @@ export default {
           mfDemo: ''
         },
         {
+          name: 'show-tooltip',
+          type: 'boolean',
+          defaultValue: 'true',
+          meta: {
+            stable: '3.18.0'
+          },
+          desc: {
+            'zh-CN': '只读状态下，文本超出是否悬浮提示',
+            'en-US': 'In the read-only state, whether the text exceeds the floating prompt'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'size',
+          mfDemo: ''
+        },
+        {
           name: 'size',
           type: "'medium' | 'small' | 'mini'",
           defaultValue: '',
           desc: {
-            'zh-CN': '输入框尺寸，只在 type!="textarea" 时有效',
+            'zh-CN': '输入框尺寸，只在 type 为 "textarea" 时有效',
             'en-US': 'Size of the text box. This parameter is valid only when type!="textarea". '
           },
           mode: ['pc', 'mobile-first'],
@@ -528,6 +543,32 @@ export default {
           },
           mode: ['mobile'],
           mobileDemo: ''
+        },
+        {
+          name: 'popup-more',
+          type: 'Boolean',
+          defaultValue: '',
+          desc: {
+            'zh-CN':
+              '在只读的基础上增加 <code>popup-more</code> 属性，可使文本域超出显示更多按钮，点击更多按钮可以查看详细信息。',
+            'en-US':
+              'The <code>popup-more</code> attribute is added to enable the text field to exceed the display of more buttons. You can click more buttons to view details.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'display-only-popup-more',
+          mfDemo: 'display-only-popup-more'
+        },
+        {
+          name: 'input-box-type',
+          type: 'string',
+          defaultValue: 'normal',
+          desc: {
+            'zh-CN': '设置边框模式',
+            'en-US': 'Setting input box border type'
+          },
+          mode: ['pc'],
+          pcDemo: 'input-box-type',
+          mfDemo: ''
         }
       ],
       events: [

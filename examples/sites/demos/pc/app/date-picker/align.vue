@@ -1,16 +1,21 @@
 <template>
   <div>
     <p>左对齐：</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" align="left"></tiny-date-picker>
     </div>
+    <br />
 
     <p>居中对齐：</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" align="center"></tiny-date-picker>
     </div>
+    <br />
 
     <p>右对齐：</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" align="right"></tiny-date-picker>
     </div>
@@ -18,11 +23,11 @@
 </template>
 
 <script>
-import { DatePicker } from '@opentiny/vue'
+import { TinyDatePicker } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyDatePicker: DatePicker
+    TinyDatePicker
   },
   data() {
     return {
@@ -34,6 +39,6 @@ export default {
 
 <style scoped>
 .demo-date-picker-wrap {
-  width: 350px;
+  width: 360px;
 }
 </style>

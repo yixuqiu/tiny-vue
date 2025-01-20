@@ -1,16 +1,15 @@
 <template>
-  <tiny-chart-line :data="chartData">
+  <tiny-chart-line :options="options">
     <div class="data-empty">没有数据😂</div>
   </tiny-chart-line>
 </template>
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { ChartLine as TinyChartLine } from '@opentiny/vue'
+import { TinyHuichartsLine as TinyChartLine } from '@opentiny/vue'
 
-const chartData = ref({
-  columns: ['日期', '成本', '利润'],
-  rows: []
+const options = ref({
+  data: []
 })
 </script>
 

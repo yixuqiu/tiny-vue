@@ -186,6 +186,8 @@ export default (options: IPopperInputParams) => {
 
     const popperJS = state.popperJS
     if (popperJS) {
+      // Tiny 新增，在动态切换renference时，需要实时获取最新的触发源
+      popperJS._reference = getReference({ state, props, vm, slots })
       popperJS.update()
 
       // 每次递增 z-index
@@ -213,7 +215,8 @@ export default (options: IPopperInputParams) => {
   /** remove时，执行真的移除popper dom操作。 */
   const destroyPopper = (remove: 'remove' | boolean) => {
     if (remove) {
-      if (state.popperElm) {
+      // 当popper中嵌套popper时，内层popper被移除后不会重新创建，因此onDeactivated不将内层popper移除
+      if (state.popperElm && state.popperElm.parentNode === document.body) {
         off(state.popperElm, 'click', stop)
         state.popperElm.remove()
       }

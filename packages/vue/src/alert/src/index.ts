@@ -17,7 +17,8 @@ export const $constants = {
     success: 'icon-success',
     error: 'icon-error',
     info: 'icon-help',
-    warning: 'icon-warning'
+    warning: 'icon-warning-triangle',
+    simple: 'icon-help'
   },
   TITLE_MAP: {
     success: 'ui.alert.success',
@@ -83,6 +84,10 @@ export const alertProps = {
   autoHide: {
     type: Boolean,
     default: false
+  },
+  showTitle: {
+    type: Boolean,
+    default: true
   },
   target: {
     type: String,
