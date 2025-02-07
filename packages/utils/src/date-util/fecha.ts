@@ -10,9 +10,10 @@
  *
  */
 
-import { DATEPICKER } from '../index'
+import { DATEPICKER } from '../common'
 import { isNull, isDate } from '../type'
 
+/** 西班牙语的“日期，日子”，此处为日期辅助对象，其下有i18n,masks,format,parse等辅助方法 */
 const fecha = {}
 const digitsReg = ['\\d\\d?', '\\d{3}', '\\d{4}']
 const twoDigits = digitsReg[0]
@@ -339,4 +340,4 @@ fecha.parse = (dateStr, format, i18nSettings) => {
   return getDate(dateInfo)
 }
 
-export default fecha
+export { fecha }

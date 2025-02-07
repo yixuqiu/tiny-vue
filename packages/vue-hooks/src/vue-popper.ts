@@ -10,10 +10,12 @@
  *
  */
 
-import { PopupManager, Popper as PopperJS, on, off, isDisplayNone } from '@opentiny/utils'
+import { PopupManager, PopperJS, on, off, isDisplayNone } from '@opentiny/utils'
 
 // todo
 import type { ISharedRenderlessFunctionParams } from 'types/shared.type'
+
+import { isServer } from '@opentiny/utils'
 
 export interface IPopperState {
   popperJS: Popper
@@ -32,8 +34,6 @@ type IPopperInputParams = ISharedRenderlessFunctionParams<never> & {
 
 /** 给 popper 的click添加stop, 阻止冒泡 */
 const stop = (e: Event) => e.stopPropagation()
-
-const isServer = typeof window === 'undefined'
 
 // 由于多个组件传入reference元素的方式不同，所以这里从多处查找。
 const getReference = ({ state, props, vm, slots }: Pick<IPopperInputParams, 'state' | 'props' | 'vm' | 'slots'>) => {
@@ -69,8 +69,8 @@ const getReferMaxZIndex = (reference) => {
 
   return max + 1 + ''
 }
-
-export default (options: IPopperInputParams) => {
+// 历史原因，暂时先命名为userPopper， 以后统一替换
+export const userPopper = (options: IPopperInputParams) => {
   const {
     parent,
     emit,
