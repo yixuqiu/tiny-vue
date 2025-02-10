@@ -15,7 +15,7 @@ const value = ref(false)
 <style>
 .demo {
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 20px;
 }
 </style>

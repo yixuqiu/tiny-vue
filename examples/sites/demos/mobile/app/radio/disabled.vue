@@ -16,7 +16,7 @@ const value = ref('1')
 <style>
 .demo {
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 20px;
 }
 </style>

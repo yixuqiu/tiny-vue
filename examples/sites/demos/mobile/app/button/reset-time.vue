@@ -7,8 +7,6 @@
 
 <script setup>
 import { TinyButton } from '@opentiny/vue-mobile'
-
-
 </script>
 
 <style scoped>
@@ -17,7 +15,7 @@ body {
 }
 .button-wrap {
   padding: 0 10px;
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100%;
 }
 .button-wrap .tiny-mobile-button {

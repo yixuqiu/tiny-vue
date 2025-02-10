@@ -1,6 +1,105 @@
 export default {
   column: '2',
   owner: '',
+  apis: [
+    {
+      name: 'radio',
+      type: 'component',
+      props: [
+        {
+          name: 'disabled',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '是否禁用',
+            'en-US': 'Disable'
+          },
+          demoId: 'disabled'
+        },
+        {
+          name: 'label',
+          type: 'boolean | number | string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': 'radio 选中时的值',
+            'en-US': 'Value when radio is selected'
+          },
+          demoId: 'label'
+        },
+        {
+          name: 'name',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '原生 name 属性',
+            'en-US': 'Native name attribute'
+          },
+          demoId: 'base'
+        },
+        {
+          name: 'text',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '单选框文本内容',
+            'en-US': 'Radio Box Text Content'
+          },
+          demoId: 'base'
+        },
+        {
+          name: 'value',
+          type: 'object | string',
+          defaultValue: '{}',
+          desc: {
+            'zh-CN': '<p>绑定值，该属性默认为{}</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'base'
+        }
+      ],
+      events: [
+        {
+          name: 'change',
+          type: '(value: boolean | number | string) => void',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '绑定值变化时触发的事件',
+            'en-US': 'Event triggered when the binding value changes'
+          },
+          demoId: 'event'
+        }
+      ],
+      methods: [],
+      slots: [
+        {
+          name: 'default',
+          type: '',
+          defaultValue: '',
+          desc: {
+            'zh-CN': 'radio 的默认插槽',
+            'en-US': 'Radio default slot'
+          },
+          demoId: ''
+        }
+      ]
+    },
+    {
+      name: 'radio-group',
+      type: 'component',
+      props: [],
+      events: [],
+      methods: [],
+      slots: []
+    },
+    {
+      name: 'radio-button',
+      type: 'component',
+      props: [],
+      events: [],
+      methods: [],
+      slots: []
+    }
+  ],
   demos: [
     {
       demoId: 'base',

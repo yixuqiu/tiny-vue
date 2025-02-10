@@ -22,7 +22,7 @@ function changeAction(value) { // NISVUE3 FIXME: value重复定义，请手工�
 <style>
 .demo {
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 20px;
 }
 </style>

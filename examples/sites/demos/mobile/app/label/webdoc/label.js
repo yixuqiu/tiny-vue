@@ -1,6 +1,107 @@
 export default {
   column: '2',
   owner: '',
+  apis: [
+    {
+      name: 'Label',
+      type: 'component',
+      props: [
+        {
+          name: 'decimal',
+          type: 'number',
+          defaultValue: '2',
+          desc: {
+            'zh-CN': '<p>小数点的位数</p>',
+            'en-US': 'decimal'
+          },
+          demoId: 'decimal'
+        },
+        {
+          name: 'ellipsis',
+          type: 'number',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>支持超出省略号显示的行数</p>',
+            'en-US': 'ellipsis'
+          },
+          demoId: 'ellipsis'
+        },
+        {
+          name: 'is-required',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '<p>是否添加*号</p>',
+            'en-US': 'is required'
+          },
+          demoId: 'required'
+        },
+        {
+          name: 'label',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>文本</p>',
+            'en-US': 'text'
+          },
+          demoId: 'base'
+        },
+        {
+          name: 'limit',
+          type: 'number',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>限制文本的字数</p>',
+            'en-US': 'text limit'
+          },
+          demoId: 'limit'
+        },
+        {
+          name: 'position',
+          type: 'string',
+          defaultValue: 'left',
+          desc: {
+            'zh-CN': '<p>整行显示时的位置:left,center,right</p>',
+            'en-US': 'position of whole line dispaly'
+          },
+          demoId: 'position'
+        },
+        {
+          name: 'size',
+          type: 'string',
+          defaultValue: 'normal',
+          desc: {
+            'zh-CN': '<p>文本大小:large,normal,small,mini</p>',
+            'en-US': 'text size'
+          },
+          demoId: 'size'
+        },
+        {
+          name: 'type',
+          type: 'string',
+          defaultValue: 'base',
+          desc: {
+            'zh-CN': '<p>类型 \n base, number</p>',
+            'en-US': 'type'
+          },
+          demoId: 'type'
+        },
+        {
+          name: 'wholeline',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '<p>是否整行显示</p>',
+            'en-US': 'whole line display'
+          },
+          demoId: 'wholeline'
+        }
+      ],
+      events: [],
+      methods: [],
+      slots: []
+    }
+  ],
   demos: [
     {
       demoId: 'base',

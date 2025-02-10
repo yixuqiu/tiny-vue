@@ -1,6 +1,222 @@
 export default {
   column: '2',
   owner: '',
+  apis: [
+    {
+      name: 'DropdownMenu',
+      type: 'component',
+      props: [
+        {
+          name: 'active-color',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>标题和选项的选中态颜色</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'activeColor'
+        },
+        {
+          name: 'close-on-click-outside',
+          type: 'boolean',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': '<p>设置点击外部元素后关闭菜单,默认问true</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'closeOnClickOutside'
+        },
+        {
+          name: 'close-on-click-overlay',
+          type: 'boolean',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': '<p>设置点击遮罩层后关闭菜单，默认为true设置点击遮罩层后关闭菜单，默认为true</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'closeOnClickOverlay'
+        },
+        {
+          name: 'direction',
+          type: 'string',
+          defaultValue: 'down',
+          desc: {
+            'zh-CN': '<p>设置弹出框弹出框展开方向，默认为down</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'direction'
+        },
+        {
+          name: 'duration',
+          type: 'number',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>设置弹出框的动画时长</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'duration'
+        },
+        {
+          name: 'overlay',
+          type: 'boolean',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': '<p>设置是否显示遮罩层，默认为true</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'overlay'
+        }
+      ],
+      events: [],
+      methods: [],
+      slots: [
+        {
+          name: 'default',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>定义菜单内容</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'slot'
+        }
+      ]
+    },
+    {
+      name: 'DropdownItem',
+      type: 'component',
+      props: [
+        {
+          name: 'disabled',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '<p>设置是否禁用，默认为false</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'disabled'
+        },
+        {
+          name: 'icon',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>设置菜单选项项左侧icon</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'icon'
+        },
+        {
+          name: 'options',
+          type: 'Array',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>设置选项数据</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'screen-funnel'
+        },
+        {
+          name: 'title',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>菜单项标题</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'screen-funnel'
+        },
+        {
+          name: 'title-class',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>标题类名</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'title-class'
+        },
+        {
+          name: 'type',
+          type: 'string',
+          defaultValue: 'selection',
+          desc: {
+            'zh-CN': '<p>设置菜单项类型，可选值为 filter | sort | selection,默认值为 selection</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'title-class'
+        },
+        {
+          name: 'value',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>当前选中项对应的 value，可以通过v-model双向绑定</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'activeColor'
+        }
+      ],
+      events: [
+        {
+          name: 'change',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>点击选项时触发，type为 selection 时启用</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'event'
+        },
+        {
+          name: 'close',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>关闭菜单时触发</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'event'
+        },
+        {
+          name: 'open',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>打开菜单时触发</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'event'
+        }
+      ],
+      methods: [],
+      slots: [
+        {
+          name: 'default',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>定义菜单内容</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'slot'
+        },
+        {
+          name: 'icon',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>当type为selection时选项左侧内容</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'slot'
+        },
+        {
+          name: 'title',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>当type为selection时选项内容</p>',
+            'en-US': 'Click'
+          },
+          demoId: 'slot'
+        }
+      ]
+    }
+  ],
   demos: [
     {
       demoId: 'activeColor',

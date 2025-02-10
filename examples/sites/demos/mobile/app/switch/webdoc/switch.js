@@ -1,6 +1,78 @@
 export default {
   column: '2',
   owner: '',
+  apis: [
+    {
+      name: 'switch',
+      type: 'component',
+      props: [
+        {
+          name: 'disabled',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '是否禁用',
+            'en-US': 'Disable'
+          },
+          demoId: 'disabled'
+        },
+        {
+          name: 'false-value',
+          type: 'boolean | string | number',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': 'switch 关闭时的值',
+            'en-US': 'Value when switch is disabled'
+          },
+          demoId: 'base'
+        },
+        {
+          name: 'mini',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '设置是否显示为 mini 模式，mini 模式下不会显示 slot 的内容',
+            'en-US': 'Sets whether to display in mini mode. In mini mode, the content of the slot is not displayed'
+          },
+          demoId: 'mini'
+        },
+        {
+          name: 'true-value',
+          type: 'boolean | string | number',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': 'switch 打开时的值',
+            'en-US': 'Value when switch is enabled'
+          },
+          demoId: 'base'
+        },
+        {
+          name: 'v-model',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '<p>绑定值</p>',
+            'en-US': 'display different button'
+          },
+          demoId: 'base'
+        }
+      ],
+      events: [
+        {
+          name: 'change',
+          type: '(value: boolean | string | number) => void',
+          defaultValue: '',
+          desc: {
+            'zh-CN': 'switch 状态发生变化时的回调函数',
+            'en-US': 'Callback function for switch changes'
+          },
+          demoId: 'event'
+        }
+      ],
+      methods: [],
+      slots: []
+    }
+  ],
   demos: [
     {
       demoId: 'base',
