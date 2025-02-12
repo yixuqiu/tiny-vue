@@ -10,7 +10,7 @@
  *
  */
 
-import { merge } from '../common/object'
+import { merge } from '@opentiny/utils'
 
 import type { IFormRenderlessParams } from '@/types'
 
@@ -47,13 +47,13 @@ export const computedAutoLabelWidth =
 export const computedHideRequiredAsterisk =
   ({ props, designConfig }: Pick<IFormRenderlessParams, 'props' | 'designConfig'>) =>
   (): boolean => {
-    return props.hideRequiredAsterisk ?? designConfig?.hideRequiredAsterisk ?? false
+    return props.hideRequiredAsterisk ?? designConfig?.props?.hideRequiredAsterisk ?? false
   }
 
 export const computedValidateIcon =
   ({ props, designConfig }: Pick<IFormRenderlessParams, 'props' | 'designConfig'>) =>
   (): object | null => {
-    return props.validateIcon ?? designConfig?.icons?.validateIcon ?? null
+    return props.validateIcon ?? designConfig?.icons?.validateIcon ?? 'icon-error'
   }
 
 export const computedIsErrorInline =
@@ -65,7 +65,7 @@ export const computedIsErrorInline =
     if (typeof props.inlineMessage === 'boolean') {
       return props.inlineMessage
     }
-    return designConfig?.messageType === 'inline' || false
+    return designConfig?.messageType === 'inline'
   }
 
 export const computedIsErrorBlock =
@@ -74,7 +74,10 @@ export const computedIsErrorBlock =
     if (props.messageType) {
       return props.messageType === 'block'
     }
-    return designConfig?.messageType === 'block' || false
+    if (designConfig && Object.hasOwnProperty.call(designConfig, 'messageType')) {
+      return designConfig.messageType === 'block'
+    }
+    return true
   }
 
 export const created =
@@ -162,6 +165,7 @@ export const validate =
     }
 
     let invalidFields = {}
+    let invalidFieldArr = []
 
     state.fields.forEach((field) => {
       field.validate('', (message, field) => {
@@ -171,8 +175,12 @@ export const validate =
 
         invalidFields = merge({}, invalidFields, field)
 
+        if (field) {
+          Object.keys(field).forEach((item) => invalidFieldArr.push(item))
+        }
+
         if (typeof callback === 'function' && ++count === state.fields.length) {
-          callback(valid, invalidFields)
+          callback(valid, invalidFields, invalidFieldArr)
         }
       })
     })

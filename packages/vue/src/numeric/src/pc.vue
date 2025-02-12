@@ -183,6 +183,7 @@
             @keydown.down.prevent="decrease"
             @blur="handleBlur"
             @focus="handleFocus"
+            @compositionend="handleInput"
             @input="handleInput"
             @change="handleInputChange"
           />
@@ -195,7 +196,7 @@
 <script lang="ts">
 import { renderless, api } from '@opentiny/vue-renderless/numeric/vue'
 import { props, setup, directive, defineComponent } from '@opentiny/vue-common'
-import bind from '@opentiny/vue-renderless/common/deps/repeat-click'
+import { RepeatClick } from '@opentiny/vue-directive'
 import { iconChevronDown, iconChevronUp, iconMinus, iconPlus } from '@opentiny/vue-icon'
 import '@opentiny/vue-theme/numeric/index.less'
 import type { INumericApi } from '@opentiny/vue-renderless/types/numeric.type'
@@ -206,7 +207,7 @@ import Tag from '@opentiny/vue-tag'
 
 export default defineComponent({
   directives: directive({
-    repeatClick: { bind }
+    repeatClick: { bind: RepeatClick }
   }),
   components: {
     IconChevronDown: iconChevronDown(),

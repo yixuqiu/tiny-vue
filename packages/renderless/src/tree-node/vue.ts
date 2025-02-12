@@ -10,7 +10,7 @@
  *
  */
 
-import debounce from '../common/deps/debounce'
+import { debounce } from '@opentiny/utils'
 import {
   created,
   handleDragEnd,
@@ -62,7 +62,7 @@ export const api = [
   'handleCheckChange'
 ]
 
-const initState = ({ reactive, treeRoot, props, emitter, $parentEmitter, vm, api, computed }) => {
+const initState = ({ reactive, treeRoot, props, emitter, $parentEmitter, vm, api, TreeAdapter, computed }) => {
   const state = reactive({
     tree: treeRoot,
     expanded: false,
@@ -79,6 +79,10 @@ const initState = ({ reactive, treeRoot, props, emitter, $parentEmitter, vm, api
     emitter: emitter(),
     parentEmitter: $parentEmitter,
     isSaaSTheme: (props.theme || vm.theme) === 'saas',
+    props: treeRoot.props,
+    renderedChildNodes: computed(() => {
+      return props.node.childNodes.filter((childNode) => (TreeAdapter ? TreeAdapter.shouldRender(childNode) : true))
+    }),
     computedExpandIcon: computed(() => api.computedExpandIcon(treeRoot, state)),
     computedIndent: computed(() => api.computedIndent(props, state))
   })
@@ -110,7 +114,7 @@ const initApi = ({ api, state, dispatch, broadcast, vm, props, treeRoot, nextTic
     watchIndeterminate: watchIndeterminate({ api, props }),
     watchChecked: watchChecked({ api, props }),
     openEdit: openEdit({ state, vm }),
-    addNode: addNode({ state, props, api }),
+    addNode: debounce(500, true, addNode({ state, props, api })),
     saveEdit: saveEdit({ state }),
     deleteNode: deleteNode({ state }),
     handleChildNodeExpand: handleChildNodeExpand(state),
@@ -139,7 +143,8 @@ export const renderless = (
   const api = {}
   const treeRoot = inject('TreeRoot')
   const $parentEmitter = inject('parentEmitter')
-  const state = initState({ reactive, treeRoot, props, emitter, $parentEmitter, vm, api, computed })
+  const TreeAdapter = inject('TreeAdapter', null)
+  const state = initState({ reactive, treeRoot, props, emitter, $parentEmitter, vm, api, TreeAdapter, computed })
 
   if (state.tree.accordion) {
     state.parentEmitter.on('sibling-node-toggle-expand', (event) => api.onSiblingToggleExpand(event))

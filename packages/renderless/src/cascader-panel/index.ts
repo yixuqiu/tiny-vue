@@ -10,11 +10,11 @@
  *
  */
 
-import { isNull } from '../common/type'
-import { isEqual } from '../common/object'
+import { isNull } from '@opentiny/utils'
+import { isEqual } from '@opentiny/utils'
 import { isEmpty } from '../cascader'
-import { KEY_CODE, CASCADER } from '../common'
-import scrollIntoViewCommon from '../common/deps/scroll-into-view'
+import { KEY_CODE, CASCADER } from '@opentiny/utils'
+import { scrollIntoView as scrollIntoViewCommon } from '@opentiny/utils'
 import type {
   ICascaderPanelApi,
   ICascaderPanelData,
@@ -233,7 +233,13 @@ export const handleCheckChange =
   }
 
 export const lazyLoad =
-  ({ api, $parent, state, Store }: Pick<ICascaderPanelRenderlessParams, 'api' | '$parent' | 'state' | 'Store'>) =>
+  ({
+    api,
+    $parent,
+    state,
+    Store,
+    emit
+  }: Pick<ICascaderPanelRenderlessParams, 'api' | '$parent' | 'state' | 'Store' | 'emit'>) =>
   (currentNode?: ICascaderPanelNode, onFullfiled?: (dataList: ICascaderPanelData[]) => void) => {
     let node = currentNode as ICascaderPanelLazyLoadNode | ICascaderPanelNode
 
@@ -251,6 +257,8 @@ export const lazyLoad =
 
       node.loading = false
       node.loaded = true
+
+      emit('load-data', dataList)
 
       if (Array.isArray(state.checkedValue)) {
         const nodeValue = state.checkedValue[state.loadCount++]

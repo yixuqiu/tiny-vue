@@ -5,7 +5,7 @@ test('拦截弹窗关闭', async ({ page }) => {
   await page.goto('drawer#before-close')
 
   const drawer = page.locator('.tiny-drawer__main')
-  const message = page.locator('.tiny-modal.type__message')
+  const message = page.locator('.tiny-modal__text')
 
   await page.getByRole('button', { name: '点击展开 Drawer' }).click()
   await expect(drawer).toBeVisible()
@@ -19,7 +19,7 @@ test('拦截弹窗关闭', async ({ page }) => {
   await page.locator('.tiny-drawer__mask').click()
   await expect(drawer).toBeVisible()
 
-  // 点击底部确认按钮
+  // 点击底部确定按钮
   await page.locator('#before-close').getByRole('button', { name: '确定' }).click()
   await expect(drawer).toBeVisible()
 

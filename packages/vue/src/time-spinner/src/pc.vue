@@ -25,12 +25,12 @@
         ref="hours"
       >
         <li
-          @click="handleClick('hours', { value: hour, disabled })"
           v-for="{ disabled, hour } in state.hoursList"
           class="tiny-time-spinner__item"
           data-tag="li"
           :key="hour"
           :class="{ active: hour === state.hours, disabled }"
+          @click="handleClick('hours', { value: hour, disabled })"
         >
           <span>{{ ('0' + (amPmMode ? hour % 12 || 12 : hour)).slice(-2) }}{{ amPm(hour) }}</span>
         </li>
@@ -155,7 +155,7 @@
 import { renderless, api } from '@opentiny/vue-renderless/time-spinner/vue'
 import { props, setup, directive, defineComponent } from '@opentiny/vue-common'
 import Scrollbar from '@opentiny/vue-scrollbar'
-import bind from '@opentiny/vue-renderless/common/deps/repeat-click'
+import { RepeatClick } from '@opentiny/vue-directive'
 import { iconChevronDown, iconChevronUp } from '@opentiny/vue-icon'
 
 export default defineComponent({
@@ -166,7 +166,7 @@ export default defineComponent({
     IconChevronUp: iconChevronUp()
   },
   directives: directive({
-    repeatClick: { bind }
+    repeatClick: { bind: RepeatClick }
   }),
   props: [...props, 'date', 'defaultValue', 'showSeconds', 'arrowControl', 'amPmMode', 'step', 'startDate', 'endDate'],
 

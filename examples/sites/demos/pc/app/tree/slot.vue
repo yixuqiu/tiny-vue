@@ -5,7 +5,7 @@
       <tiny-button @click="clearData">清除数据</tiny-button>
     </div>
     <div>
-      <div class="tip">5个插槽示例</div>
+      <div class="tips">提示：5 个插槽示例</div>
       <tiny-tree :data="data" default-expand-all>
         <!-- 前缀插槽 -->
         <template #prefix="{ node }">
@@ -13,7 +13,7 @@
         </template>
         <!-- 默认插槽 -->
         <template #default="node">
-          <div style="color: red">{{ node.data.label }}</div>
+          <div style="margin: 0 8px">{{ node.data.label }}</div>
         </template>
         <!-- 后缀插槽 -->
         <template #suffix="{ node }">
@@ -22,7 +22,7 @@
         <!-- 操作插槽 -->
         <template #operation="{ node }">
           <div style="width: 80px; text-align: right">
-            <tiny-link :underline="true" title="一些功能操作" type="primary"> 新增 </tiny-link> &nbsp;
+            <tiny-link :underline="true" title="一些功能操作"> 新增 </tiny-link> &nbsp;
             <tiny-link :underline="true" title="一些功能操作" type="danger"> 删除 </tiny-link>
           </div>
         </template>
@@ -33,23 +33,22 @@
       </tiny-tree>
     </div>
     <div>
-      <div class="tip">render-content + empty-text 示例</div>
+      <div class="tips">提示：render-content + empty-text 示例</div>
       <tiny-tree :data="data" empty-text="组件无数据" :render-content="renderContent" default-expand-all> </tiny-tree>
     </div>
   </div>
 </template>
 
 <script lang="jsx">
-import { Tree, Link, Button } from '@opentiny/vue'
+import { TinyTree, TinyLink, TinyButton } from '@opentiny/vue'
 import { iconPlusSquare } from '@opentiny/vue-icon'
 
 const TinyIconPlusSquare = iconPlusSquare()
 export default {
   components: {
-    TinyTree: Tree,
-    TinyLink: Link,
-    TinyButton: Button,
-    TinyIconPlusSquare: iconPlusSquare()
+    TinyTree,
+    TinyLink,
+    TinyButton
   },
   data() {
     return {
@@ -62,7 +61,10 @@ export default {
         {
           id: '1',
           label: '数据 1',
-          children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+            { id: '1-2', label: '数据 1-2' }
+          ]
         },
         {
           id: '2',
@@ -85,7 +87,7 @@ export default {
     renderContent(h, { node, data }) {
       return (
         <span>
-          {node.label} <TinyIconPlusSquare fill="red" />
+          {node.label} <TinyIconPlusSquare fill="#666" />
         </span>
       )
     }
@@ -103,8 +105,8 @@ export default {
 .slot-demo > div {
   margin-bottom: 8px;
 }
-.tip {
-  font-weight: bold;
-  margin-bottom: 8px;
+.tips {
+  color: #888;
+  margin: 12px 20px;
 }
 </style>

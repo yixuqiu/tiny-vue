@@ -10,7 +10,7 @@
  *
  */
 
-import { xss } from '../common'
+import { xss } from '@opentiny/utils'
 
 export const getUserHref =
   ({ api, props }) =>
@@ -46,7 +46,8 @@ export const getUserTitle = (item) => {
 
 export const doUserAction =
   ({ api, props, state, eSpaceCtrl }) =>
-  (item) => {
+  (item, ev: MouseEvent) => {
+    ev?.preventDefault()
     state.dataItem = item
 
     const type = item.type ? String(item.type).toLocaleLowerCase() : ''

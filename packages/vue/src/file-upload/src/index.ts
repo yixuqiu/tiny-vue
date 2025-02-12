@@ -10,7 +10,7 @@
  *
  */
 import { $props, $prefix, $setup, defineComponent } from '@opentiny/vue-common'
-import template from 'virtual-template?pc|mobile|mobile-first'
+import template from 'virtual-template?pc|mobile-first'
 
 export const $constants = {
   FILE_UPLOAD_INNER_TEMPLATE: 'file-upload-inner-template',
@@ -22,6 +22,7 @@ export const $constants = {
   COMMA: 'ui.base.comma',
   FILE_NOT_LESS_THAN: 'ui.fileUpload.fileNotLessThan',
   FILE_NOT_MORE_THAN: 'ui.fileUpload.fileNotMoreThan',
+  FILE_SIZE_RANGE: 'ui.fileUpload.fileSizeRange',
   NUMBER_LIMIT: 'ui.fileUpload.numberLimit',
   FILE_STATUS: {
     READY: 'ready',
@@ -287,6 +288,10 @@ export const fileUploadProps = {
       watermark: ''
     })
   },
+  promptTip: {
+    type: Boolean,
+    default: false
+  },
   isHidden: {
     type: Boolean,
     default: false
@@ -296,7 +301,8 @@ export const fileUploadProps = {
     default: false
   },
   reUploadable: Boolean,
-  reUploadTip: Function
+  reUploadTip: Function,
+  imageBgColor: String // mobile-first新增
 }
 
 export default defineComponent({

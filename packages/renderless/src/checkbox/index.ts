@@ -11,7 +11,7 @@
  */
 
 import type { ICheckboxRenderlessParams, ICheckboxState, ICheckboxChangeEvent, ICheckboxProps } from '@/types'
-import { isNull } from '../common/type'
+import { isNull } from '@opentiny/utils'
 
 export const addToStore =
   ({ state, props }: Pick<ICheckboxRenderlessParams, 'state' | 'props'>) =>
@@ -193,12 +193,14 @@ export const computedIsGroupDisplayOnly =
   (): boolean =>
     state.isGroup && (state.checkboxGroup.displayOnly || state.formDisplayOnly)
 
+// 多端模板下，计算displayLabel的值。  pc模板没有用到
 export const computedDisplayLabel =
   ({ state, props, t }: Pick<ICheckboxRenderlessParams, 'state' | 'props' | 't'>) =>
   (): string => {
     state.showLabel = true
     if (props.trueLabel !== undefined && props.falseLabel !== undefined) {
-      return props.modelValue ? String(props.trueLabel) : String(props.falseLabel)
+      // 当需要显示 trueLabel 或 falseLabel 时， 根据示例推测， modelValue应该是其中一个值，而不能是一个boolean值
+      return props.modelValue
     } else {
       return props.modelValue ? t('yes') : t('no')
     }
@@ -218,26 +220,3 @@ export const computedShowText =
       return props.label
     }
   }
-
-export const handleLabelMouseenter =
-  ({ state, vm }: Pick<ICheckboxRenderlessParams, 'state' | 'vm'>) =>
-  (e) => {
-    const label = e.target
-
-    if (label && label.scrollWidth > label.offsetWidth) {
-      const tooltip = vm.$refs.tooltip
-
-      tooltip.state.referenceElm = label
-      tooltip.state.popperElm && (tooltip.state.popperElm.style.display = 'none')
-      tooltip.doDestroy()
-
-      state.tooltipVisible = true
-      state.displayedValue = label.textContent
-
-      setTimeout(tooltip.updatePopper, 20)
-    }
-  }
-
-export const handleMouseleave = (state) => () => {
-  state.tooltipVisible = false
-}

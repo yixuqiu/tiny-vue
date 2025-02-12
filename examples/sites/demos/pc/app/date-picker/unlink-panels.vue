@@ -1,11 +1,14 @@
 <template>
   <div>
     <p>默认启用面板联动：</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" type="daterange"></tiny-date-picker>
     </div>
-  
+    <br />
+
     <p>关闭面板联动：</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" type="daterange" unlink-panels></tiny-date-picker>
     </div>
@@ -13,11 +16,11 @@
 </template>
 
 <script>
-import { DatePicker } from '@opentiny/vue'
+import { TinyDatePicker } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyDatePicker: DatePicker
+    TinyDatePicker
   },
   data() {
     return {
@@ -29,6 +32,6 @@ export default {
 
 <style scoped lang="less">
 .demo-date-picker-wrap {
-  width: 280px;
+  width: 360px;
 }
 </style>

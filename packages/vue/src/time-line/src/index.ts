@@ -11,7 +11,7 @@
  */
 import { $prefix, $props, $setup, defineComponent } from '@opentiny/vue-common'
 import type { PropType } from '@opentiny/vue-common'
-import template from 'virtual-template?pc|mobile|mobile-first'
+import template from 'virtual-template?pc|mobile-first'
 
 export const $constants = {
   PROCESS_DONE_CLS: 'process-done',
@@ -67,7 +67,10 @@ export const timelineProps = {
     type: Number,
     default: 1
   },
-  data: Array,
+  data: {
+    type: Array,
+    default: () => []
+  },
   space: {
     type: [String, Number],
     default: ''

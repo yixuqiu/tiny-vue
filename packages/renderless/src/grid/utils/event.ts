@@ -23,36 +23,42 @@
  *
  */
 
-import browser from '../../common/browser'
+import { browserInfo } from '@opentiny/utils'
 import { remove } from '../static'
-import { on } from '../../common/deps/dom'
+import { on } from '@opentiny/utils'
 
 // 监听全局事件
-const wheelName = browser.isDoc && /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel'
+const wheelName = browserInfo.isDoc && /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel'
 const eventStore = []
 
-const GlobalEvent = {
-  on(comp, type, cb) {
-    if (cb) {
-      eventStore.push({ comp, type, cb })
-    }
-  },
-  off(comp, type) {
-    remove(eventStore, (item) => item.comp === comp && item.type === type)
-  },
-  trigger(event) {
-    eventStore.forEach(({ comp, type, cb }) => {
-      if (type === event.type || (type === 'mousewheel' && event.type === wheelName)) {
-        cb.call(comp, event)
-      }
-    })
+const invoke = ({ comp, type, cb }, event) => {
+  if (type === event.type || (type === 'mousewheel' && event.type === wheelName)) {
+    cb.call(comp, event)
   }
 }
 
-if (browser.isDoc) {
+const GlobalEvent = {
+  on(comp, type, cb, capture = false) {
+    if (cb) {
+      eventStore.push({ comp, type, cb, capture })
+    }
+  },
+  off(comp, type, capture = false) {
+    remove(eventStore, (item) => item.comp === comp && item.type === type && item.capture === capture)
+  },
+  trigger(event) {
+    eventStore.filter((item) => !item.capture).forEach((item) => invoke(item, event))
+  },
+  capture(event) {
+    eventStore.filter((item) => item.capture).forEach((item) => invoke(item, event))
+  }
+}
+
+if (browserInfo.isDoc) {
   on(document, 'keydown', GlobalEvent.trigger)
   on(document, 'contextmenu', GlobalEvent.trigger)
   on(window, 'mousedown', GlobalEvent.trigger)
+  on(window, 'mousedown', GlobalEvent.capture, true)
   on(window, 'blur', GlobalEvent.trigger)
   on(window, 'resize', GlobalEvent.trigger)
   on(window, wheelName, GlobalEvent.trigger)

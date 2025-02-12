@@ -4,7 +4,7 @@
     :class="
       m(
         'inline-flex sm:items-center text-sm leading-5 cursor-pointer',
-        state.size === 'medium' ? 'sm:text-sm' : 'sm:text-xs',
+        state.size !== 'mini' ? 'sm:text-sm' : 'sm:text-xs',
         { 'sm:py-2': state.vertical },
         state.isDisplayOnly || state.isGroupDisplayOnly
           ? state.isChecked
@@ -79,7 +79,7 @@
         :true-value="trueLabel"
         :false-value="falseLabel"
         v-model="state.model"
-        @change="handleChange"
+        @change.stop="handleChange"
         @focus="state.focus = true"
         @blur="state.focus = false"
         @click.stop
@@ -93,7 +93,7 @@
         :value="label"
         :name="name"
         v-model="state.model"
-        @change="handleChange"
+        @change.stop="handleChange"
         @focus="state.focus = true"
         @blur="state.focus = false"
         @click.stop
@@ -103,8 +103,8 @@
       ref="label"
       :class="
         m(
-          'py-0 pl-0 sm:pl-2 mr-5 flex-auto leading-7 sm:leading-none',
-          state.isDisabled ? 'cursor-not-allowed text-color-text-disabled' : 'text-color-text-primary',
+          'py-0 pl-0 sm:pl-2 mr-5 flex-1 leading-7 sm:leading-none',
+          state.isDisabled ? 'cursor-not-allowed text-color-text-secondary' : 'text-color-text-primary',
           state.isDisplayOnly || state.isGroupDisplayOnly ? 'p-0 sm:p-0 m-0 text-color-text-primary cursor-default' : ''
         )
       "

@@ -5,14 +5,21 @@
       `tiny-card--${state.size}`,
       `tiny-card--${state.status}`,
       state.autoWidth ? '' : `tiny-card--${state.size}-width`,
-      state.itemChecked ? 'tiny-card--item-checked' : '',
+      state.itemChecked
+        ? state.checkMode === 'badge'
+          ? 'tiny-card--item-checkbox-checked'
+          : 'tiny-card--item-checked'
+        : '',
       state.disabled ? 'tiny-card--disabled' : '',
       state.customClass
     ]"
-    @click="$emit('click', $event)"
+    @click="cardClick($event)"
   >
     <div class="tiny-card__body" :style="{ 'display': state.type === 'text' ? 'flex' : 'block' }">
-      <div class="tiny-card--checkbox" v-if="state.checkType === 'checkbox' && state.type === 'text'">
+      <div
+        class="tiny-card--checkbox"
+        v-if="state.checkType === 'checkbox' && state.type === 'text' && state.checkMode === 'normal'"
+      >
         <tiny-checkbox
           v-model="state.model"
           :label="label"
@@ -21,7 +28,10 @@
           @change="handleChange"
         ></tiny-checkbox>
       </div>
-      <div class="tiny-card--radio" v-if="state.checkType === 'radio' && state.type === 'text'">
+      <div
+        class="tiny-card--radio"
+        v-if="state.checkType === 'radio' && state.type === 'text' && state.checkMode === 'normal'"
+      >
         <tiny-radio v-model="state.model" :label="label" :disabled="state.disabled" @change="handleChange">
           <!-- 为什么空一个span -->
           <span></span>
@@ -137,7 +147,6 @@ import DropdownMenu from '@opentiny/vue-dropdown-menu'
 import DropdownItem from '@opentiny/vue-dropdown-item'
 import Checkbox from '@opentiny/vue-checkbox'
 import Radio from '@opentiny/vue-radio'
-import { IconEllipsis } from '@opentiny/vue-icon'
 import '@opentiny/vue-theme/card/index.less'
 
 export default defineComponent({
@@ -148,8 +157,7 @@ export default defineComponent({
     TinyDropdownMenu: DropdownMenu,
     TinyDropdownItem: DropdownItem,
     TinyCheckbox: Checkbox,
-    TinyRadio: Radio,
-    IconEllipsis: IconEllipsis()
+    TinyRadio: Radio
   },
   props: [
     ...props,
@@ -167,7 +175,8 @@ export default defineComponent({
     'status',
     'checkType',
     'type',
-    'disabled'
+    'disabled',
+    'checkMode'
   ],
   setup(props, context) {
     return setup({

@@ -1,4 +1,4 @@
-import { isNull } from '../common/type'
+import { isNull } from '@opentiny/utils'
 
 export const handelIconClick =
   ({ emit }) =>
@@ -105,4 +105,21 @@ export const getItemChecked =
     } else {
       return state.model === props.label
     }
+  }
+
+export const cardClick =
+  ({ emit, state, props }) =>
+  (event) => {
+    if (props.checkMode !== 'normal' && !state.disabled) {
+      if (state.checkType === 'checkbox') {
+        if (state.model.includes(props.label)) {
+          state.model = state.model.filter((label) => label !== props.label)
+        } else {
+          state.model.push(props.label)
+        }
+      } else {
+        state.model = props.label
+      }
+    }
+    emit('click', event)
   }

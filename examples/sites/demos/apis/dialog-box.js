@@ -65,7 +65,10 @@ export default {
           name: 'drag-outside-window',
           type: 'boolean',
           defaultValue: 'false',
-          desc: { 'zh-CN': '可将弹窗拖出窗口', 'en-US': 'Pop ups can be dragged out of the window' },
+          desc: {
+            'zh-CN': '可将弹窗拖出窗口',
+            'en-US': 'Pop ups can be dragged out of the window'
+          },
           mode: ['pc'],
           pcDemo: 'draggable'
         },
@@ -133,7 +136,7 @@ export default {
             'en-US': 'Achieve the maximum height of the window'
           },
           mode: ['pc'],
-          pcDemo: 'form-in-dialog'
+          pcDemo: 'dialog-width'
         },
         {
           name: 'modal',
@@ -161,10 +164,10 @@ export default {
         {
           name: 'resize',
           type: 'boolean',
-          defaultValue: 'true',
+          defaultValue: 'false',
           desc: {
-            'zh-CN': '实现窗口最大化',
-            'en-US': 'Maximize windows'
+            'zh-CN': '弹窗是否能切换全屏',
+            'en-US': 'Whether the pop-up window can be switched to full screen'
           },
           mode: ['pc'],
           pcDemo: 'form-in-dialog'
@@ -216,7 +219,7 @@ export default {
         {
           name: 'top',
           type: 'string',
-          defaultValue: `'15vh'`,
+          defaultValue: "'15vh'",
           desc: {
             'zh-CN': '设置弹出框距离窗口顶部的高度',
             'en-US': 'Set the height of the popup from the top of the window'
@@ -227,7 +230,7 @@ export default {
         {
           name: 'visible',
           type: 'boolean',
-          defaultValue: 'true',
+          defaultValue: 'false',
           desc: {
             'zh-CN': '控制弹出框显示与关闭',
             'en-US': 'Control pop-up display and closing'
@@ -238,13 +241,54 @@ export default {
         {
           name: 'width',
           type: 'string',
-          defaultValue: `'500px'`,
+          defaultValue: "'500px'",
           desc: {
             'zh-CN': '弹出框的宽度',
             'en-US': 'Wideness of the dialog box that is displayed'
           },
           mode: ['pc'],
           pcDemo: 'dialog-width'
+        },
+        {
+          name: 'custom-style',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '自定义实现双层抽屉',
+            'en-US': 'Custom Styles'
+          },
+          meta: {
+            stable: '3.21.0'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'double-dialog-height',
+          mfDemo: 'double-dialog-height'
+        },
+        {
+          name: 'no-animation',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '是否开启动画',
+            'en-US': 'Indicates whether to enable animation'
+          },
+          meta: {
+            stable: '3.21.0'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'double-dialog-height',
+          mfDemo: 'double-dialog-height'
+        },
+        {
+          name: 'dialog-transition',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '启动弹出动效由小变大',
+            'en-US': 'Startup pop-up effect from small to large'
+          },
+          mode: ['pc'],
+          pcDemo: 'transition-effect'
         }
       ],
       events: [
@@ -335,6 +379,18 @@ export default {
           },
           mode: ['pc'],
           pcDemo: 'open-close-events'
+        },
+        {
+          name: 'resize',
+          typeAnchorName: 'IResizeEvent',
+          type: '(ev: IResizeEvent) => void',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '弹窗大小变化时的事件，比如切换全屏状态时',
+            'en-US': 'Event when the pop-up window size changes, for example, when the full-screen mode is switched.'
+          },
+          mode: ['pc'],
+          pcDemo: 'fullscreen'
         }
       ],
       methods: [],
@@ -343,7 +399,7 @@ export default {
           name: 'default',
           defaultValue: '',
           desc: {
-            'zh-CN': 'Dialog 的内容',
+            'zh-CN': 'Dialog 的内容插槽',
             'en-US': 'Dialog content'
           },
           mode: ['pc'],
@@ -353,7 +409,7 @@ export default {
           name: 'footer',
           defaultValue: '',
           desc: {
-            'zh-CN': 'Dialog 按钮操作区的内容',
+            'zh-CN': 'Dialog 按钮操作区的内容插槽',
             'en-US': 'Dialog button operation area content'
           },
           mode: ['pc'],
@@ -363,13 +419,27 @@ export default {
           name: 'title',
           defaultValue: '',
           desc: {
-            'zh-CN': 'Dialog 标题区的内容',
+            'zh-CN': 'Dialog 标题区的内容插槽',
             'en-US': 'Dialog content in the title area'
           },
           mode: ['pc'],
           pcDemo: 'custom-dialog-title'
         }
       ]
+    }
+  ],
+  types: [
+    {
+      name: 'IResizeEvent',
+      type: 'interface',
+      code: `
+interface IResizeEvent {
+  // 当前的全屏状态
+  fullscreen: boolean
+  // 弹窗的元素
+  dialog: HTMLElement
+}
+      `
     }
   ]
 }

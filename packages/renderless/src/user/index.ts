@@ -10,11 +10,27 @@
  *
  */
 
-import debounce from '../common/deps/debounce'
-import { toDateStr } from '../common/date'
-import { toJsonStr } from '../common/object'
-import { toJson } from '../common/string'
-import { log } from '../common/xss'
+import { debounce } from '@opentiny/utils'
+import { toDateStr } from '@opentiny/utils'
+import { toJsonStr } from '@opentiny/utils'
+import { toJson } from '@opentiny/utils'
+import { logger } from '@opentiny/utils'
+
+const toLowerCase = (val) => {
+  return typeof val === 'string' ? val.toLowerCase() : val
+}
+
+const getUserById = (obj, id) => {
+  return obj && obj[toLowerCase(id)]
+}
+
+const getLowerCaseObj = (obj) => {
+  const newObj = {}
+  Object.keys(obj).forEach((key) => {
+    newObj[toLowerCase(key)] = obj[key]
+  })
+  return newObj
+}
 
 const request = {
   timmer: null,
@@ -69,8 +85,8 @@ const request = {
 
     return args
   },
+
   setCache(data, valueField) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const me = this
 
     if (valueField && !this.group[valueField]) {
@@ -80,7 +96,7 @@ const request = {
     data.forEach((item) => {
       for (let key in this.group) {
         if (!me.cache[key]) me.cache[key] = {}
-        me.cache[key][item[key]] = item
+        me.cache[key][toLowerCase(item[key])] = item
       }
     })
   },
@@ -99,7 +115,6 @@ const request = {
       })
   },
   batchRequest(api) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const me = this
     const reqParamsSeq = me.getParams()
     let reqLen = reqParamsSeq.length
@@ -119,12 +134,12 @@ const request = {
 
             cb(result)
             queryIds.forEach((id) => {
-              if (!this.cache[valueField] || !this.cache[valueField][id]) {
+              if (!getUserById(this.cache[valueField], id)) {
                 errors.push(id)
               }
             })
           })
-          errors.length && log.logger.warn(`user [${errors.join(',')}] not found`)
+          errors.length && logger.warn(`user [${errors.join(',')}] not found`)
           this.clearRequest()
         }
       }
@@ -141,7 +156,7 @@ const request = {
             const { queryIds, valueField } = param
 
             queryIds.forEach((id) => {
-              const user = me.cache[valueField] && me.cache[valueField][id]
+              const user = getUserById(me.cache[valueField], id)
               user && !reqItem.result.includes(user) && reqItem.result.push(user)
             })
 
@@ -370,11 +385,13 @@ export const syncCacheIds =
     const { cacheFields, cacheKey } = props
     const { valueField } = state
     const cacheUsers = toJson(window.localStorage.getItem(cacheKey)) || {}
+    const caseCacheUsers = getLowerCaseObj(cacheUsers)
+
     ids.forEach((id) => {
       // 如果存在cache 但是cache中不存在自定义cacheFields的字段需要优化 TODO
-      if (cacheUsers[id]) {
-        const cacheUser = cacheUsers[id]
-
+      const caseId = toLowerCase(id)
+      const cacheUser = caseCacheUsers[caseId]
+      if (cacheUser) {
         const textField =
           state.textField === 'userCN' || state.textField === 'userId' || state.textField === 'dept'
             ? ''
@@ -399,7 +416,7 @@ export const syncCacheIds =
 
         cacheData.push(
           Object.assign(user, {
-            [valueField]: cacheUsers[id].p || cacheUsers[id].i
+            [valueField]: cacheUser.p || cacheUser.i
           })
         )
       } else {
@@ -645,12 +662,17 @@ export const filter =
     if (props.multiple && props.hideSelected) {
       const selectedUsers = state.user.map((value) => (typeof value === 'string' ? value.toLocaleLowerCase() : value))
 
-      return state.options.filter((user) => {
-        return !~selectedUsers.indexOf(
+      return state.options.map((user) => {
+        const _show = !~selectedUsers.indexOf(
           typeof user[state.valueField] === 'string'
             ? user[state.valueField].toLocaleLowerCase()
-            : user[state.textField]
+            : user[state.valueField]
         )
+
+        return {
+          ...user,
+          _show
+        }
       })
     }
 

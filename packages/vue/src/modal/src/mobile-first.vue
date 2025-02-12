@@ -132,8 +132,8 @@ export default defineComponent({
     } = this
     let { slots: propSlots = {} } = $props
     let { zoomLocat, visible, contentVisible, modalTop, isMsg } = state
-    let defaultSlot = slots.default || propSlots.default
-    let footerSlot = slots.footer || propSlots.footer
+    let defaultSlot = slots?.default || propSlots.default
+    let footerSlot = slots?.footer || propSlots.footer
     let footerSlotParams = {
       $modal: this,
       beforeClose: this.beforeClose,
@@ -412,7 +412,7 @@ export default defineComponent({
                     ? h(
                         'div',
                         {
-                          class: 'flex-auto flex mx-6 mt-4 mb-5 sm:my-6 leading-5 overflow-auto'
+                          class: 'flex-auto flex mx-6 mt-4 mb-5 sm:my-6 leading-5 overflow-auto break-normal'
                         },
                         [
                           status ? h('div', { class: 'hidden sm:block mr-8' }) : null,

@@ -11,8 +11,9 @@
  *
  */
 
-import { modifyTime } from '../common/deps/date-util'
-import { DATEPICKER } from '../common'
+import { modifyTime } from '@opentiny/utils'
+import { DATEPICKER } from '@opentiny/utils'
+import { isServer } from '@opentiny/utils'
 
 export const getArrowHourList = (state) => () => {
   const hours = state.hours
@@ -178,8 +179,18 @@ export const selectDateScroll =
   }
 
 export const adjustSpinners =
-  ({ api, state }) =>
-  () => {
+  ({ api, state, vm }) =>
+  (type) => {
+    if (type) {
+      const year = vm.date.getFullYear()
+      const month = vm.date.getUTCMonth() + 1
+      const day = vm.date.getDate()
+      if (type === 'min' && vm.endDate instanceof Date) {
+        state.selectableRange = [[new Date(`${year}-${month}-${day} 00:00:00`), vm.endDate]]
+      } else if (type === 'max' && vm.startDate instanceof Date) {
+        state.selectableRange = [[vm.startDate, new Date(`${year}-${month}-${day} 23:59:59`)]]
+      }
+    }
     api.adjustSpinner('hours', state.hours)
     api.adjustSpinner('minutes', state.minutes)
     api.adjustSpinner('seconds', state.seconds)
@@ -194,7 +205,7 @@ export const adjustCurrentSpinner =
 export const adjustSpinner =
   ({ api, props, vm, state }) =>
   (type, value) => {
-    if (props.arrowControl) {
+    if (props.arrowControl || isServer) {
       return
     }
 
@@ -265,9 +276,10 @@ export const amPm = (props) => (hour) => {
   return content
 }
 
+// 步长等于offsetHeight + margin
 export const typeItemHeight =
-  ({ vm }) =>
+  ({ vm, designConfig }) =>
   (type) =>
-    vm.$refs[type].$el.querySelector(DATEPICKER.Qurtyli).offsetHeight
+    vm.$refs[type].$el.querySelector(DATEPICKER.Qurtyli).offsetHeight + (designConfig?.itemMarginSpace ?? 12)
 
 export const scrollBarHeight = (vm) => (type) => vm.$refs[type].$el.offsetHeight

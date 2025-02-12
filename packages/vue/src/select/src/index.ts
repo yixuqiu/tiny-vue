@@ -13,7 +13,6 @@
 import { $props, $prefix, $setup, defineComponent } from '@opentiny/vue-common'
 import { t } from '@opentiny/vue-locale'
 import template from 'virtual-template?pc|mobile-first'
-import { IconChevronDown } from '@opentiny/vue-icon'
 
 const $constants = {
   CLASS: {
@@ -246,11 +245,7 @@ export default defineComponent({
     },
     dropdownIcon: {
       type: [Object, String],
-      default: () => {
-        const defaultDropdownIcon = IconChevronDown()
-        defaultDropdownIcon.isDefault = true
-        return defaultDropdownIcon
-      }
+      default: ''
     },
     disabledTooltipContent: String,
     hoverExpand: {
@@ -299,9 +294,28 @@ export default defineComponent({
       type: String,
       default: () => t('ui.select.add')
     },
+    initLabel: {
+      type: String,
+      default: ''
+    },
     blank: {
       type: Boolean,
       default: false
+    },
+    tooltipConfig: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    showEmptyValue: Boolean,
+    dropdownHeight: {
+      type: String,
+      default: 'initial'
+    },
+    stopPropagation: {
+      type: Boolean,
+      default: undefined
     },
     // 以下为 tiny 新增
     searchable: {
@@ -325,6 +339,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    showLimitText: {
+      type: Boolean,
+      default: false
+    },
     showProportion: {
       type: Boolean,
       default: false
@@ -336,6 +354,14 @@ export default defineComponent({
     maxVisibleRows: {
       type: Number,
       default: $constants.MAX_VISIBLE_ROWS
+    },
+    allText: {
+      type: String,
+      default: ''
+    },
+    showAllTextTag: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, context) {

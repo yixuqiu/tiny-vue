@@ -11,7 +11,7 @@
  */
 
 import type { IRadioGroupRenderlessParams } from '@/types'
-import { KEY_CODE } from '../common'
+import { KEY_CODE } from '@opentiny/utils'
 
 export const handleKeydown =
   (parent: IRadioGroupRenderlessParams['parent']) =>
@@ -26,10 +26,10 @@ export const handleKeydown =
     switch (event.keyCode) {
       case KEY_CODE.ArrowDown:
       case KEY_CODE.ArrowRight:
-        if (index === length - 1) {
-          event.stopPropagation()
-          event.preventDefault()
+        event.stopPropagation()
+        event.preventDefault()
 
+        if (index === length - 1) {
           roleRadiosNodes[0].click()
           roleRadiosNodes[0].focus()
         } else {

@@ -70,7 +70,7 @@ import {
   formatInputValue
 } from './index'
 import { dateMobileToggle, timeMobileToggle, dateToTimeArray, timeArrayToDate, timeMobileConfirm } from './mb'
-import { DATEPICKER } from '../common'
+import { DATEPICKER } from '@opentiny/utils'
 import type {
   IPickerProps,
   IPickerApi,
@@ -152,7 +152,8 @@ const initState = ({ api, reactive, vm, computed, props, utils, parent, breakpoi
     timeMobileOption: {
       visible: false,
       type: props.type,
-      value: [0, 0, 0]
+      value: [0, 0, 0],
+      defaultValue: [0, 0, 0]
     },
     isDateMobileComponent: computed(() =>
       [
@@ -285,6 +286,8 @@ const initWatch = ({ api, state, props, watch, markRaw }) => {
     (value) => state.picker && (state.picker.state.value = value),
     { immediate: true }
   )
+
+  watch(() => props.type, api.mountPicker)
 
   watch(() => props.isRange, api.watchIsRange)
 

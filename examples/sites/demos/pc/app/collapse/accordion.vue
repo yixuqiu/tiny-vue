@@ -21,25 +21,23 @@
 </template>
 
 <script>
-import { Collapse, CollapseItem, Modal } from '@opentiny/vue'
+import { TinyCollapse, TinyCollapseItem } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyCollapse: Collapse,
-    TinyCollapseItem: CollapseItem
+    TinyCollapse,
+    TinyCollapseItem
   },
   data() {
     return {
       activeName: '1'
     }
-  },
+  }
 }
 </script>
 
 <style scoped lang="less">
-.demo-collapse-wrap {
-  .tiny-collapse-item__content > * {
-    line-height: 1.8;
-  }
+.demo-collapse-wrap ::v-deep .tiny-collapse-item__content > * {
+  line-height: 1.6;
 }
 </style>

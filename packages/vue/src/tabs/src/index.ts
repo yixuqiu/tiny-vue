@@ -10,7 +10,7 @@
  *
  */
 import { $props, $prefix, $setup, defineComponent } from '@opentiny/vue-common'
-import template from 'virtual-template?pc|mobile|mobile-first'
+import template from 'virtual-template?pc|mobile-first'
 
 export const $constants = {
   TAB_ITEM: 'TabItem'
@@ -42,7 +42,7 @@ export const tabsProps = {
   showMoreTabs: Boolean,
   swipeable: {
     type: Boolean,
-    default: true
+    default: false
   },
   popperClass: String,
   popperAppendToBody: {

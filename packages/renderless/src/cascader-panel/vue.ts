@@ -34,9 +34,9 @@ import {
   syncMenuState,
   syncMultiCheckState
 } from './index'
-import { merge } from '../common/object'
+import { merge } from '@opentiny/utils'
 import { isEmpty } from '../cascader'
-import Store from './store.js'
+import Store from './store'
 import type {
   ICascaderPanelApi,
   ICascaderPanelProps,
@@ -122,7 +122,7 @@ const initApi = ({
     syncMenuState: syncMenuState({ api, nextTick, state }),
     syncMultiCheckState: syncMultiCheckState({ api, state }),
     calculateCheckedNodePaths: calculateCheckedNodePaths({ api, state }),
-    lazyLoad: lazyLoad({ api, $parent: parent, state, Store }),
+    lazyLoad: lazyLoad({ api, $parent: parent, state, Store, emit }),
     syncCheckedValue: syncCheckedValue({ api, props, state }),
     focusNode: focusNode(api),
     checkNode: checkNode(api),

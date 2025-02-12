@@ -112,6 +112,21 @@ export default {
           mfDemo: ''
         },
         {
+          name: 'disabled',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '控制轮播箭头禁用状态，设置为 true 则禁用',
+            'en-US': 'Control the disabled state of the carousel arrow, set to true to disable'
+          },
+          meta: {
+            stable: '3.19.0'
+          },
+          mode: ['pc'],
+          pcDemo: 'close-loop',
+          mfDemo: ''
+        },
+        {
           name: 'show-title',
           type: 'boolean',
           defaultValue: 'false',
@@ -145,6 +160,44 @@ export default {
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'card-mode',
+          mfDemo: ''
+        },
+        {
+          name: 'swipeable',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '是否支持触屏轮播',
+            'en-US': 'Support Touchscreen Carousel'
+          },
+          mode: ['mobile-first'],
+          pcDemo: '',
+          mfDemo: ''
+        },
+        {
+          name: 'lite',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN': '是否打开精简模式，不显示切换按钮和指示器',
+            'en-US':
+              'Indicates whether to enable the simplified mode. The switch button and indicator are not displayed.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'swipeable',
+          mfDemo: ''
+        },
+        {
+          name: 'beforeSwipe',
+          type: '(newIndex,oldIndex) => boolean',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '触摸轮播前，通过返回值控制某个图是否可轮播显示',
+            'en-US':
+              'Controls whether a graph can be displayed in rotation based on the return value before the rotation is touched.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'swipeable',
           mfDemo: ''
         }
       ],
@@ -255,7 +308,7 @@ export default {
             'en-US': 'Default slot'
           },
           mode: ['pc'],
-          pcDemo: 'manual-play'
+          pcDemo: 'card-show'
         }
       ]
     }

@@ -39,6 +39,43 @@ export default {
       codeFiles: ['file-list.vue']
     },
     {
+      demoId: 'file-size',
+      name: {
+        'zh-CN': '上传的文件大小限制',
+        'en-US': 'Uploaded file size limit'
+      },
+      desc: {
+        'zh-CN': '<p>通过 <code>file-size</code> 配置上传文件的大小。<p>',
+        'en-US': '<p>Use <code>file-size</code> to configure the size of the uploaded file.</p>'
+      },
+      codeFiles: ['file-size.vue']
+    },
+    {
+      demoId: 'file-size-array',
+      name: {
+        'zh-CN': '上传的文件大小范围',
+        'en-US': 'Uploaded file size range'
+      },
+      desc: {
+        'zh-CN': '<p>通过 <code>file-size</code> 配置为数组类型限制上传文件的大小范围。<p>',
+        'en-US': '<p>Set <code>file-size</code> to an array to limit the size of the file to be uploaded.</p>'
+      },
+      codeFiles: ['file-size-array.vue']
+    },
+    {
+      demoId: 'prompt-tip',
+      name: {
+        'zh-CN': 'tip提示',
+        'en-US': 'tip Hints'
+      },
+      desc: {
+        'zh-CN': '<p>通过 <code>propmtTip</code> 为 `true` 设置提示为tip类型，悬浮图标时显示tip提示。<p>',
+        'en-US':
+          '<p>Set the prompt to the tip type by setting <code>propmtTip</code> to `true`. The tip prompt is displayed when the icon is suspended.</p>'
+      },
+      codeFiles: ['prompt-tip.vue']
+    },
+    {
       demoId: 'show-title',
       name: {
         'zh-CN': '隐藏标题',
@@ -96,7 +133,7 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>文件上传模式，配置 `download-all` 事件，会显示下载全部按钮，点击下载全部按钮会触发 `download-all` 事件<p>',
+          '<p>文件上传模式，配置 `download-all` 事件，会显示下载全部按钮，点击下载全部按钮会触发 `download-all` 事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['download-all.vue']
@@ -109,10 +146,24 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>文件上传模式，配置 `download-file` 事件，已上传的文件会显示下载按钮，点击下载按钮会触发 `download-file` 事件<p>',
+          '<p>文件上传模式，配置 `download-file` 事件，已上传的文件会显示下载按钮，点击下载按钮会触发 `download-file` 事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['download.vue']
+    },
+    {
+      demoId: 'show-download-bar',
+      name: {
+        'zh-CN': '下载进度条',
+        'en-US': 'Download progress bar'
+      },
+      desc: {
+        'zh-CN':
+          '<p>通过给 file 对象设置 `showDownloadBar:true` 可以显示下载进度条，`downloadPercentage` 属性传入下载进度，`downloadStatus` 设置下载状态。<p>',
+        'en-US':
+          '<p>You can set the `showDownloadBar:true` attribute of the file object to display the download progress bar, set the`downloadPercentage` attribute to transfer the download progress, and set the`downloadStatus` to set the download status.</p>'
+      },
+      codeFiles: ['show-download-bar.vue']
     },
     {
       demoId: 'download-picture',
@@ -122,7 +173,7 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>图片上传模式，配置 `download-file` 事件，已上传的文件会显示下载图标，点击下载按钮会触发 `download-file` 事件<p>',
+          '<p>图片上传模式，配置 `download-file` 事件，已上传的文件会显示下载图标，点击下载按钮会触发 `download-file` 事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['download-picture.vue']
@@ -135,7 +186,7 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>文件上传模式，配置 `re-upload` 事件，上传失败的文件会显示重新上传按钮，点击重新上传按钮会触发 `re-upload` 事件<p>',
+          '<p>文件上传模式，配置 `re-upload` 事件，上传失败的文件会显示重新上传按钮，点击重新上传按钮会触发 `re-upload` 事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['re-upload.vue']
@@ -148,7 +199,7 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>图片上传模式，配置 `re-upload` 事件，上传失败的文件会显示重新上传图标，点击重新上传按钮会触发 `re-upload` 事件<p>',
+          '<p>图片上传模式，配置 `re-upload` 事件，上传失败的文件会显示重新上传图标，点击重新上传按钮会触发 `re-upload` 事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['re-upload-picture.vue']
@@ -308,7 +359,7 @@ export default {
         'en-US': 'events'
       },
       desc: {
-        'zh-CN': '<p>可配置 `file-list` 属性展示对应的文件<p>',
+        'zh-CN': '<p>可配置 `file-list` 属性展示对应的文件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['drag-file-list.vue']
@@ -321,7 +372,7 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>`trigger-click` 点击文件上传时触发的事件<br>`preview` 点击预览时触发的事件<br> `download-file` 点击下载时触发的事件<br>`download-all` 点击全部下载时触发的事件<br>`re-upload` 点击重新上传时触发的事件<br>`click-file-list` 点击上传的文件列表时触发的事件<p>',
+          '<p>`trigger-click` 点击文件上传时触发的事件<br>`preview` 点击预览时触发的事件<br> `download-file` 点击下载时触发的事件<br>`download-all` 点击全部下载时触发的事件<br>`re-upload` 点击重新上传时触发的事件<br>`click-file-list` 点击上传的文件列表时触发的事件。<p>',
         'en-US': '<p>button click</p>'
       },
       codeFiles: ['event-trigger-click.vue']

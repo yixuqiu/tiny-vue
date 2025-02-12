@@ -35,13 +35,13 @@
 </template>
 
 <script lang="jsx">
-import { Tree, RadioGroup, Radio } from '@opentiny/vue'
+import { TinyTree, TinyRadioGroup, TinyRadio } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTree: Tree,
-    TinyRadio: Radio,
-    TinyRadioGroup: RadioGroup
+    TinyTree,
+    TinyRadio,
+    TinyRadioGroup
   },
   data() {
     return {
@@ -52,7 +52,10 @@ export default {
         {
           id: '1',
           label: '数据 1',
-          children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+            { id: '1-2', label: '数据 1-2' }
+          ]
         },
         {
           id: '2',
@@ -84,8 +87,5 @@ export default {
   align-items: center;
   margin-top: 16px;
   margin-bottom: 16px;
-}
-.option-row > span {
-  font-size: 18px;
 }
 </style>

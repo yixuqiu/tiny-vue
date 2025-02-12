@@ -1,7 +1,12 @@
 <template>
   <div>
     <div v-if="state.current !== 'default'">
-      <transition :name="state.animationName" @after-enter="afterEnter" @after-leave="afterLeave">
+      <transition
+        :duration="noAnimation ? 0 : undefined"
+        :name="state.animationName"
+        @after-enter="afterEnter"
+        @after-leave="afterLeave"
+      >
         <div
           v-show="visible"
           :class="['fixed inset-0 m-0 flex items-center', dialogClass]"
@@ -26,7 +31,7 @@
             <div
               v-if="showHeader"
               data-tag="tiny-dialog-box__header"
-              class="px-6 py-4 h-12 leading-4 bg-color-bg-1 flex justify-between items-center border-b border-b-color-bg-3"
+              class="px-6 py-4 leading-5.5 bg-color-bg-1 flex justify-between items-center border-b border-b-color-bg-3"
               @mousedown="handleDrag"
             >
               <slot name="title">
@@ -34,6 +39,32 @@
                   title
                 }}</span>
               </slot>
+              <button
+                v-if="resize && !state.isFull"
+                type="button"
+                data-tag="tiny-dialog-box__headerbtn"
+                class="border-none p-0 leading-none cursor-pointer focus:outline-0"
+                aria-label="Resize"
+                @click="toggleFullScreen(true)"
+              >
+                <icon-fullscreen
+                  data-tag="tiny-svg-size tiny-dialog-box__close"
+                  class="fill-color-text-primary text-base hover:fill-color-brand"
+                />
+              </button>
+              <button
+                v-if="resize && state.isFull"
+                type="button"
+                data-tag="tiny-dialog-box__headerbtn"
+                class="border-none p-0 leading-none cursor-pointer focus:outline-0"
+                aria-label="Resize"
+                @click="toggleFullScreen(false)"
+              >
+                <icon-minscreen
+                  data-tag="tiny-svg-size tiny-dialog-box__close"
+                  class="fill-color-text-primary text-base hover:fill-color-brand"
+                />
+              </button>
               <button
                 v-if="showClose"
                 type="button"
@@ -47,41 +78,11 @@
                   class="fill-color-text-primary text-base hover:fill-color-brand"
                 />
               </button>
-              <button
-                v-if="resize && !state.isFull"
-                type="button"
-                data-tag="tiny-dialog-box__headerbtn"
-                class="border-none p-0 leading-none cursor-pointer focus:outline-0"
-                aria-label="Resize"
-                @click="state.isFull = true"
-              >
-                <icon-fullscreen
-                  data-tag="tiny-svg-size tiny-dialog-box__close"
-                  class="fill-color-text-primary text-base hover:fill-color-brand"
-                />
-              </button>
-              <button
-                v-if="resize && state.isFull"
-                type="button"
-                data-tag="tiny-dialog-box__headerbtn"
-                class="border-none p-0 leading-none cursor-pointer focus:outline-0"
-                aria-label="Resize"
-                @click="state.isFull = false"
-              >
-                <icon-minscreen
-                  data-tag="tiny-svg-size tiny-dialog-box__close"
-                  class="fill-color-text-primary text-base hover:fill-color-brand"
-                />
-              </button>
             </div>
             <div
               data-tag="tiny-dialog-box__body"
-              class="text-left pt-0 pr-6 pb-0 pl-6 mb-6 mt-6 text-color-text-primary leading-5 text-sm overflow-auto"
-              :class="[
-                state.isFull ? 'max-h-[calc(100vh-theme(spacing.28))]' : 'max-h-[65vh]',
-                rightSlide ? 'max-h-[none] flex-auto' : ''
-              ]"
-              :style="state.bodyStyle"
+              class="text-left pt-0 pr-6 pb-0 pl-6 mb-3 mt-3 text-color-text-primary leading-5.5 text-sm overflow-auto"
+              :class="[rightSlide || state.isFull ? 'max-h-[none] flex-auto' : 'max-h-[65vh]']"
             >
               <slot></slot>
             </div>
@@ -175,7 +176,9 @@ export default defineComponent({
     'destroyOnClose',
     'dialogClass',
     'beforeClose',
-    'maxHeight'
+    'maxHeight',
+    'customStyle',
+    'noAnimation'
   ],
   model: {
     prop: 'visible',

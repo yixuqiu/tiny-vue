@@ -1,23 +1,23 @@
 <template>
-  <tiny-tabs v-model="activeName" tab-style="card" :with-close="true" @close="close">
-    <tiny-tab-item :key="item.name" v-for="item in Tabs" :title="item.title" :name="item.name">
+  <tiny-tabs v-model="activeName" tab-style="card" :with-close="true" :before-close="beforeClose" @close="close">
+    <tiny-tab-item :key="item.name" v-for="item in tabs" :title="item.title" :name="item.name">
       {{ item.content }}
     </tiny-tab-item>
   </tiny-tabs>
 </template>
 
 <script>
-import { Tabs, TabItem } from '@opentiny/vue'
+import { TinyTabs, TinyTabItem } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTabs: Tabs,
-    TinyTabItem: TabItem
+    TinyTabs,
+    TinyTabItem
   },
   data() {
     return {
       activeName: 'first',
-      Tabs: [
+      tabs: [
         {
           title: '表单组件',
           name: 'first',
@@ -47,13 +47,17 @@ export default {
     }
   },
   methods: {
+    beforeClose(name) {
+      // 只能关闭标签页“其他组件”
+      return name === 'fifth'
+    },
     close(name) {
       this.$message({
         title: 'close 事件',
         message: '关闭 ' + name + ' 页签'
       })
 
-      this.Tabs = this.Tabs.filter((tab) => {
+      this.tabs = this.tabs.filter((tab) => {
         return tab.name !== name
       })
     }

@@ -10,7 +10,12 @@
  *
  -->
 <template>
-  <transition :name="state.animationName" @after-enter="afterEnter" @after-leave="afterLeave">
+  <transition
+    :duration="noAnimation ? 0 : undefined"
+    :name="state.animationName"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+  >
     <div
       v-show="visible"
       :class="['tiny-dialog-box__wrapper', dialogClass]"
@@ -18,60 +23,66 @@
       @mouseup="useMouseEventUp"
       @mousedown="useMouseEventDown"
     >
-      <div
-        ref="dialog"
-        v-if="destroyOnClose ? visible : true"
-        :class="[
-          {
-            'is-fullscreen': state.isFull,
-            'is-center': center,
-            'is-right-slide': rightSlide
-          }
-        ]"
-        :style="state.style"
-        class="tiny-dialog-box"
-        :key="state.key"
-      >
-        <div v-if="showHeader" class="tiny-dialog-box__header" @mousedown="handleDrag">
-          <slot name="title">
-            <span class="tiny-dialog-box__title">{{ title }}</span>
-          </slot>
-          <button
-            v-if="showClose"
-            type="button"
-            class="tiny-dialog-box__headerbtn"
-            aria-label="Close"
-            @click="handleClose('close', $event)"
-            @mousedown.stop
-          >
-            <icon-close class="tiny-svg-size tiny-dialog-box__close" />
-          </button>
-          <button
-            v-if="resize && !state.isFull"
-            type="button"
-            class="tiny-dialog-box__headerbtn"
-            aria-label="Resize"
-            @click="state.isFull = true"
-          >
-            <icon-fullscreen class="tiny-svg-size tiny-dialog-box__close" />
-          </button>
-          <button
-            v-if="resize && state.isFull"
-            type="button"
-            class="tiny-dialog-box__headerbtn"
-            aria-label="Resize"
-            @click="state.isFull = false"
-          >
-            <icon-minscreen class="tiny-svg-size tiny-dialog-box__close" />
-          </button>
+      <transition :name="dialogTransition">
+        <div
+          ref="dialog"
+          v-show="visible"
+          v-if="destroyOnClose ? visible : true"
+          :class="[
+            {
+              'is-fullscreen': state.isFull,
+              'is-center': center,
+              'is-right-slide': rightSlide
+            }
+          ]"
+          :style="state.style"
+          class="tiny-dialog-box"
+          data-tag="tiny-dialog-box"
+          :data-dialog-box-draggable="draggable"
+          :key="state.key"
+        >
+          <div v-if="showHeader" ref="header" class="tiny-dialog-box__header" @mousedown="handleDrag">
+            <slot name="title">
+              <span class="tiny-dialog-box__title">{{ title }}</span>
+            </slot>
+            <div class="tiny-dialog-box__btn-tools">
+              <button
+                v-if="resize && !state.isFull"
+                type="button"
+                class="tiny-dialog-box__headerbtn"
+                aria-label="Resize"
+                @click="toggleFullScreen(true)"
+              >
+                <icon-fullscreen class="tiny-svg-size tiny-dialog-box__resize" />
+              </button>
+              <button
+                v-if="resize && state.isFull"
+                type="button"
+                class="tiny-dialog-box__headerbtn"
+                aria-label="Resize"
+                @click="toggleFullScreen(false)"
+              >
+                <icon-minscreen class="tiny-svg-size tiny-dialog-box__resize" />
+              </button>
+              <button
+                v-if="showClose"
+                type="button"
+                class="tiny-dialog-box__headerbtn"
+                aria-label="Close"
+                @click="handleClose('close', $event)"
+              >
+                <icon-close class="tiny-svg-size tiny-dialog-box__close" />
+              </button>
+            </div>
+          </div>
+          <div class="tiny-dialog-box__body">
+            <slot></slot>
+          </div>
+          <div v-if="slots.footer" ref="footer" class="tiny-dialog-box__footer">
+            <slot name="footer" :before-close="beforeClose"></slot>
+          </div>
         </div>
-        <div class="tiny-dialog-box__body" :style="state.bodyStyle">
-          <slot></slot>
-        </div>
-        <div v-if="slots.footer" class="tiny-dialog-box__footer">
-          <slot name="footer" :before-close="beforeClose"></slot>
-        </div>
-      </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -101,7 +112,9 @@ export default defineComponent({
     'closed',
     'drag-start',
     'drag-move',
-    'drag-end'
+    'drag-end',
+    // tiny 新增
+    'resize'
   ],
   props: [
     ...props,
@@ -127,7 +140,10 @@ export default defineComponent({
     'destroyOnClose',
     'dialogClass',
     'beforeClose',
-    'maxHeight'
+    'maxHeight',
+    'dialogTransition',
+    'customStyle',
+    'noAnimation'
   ],
   model: {
     prop: 'visible',

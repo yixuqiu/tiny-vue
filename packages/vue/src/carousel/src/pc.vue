@@ -21,11 +21,15 @@
         :name="type === 'vertical' ? 'tiny-transition-carousel-arrow-top' : 'tiny-transition-carousel-arrow-left'"
       >
         <button
-          v-if="arrow !== 'never'"
+          v-if="state.hasButtons"
           v-show="(arrow === 'always' || state.hover) && (loop || state.activeIndex > 0)"
           type="button"
-          class="tiny-carousel__arrow"
-          :class="type === 'vertical' ? 'tiny-carousel__arrow-top' : 'tiny-carousel__arrow-left'"
+          :class="[
+            'tiny-carousel__arrow',
+            type === 'vertical' ? 'tiny-carousel__arrow-top' : 'tiny-carousel__arrow-left',
+            disabled && state.activeIndex === 0 ? 'tiny-carousel__arrow-disabled' : ''
+          ]"
+          :disabled="loop && disabled && state.activeIndex === 0"
           @mouseenter="handleButtonEnter('left')"
           @mouseleave="handleButtonLeave"
           @click.stop="throttledArrowClick(state.activeIndex - 1)"
@@ -37,11 +41,15 @@
         :name="type === 'vertical' ? 'tiny-transition-carousel-arrow-bottom' : 'tiny-transition-carousel-arrow-right'"
       >
         <button
-          v-if="arrow !== 'never'"
+          v-if="state.hasButtons"
           v-show="(arrow === 'always' || state.hover) && (loop || state.activeIndex < state.items.length - 1)"
           type="button"
-          class="tiny-carousel__arrow"
-          :class="type === 'vertical' ? 'tiny-carousel__arrow-bottom' : 'tiny-carousel__arrow-right'"
+          :class="[
+            'tiny-carousel__arrow',
+            type === 'vertical' ? 'tiny-carousel__arrow-bottom' : 'tiny-carousel__arrow-right',
+            disabled && state.activeIndex === state.items.length - 1 ? 'tiny-carousel__arrow-disabled' : ''
+          ]"
+          :disabled="loop && disabled && state.activeIndex === state.items.length - 1"
           @mouseenter="handleButtonEnter('right')"
           @mouseleave="handleButtonLeave"
           @click.stop="throttledArrowClick(state.activeIndex + 1)"
@@ -52,7 +60,7 @@
       <slot></slot>
     </div>
     <ul
-      v-if="indicatorPosition !== 'none'"
+      v-if="state.hasIndicators"
       :class="{
         'tiny-carousel__indicators-labels': state.hasLabel,
         'tiny-carousel__indicators-title': showTitle,
@@ -96,7 +104,11 @@ export default defineComponent({
     'arrow',
     'type',
     'showTitle',
-    'loop'
+    'loop',
+    'disabled',
+    'swipeable',
+    'lite',
+    'beforeSwipe'
   ],
   setup(props, context) {
     return setup({ props, context, renderless, api })
