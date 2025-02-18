@@ -33,6 +33,8 @@
     "@opentiny/vue-design-saas": "workspace:~",
     "@opentiny/vue-design-smb": "workspace:~",
     "@opentiny/vue-directive": "workspace:~",
+    "@opentiny/vue-hooks": "workspace:~",
+    "@opentiny/vue-huicharts": "workspace:~",
     "@opentiny/vue-flowchart": "workspace:~",
     "@opentiny/vue-icon": "workspace:~",
     "@opentiny/vue-icon-multicolor": "workspace:~",
