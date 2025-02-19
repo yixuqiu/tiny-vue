@@ -20,9 +20,9 @@
         highlightClass
       )
     "
-    data-tag="tiny-select-dropdown-item"
+    data-tag="tiny-option"
   >
-    <span v-if="state.select.multiple" class="w-4 mr-2">
+    <span v-if="state.selectMultiple" class="w-4 mr-2">
       <component
         :is="`icon-${state.selectCls}`"
         :class="
@@ -36,12 +36,13 @@
     </span>
     <slot>
       <span
+        v-auto-tip="{ placement: 'right' }"
         class="inline-block flex-1 leading-5 overflow-hidden text-ellipsis whitespace-normal sm:whitespace-nowrap"
         >{{ state.currentLabel }}</span
       >
     </slot>
     <span
-      v-if="!state.select.multiple && state.itemSelected && !disabled && !state.groupDisabled"
+      v-if="!state.selectMultiple && state.itemSelected && !disabled && !state.groupDisabled"
       class="inline-block sm:hidden w-4 ml-4 shrink-0"
     >
       <icon-finish custom-class="w-4 h-4 fill-color-brand"> </icon-finish
@@ -52,9 +53,11 @@
 <script>
 import { renderless, api } from '@opentiny/vue-renderless/option/vue'
 import { props, setup, defineComponent } from '@opentiny/vue-common'
+import { AutoTip } from '@opentiny/vue-directive'
 import { iconCheck, iconCheckedSur, iconFinish } from '@opentiny/vue-icon'
 
 export default defineComponent({
+  directives: { AutoTip },
   components: {
     IconCheck: iconCheck(),
     IconCheckedSur: iconCheckedSur(),

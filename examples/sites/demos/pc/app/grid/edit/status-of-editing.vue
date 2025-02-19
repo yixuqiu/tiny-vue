@@ -1,7 +1,16 @@
 <template>
   <div>
     <h4 class="title">开启编辑状态：</h4>
-    <tiny-grid :data="tableData" seq-serial :edit-config="{ trigger: 'click', mode: 'cell', showStatus: true }">
+    <div class="btn-box">
+      <tiny-butotn @click="addRow">新增行</tiny-butotn>
+    </div>
+    <tiny-grid
+      :data="tableData"
+      ref="insertGrid"
+      show-overflow="tooltip"
+      seq-serial
+      :edit-config="{ trigger: 'click', mode: 'cell', showStatus: true, insertChanged: true }"
+    >
       <tiny-grid-column type="index" width="60"></tiny-grid-column>
       <tiny-grid-column field="name" title="名称" :editor="{ component: 'input', autoselect: true }"></tiny-grid-column>
       <tiny-grid-column field="area" title="区域" :editor="{ component: 'select', options }"></tiny-grid-column>
@@ -38,12 +47,20 @@
 </template>
 
 <script>
-import { Grid, GridColumn } from '@opentiny/vue'
+import { TinyGrid, TinyGridColumn, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid,
-    TinyGridColumn: GridColumn
+    TinyButotn: TinyButton,
+    TinyGrid,
+    TinyGridColumn
+  },
+  methods: {
+    addRow() {
+      this.$refs.insertGrid.insert({}).then((res) => {
+        this.$refs.insertGrid.setActiveRow(res.row)
+      })
+    }
   },
   data() {
     return {
@@ -55,24 +72,24 @@ export default {
       tableData: [
         {
           id: '1',
-          name: 'GFD科技YX公司',
+          name: 'GFD 科技 YX 公司',
           area: '华东区',
           address: '福州',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。'
+          introduction: '公司技术和研发实力雄厚，是国家 863 项目的参与者，并被政府认定为“高新技术企业”。'
         },
         {
           id: '2',
-          name: 'WWWW科技YX公司',
+          name: 'WWWW 科技 YX 公司',
           area: '华南区',
           address: '深圳福田区',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。'
+          introduction: '公司技术和研发实力雄厚，是国家 863 项目的参与者，并被政府认定为“高新技术企业”。'
         },
         {
           id: '3',
-          name: 'RFV有限责任公司',
+          name: 'RFV 有限责任公司',
           area: '华南区',
           address: '中山市',
-          introduction: '公司技术和研发实力雄厚，是国家863项目的参与者，并被政府认定为“高新技术企业”。'
+          introduction: '公司技术和研发实力雄厚，是国家 863 项目的参与者，并被政府认定为“高新技术企业”。'
         }
       ]
     }
@@ -81,6 +98,9 @@ export default {
 </script>
 
 <style scoped>
+.btn-box {
+  margin-bottom: 10px;
+}
 .title {
   font-size: 16px;
   padding: 15px;

@@ -20,11 +20,11 @@ import {
   iconSuccess,
   iconError,
   iconInfoSolid,
-  iconLoading,
+  iconLoadingShadow,
   iconWarning,
   iconClose,
-  iconFullscreenLeft,
-  iconMinscreenLeft
+  iconFullscreenRight,
+  iconMinscreenRight
 } from '@opentiny/vue-icon'
 import '@opentiny/vue-theme/modal/index.less'
 import type { IModalApi } from '@opentiny/vue-renderless/types/modal.type'
@@ -61,7 +61,6 @@ export default defineComponent({
     'vSize',
     'width',
     'zIndex',
-    'showClose',
     'messageClosable',
     'confirmContent',
     'cancelContent',
@@ -69,7 +68,8 @@ export default defineComponent({
     'cancelBtnProps',
     'footerDragable',
     'tiny_theme',
-    'slots'
+    'slots',
+    'showClose'
   ],
   emits: [
     'update:modelValue',
@@ -89,7 +89,19 @@ export default defineComponent({
     return setup({ props, context, renderless, api }) as unknown as IModalApi
   },
   render() {
-    let { $props = {}, state, scopedSlots, vSize, type, resize, animat, status, showHeader, messageClosable } = this
+    let {
+      $props = {},
+      state,
+      scopedSlots,
+      vSize,
+      type,
+      resize,
+      showClose,
+      animat,
+      status,
+      showHeader,
+      messageClosable
+    } = this
     let { showFooter, title, message, lockScroll, lockView, mask, _constants: constants, t } = this
     let { confirmContent, cancelContent, confirmBtnProps, cancelBtnProps } = this
     let { zoomLocat, visible, contentVisible, modalTop, isMsg } = state
@@ -114,7 +126,7 @@ export default defineComponent({
       SUCCESS: iconSuccess(),
       WARNING: iconWarning(),
       ERROR: iconError(),
-      LOADING: iconLoading()
+      LOADING: iconLoadingShadow()
     }
 
     return h(
@@ -166,11 +178,11 @@ export default defineComponent({
                     }
                   },
                   [
-                    status && state.theme === 'saas'
+                    status
                       ? h(
                           'div',
                           {
-                            class: 'tiny-modal__status-wrapper'
+                            class: ['tiny-modal__status-wrapper']
                           },
                           [
                             typeof status === 'string'
@@ -183,38 +195,31 @@ export default defineComponent({
                           ]
                         )
                       : null,
-                    h(
-                      'span',
-                      {
-                        class: 'tiny-modal__title'
-                      },
-                      [
-                        typeof status === 'string'
-                          ? h(STATUS_MAPPING_COMPINENT[status.toUpperCase()], {
-                              class: [constants.STATUS_MAPPING_CLASSS[status.toUpperCase()]],
-                              style: 'display: inline-block; margin-right: 5px;'
-                            })
-                          : h(status, {
-                              class: ['tiny-modal__status-icon'],
-                              style: 'display: inline-block; margin-right: 5px;'
-                            }),
-                        h('span', title || t('ui.alert.title'))
-                      ]
-                    ),
+                    title !== ''
+                      ? h(
+                          'span',
+                          {
+                            class: 'tiny-modal__title'
+                          },
+                          title || t('ui.alert.title')
+                        )
+                      : null,
                     resize
-                      ? h(zoomLocat ? iconMinscreenLeft() : iconFullscreenLeft(), {
+                      ? h(zoomLocat ? iconMinscreenRight() : iconFullscreenRight(), {
                           class: ['tiny-modal__zoom-btn', 'trigger__btn'],
                           on: {
                             click: this.toggleZoomEvent
                           }
                         })
                       : null,
-                    h(iconClose(), {
-                      class: ['tiny-modal__close-btn', 'trigger__btn'],
-                      on: {
-                        click: this.closeEvent
-                      }
-                    })
+                    showClose
+                      ? h(iconClose(), {
+                          class: ['tiny-modal__close-btn', 'trigger__btn'],
+                          on: {
+                            click: this.closeEvent
+                          }
+                        })
+                      : null
                   ]
                 )
               : null,
@@ -224,14 +229,14 @@ export default defineComponent({
                 class: ['tiny-modal__body', type === 'message' ? 'is-message' : '']
               },
               [
-                status && state.theme !== 'saas'
+                type === 'message'
                   ? h(
                       'div',
                       {
                         class: 'tiny-modal__status-wrapper'
                       },
                       [
-                        typeof status === 'string' && type === 'message'
+                        typeof status === 'string'
                           ? h(STATUS_MAPPING_COMPINENT[status.toUpperCase()], {
                               class: [constants.STATUS_MAPPING_CLASSS[status.toUpperCase()]]
                             })
@@ -283,59 +288,33 @@ export default defineComponent({
                   },
                   footerSlot
                     ? footerSlot.call(this, footerSlotParams, h)
-                    : state.theme === 'saas'
-                      ? [
-                          type === 'confirm'
-                            ? h(
-                                Button,
-                                {
-                                  on: {
-                                    click: this.cancelEvent
-                                  }
+                    : [
+                        type === 'confirm'
+                          ? h(
+                              Button,
+                              {
+                                on: {
+                                  click: this.cancelEvent
                                 },
-                                cancelContent || t('ui.button.cancel')
-                              )
-                            : null,
-                          h(
-                            Button,
-                            {
-                              props: {
-                                type: 'primary'
+                                props: { ...cancelButtonProps }
                               },
-                              on: {
-                                click: this.confirmEvent
-                              }
+                              cancelButtonText
+                            )
+                          : null,
+                        h(
+                          Button,
+                          {
+                            props: {
+                              type: 'primary',
+                              ...confirmButtonProps
                             },
-                            confirmContent || t('ui.button.confirm')
-                          )
-                        ]
-                      : [
-                          h(
-                            Button,
-                            {
-                              props: {
-                                type: 'primary',
-                                ...confirmButtonProps
-                              },
-                              on: {
-                                click: this.confirmEvent
-                              }
-                            },
-                            confirmButtonText
-                          ),
-                          type === 'confirm'
-                            ? h(
-                                Button,
-                                {
-                                  on: {
-                                    click: this.cancelEvent
-                                  },
-                                  props: { ...cancelButtonProps }
-                                },
-                                cancelButtonText
-                              )
-                            : null
-                        ]
+                            on: {
+                              click: this.confirmEvent
+                            }
+                          },
+                          confirmButtonText
+                        )
+                      ]
                 )
               : null,
             !isMsg && resize

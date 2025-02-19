@@ -1,6 +1,7 @@
-import { getObj } from '@opentiny/vue-renderless/common/object'
-import { getDataset } from '@opentiny/vue-renderless/common/dataset'
+import { getObj } from '@opentiny/utils'
+import { getDataset } from '@opentiny/utils'
 import { error } from '../../tools'
+
 export default {
   /**
    * 初始化fetch-data配置项
@@ -10,9 +11,16 @@ export default {
     const { fetchData = {}, dataset = {} } = this as any
 
     if (fetchData.api || dataset.source || dataset.value || dataset.api) {
-      let { loading, fields, api } = fetchData || dataset.source || dataset.api || {}
+      const { loading, fields, api, reloadConfig } = fetchData || dataset.source || dataset.api || {}
+      let isReloadFilter = false
+      let isReloadScroll = false
 
-      return { api, dataset, fields, loading }
+      if (reloadConfig) {
+        isReloadFilter = Boolean(reloadConfig.filter)
+        isReloadScroll = Boolean(reloadConfig.scroll)
+      }
+
+      return { api, dataset, fields, loading, isReloadFilter, isReloadScroll }
     }
   },
   handleFetch(code, sortArg) {
@@ -45,6 +53,8 @@ export default {
       ...args
     }
     let search
+    const { isReloadFilter = false } = fetchOption
+
     this.tableLoading = loading
 
     if (pagerConfig) {
@@ -57,7 +67,12 @@ export default {
       }
 
       this.sortData = params.sort = {}
-      this.filterData = params.filters = []
+
+      if (!isReloadFilter) {
+        params.filters = []
+        this.filterData = params.filters
+      }
+
       this.pendingRecords = []
       this.clearAll()
     }

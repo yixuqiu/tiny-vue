@@ -1,32 +1,51 @@
 <template>
   <div>
-    <tiny-pie :data="chartData" :settings="chartSettings"></tiny-pie>
+    <tiny-pie :options="options"></tiny-pie>
   </div>
 </template>
 
 <script lang="jsx">
-import { ChartPie } from '@opentiny/vue'
+import { TinyHuichartsPie } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyPie: ChartPie
+    TinyPie: TinyHuichartsPie
   },
   data() {
     return {
-      chartData: {
-        columns: ['日期', '访问用户'],
-        rows: [
-          { 日期: '1/1', 访问用户: 1393 },
-          { 日期: '1/2', 访问用户: 3530 },
-          { 日期: '1/3', 访问用户: 2923 },
-          { 日期: '1/4', 访问用户: 1723 },
-          { 日期: '1/5', 访问用户: 3792 },
-          { 日期: '1/6', 访问用户: 4593 }
+      options: {
+        type: 'pie',
+        legend: {
+          show: true,
+
+          // 可滚动的图例，生成切换按钮
+          type: 'scroll',
+
+          // 切换按钮在图例的位置
+          pageButtonPosition: 'end',
+
+          // 图例的宽度
+          width: '80%',
+          position: {
+            left: 'center',
+            bottom: 40
+          }
+        },
+        label: {
+          show: true
+        },
+        data: [
+          { value: 20, name: '系列 1' },
+          { value: 9, name: '系列 2' },
+          { value: 14, name: '系列 3' },
+          { value: 8, name: '系列 4' },
+          { value: 16, name: '系列 5' },
+          { value: 10, name: '系列 6' },
+          { value: 16, name: '系列 7' },
+          { value: 4, name: '系列 8' },
+          { value: 6, name: '系列 9' },
+          { value: 13, name: '系列 10' }
         ]
-      },
-      // 设置数据类型
-      chartSettings: {
-        dataType: 'percent'
       }
     }
   }

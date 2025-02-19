@@ -5,11 +5,11 @@
 </template>
 
 <script lang="jsx">
-import { Tree } from '@opentiny/vue'
+import { TinyTree } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTree: Tree
+    TinyTree
   },
   data() {
     return {
@@ -23,7 +23,10 @@ export default {
         {
           id: '1',
           name: '数据 1',
-          children: [{ id: '1-1', name: '数据 1-1', children: [{ id: '1-1-1', name: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', name: '数据 1-1', children: [{ id: '1-1-1', name: '数据 1-1-1' }] },
+            { id: '1-2', name: '数据 1-2' }
+          ]
         },
         {
           id: '2',

@@ -4,7 +4,7 @@ import Modal from '@opentiny/vue-modal'
 import GlobalConfig from '../../config'
 import { emitEvent } from '@opentiny/vue-renderless/grid/utils'
 import { h, hooks } from '@opentiny/vue-common'
-import { extend } from '@opentiny/vue-renderless/common/object'
+import { extend } from '@opentiny/utils'
 
 export function setBodyRecords({ body, insertRecords, pendingRecords }) {
   if (insertRecords.length) {
@@ -82,7 +82,8 @@ export default {
         res = h(hooks.toRaw(toolbar.component), {
           ref: 'toolbar',
           props: { loading: loading || tableLoading, ...toolbar },
-          class: _vm.viewCls('toolbar')
+          class: _vm.viewCls('toolbar'),
+          scopedSlots: toolbar.slots || {}
         })
       }
 

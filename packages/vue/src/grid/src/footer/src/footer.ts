@@ -25,7 +25,7 @@
 
 import { isFunction } from '@opentiny/vue-renderless/grid/static/'
 import { getClass, emitEvent, formatText, updateCellTitle } from '@opentiny/vue-renderless/grid/utils'
-import { isNull } from '@opentiny/vue-renderless/common/type'
+import { isNull } from '@opentiny/utils'
 import { h, $prefix, defineComponent } from '@opentiny/vue-common'
 
 const classMap = {
@@ -34,7 +34,9 @@ const classMap = {
   filterActive: 'filter__active',
   cellSummary: 'cell__summary',
   fixedLeftLast: 'fixed-left-last__column',
-  fixedRightFirst: 'fixed-right-first__column'
+  fixedRightFirst: 'fixed-right-first__column',
+  colRadio: 'col__radio',
+  colSelection: 'col__selection'
 }
 
 function doFooterSpan({ attrs, footerData, footerSpanMethod, params }) {
@@ -107,6 +109,7 @@ const renderfoots = (opt) => {
     tableColumn,
     tableListeners
   } = opt
+  const { scrollbarWidth } = $table
   return (list, $rowIndex) =>
     h(
       'tr',
@@ -138,6 +141,9 @@ const renderfoots = (opt) => {
             showTooltip
           } = buildParamFunc(Object.assign(arg1, arg2))
           const { leftList, rightList } = columnStore
+          const { left: leftPosition, right } = column.style || {}
+          // 表尾右侧冻结列，当有表体有滚动条时，需要加上滚动条的偏移量
+          const rightPosition = right >= 0 ? right + scrollbarWidth : ''
           return h(
             'td',
             {
@@ -150,15 +156,19 @@ const renderfoots = (opt) => {
                   [classMap.colEllipsis]: hasEllipsis,
                   [classMap.filterActive]: column.filter && column.filter.hasFilter,
                   [classMap.fixedLeftLast]: column.fixed === 'left' && leftList[leftList.length - 1] === column,
-                  [classMap.fixedRightFirst]: column.fixed === 'right' && rightList[0] === column
+                  [classMap.fixedRightFirst]: column.fixed === 'right' && rightList[0] === column,
+                  [classMap.colRadio]: column.type === 'radio',
+                  [classMap.colSelection]: column.type === 'selection'
                 },
                 getClass(footerClassName, params),
                 getClass(footerCellClassName, params)
               ],
-              style: {
-                left: `${column.style?.left}px`,
-                right: `${column.style?.right}px`
-              },
+              style: fixedHiddenColumn
+                ? {
+                    left: `${leftPosition}px`,
+                    right: `${rightPosition}px`
+                  }
+                : null,
               attrs,
               on: tfOns,
               key: columnKey ? column.id : columnIndex

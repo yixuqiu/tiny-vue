@@ -12,7 +12,8 @@ export default defineComponent({
     selected: Boolean,
     navItem: Object
   },
-  setup(props: any, context: any) {
+  components: { IconClose: IconClose() },
+  setup(props, context): any {
     return setup({ props, context, renderless, api, mono: true })
   },
   render() {
@@ -35,9 +36,9 @@ export default defineComponent({
           'span',
           {
             class: [
-              'text-base sm:text-sm group-hover:text-color-brand',
+              'text-base sm:text-sm leading-6 sm:leading-5.5 group-hover:text-color-brand',
               state.tabSize === 'large' ? 'min-w-[theme(spacing.8)]' : 'min-w-[theme(spacing.7)]',
-              selected ? 'text-color-brand font-bold' : 'text-color-text-primary sm:text-color-text-secondary'
+              selected ? 'text-color-brand font-bold' : 'text-color-text-primary'
             ],
             style: state.tabSize === 'large' ? 'font-size: 1rem' : ''
           },

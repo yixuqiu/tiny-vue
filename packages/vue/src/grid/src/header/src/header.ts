@@ -23,12 +23,12 @@
  *
  */
 
-import { isObject, isNull } from '@opentiny/vue-renderless/common/type'
-import { removeClass, addClass } from '@opentiny/vue-renderless/common/deps/dom'
+import { isObject, isNull } from '@opentiny/utils'
+import { removeClass, addClass } from '@opentiny/utils'
 import { isBoolean, isFunction } from '@opentiny/vue-renderless/grid/static/'
-import { updateCellTitle, getOffsetPos, emitEvent, getClass } from '@opentiny/vue-renderless/grid/utils'
+import { updateCellTitle, emitEvent, getClass } from '@opentiny/vue-renderless/grid/utils'
 import { h, $prefix, defineComponent } from '@opentiny/vue-common'
-import { random } from '@opentiny/vue-renderless/common/string'
+import { random } from '@opentiny/utils'
 
 function addListenerMousedown({ $table, mouseConfig, params, thOns }) {
   if (mouseConfig.checked) {
@@ -99,10 +99,15 @@ function modifyHeadAlign({ column, headAlign }) {
 }
 
 function computeDragLeft(args) {
-  let { dragMinLeft } = args
-  let { left } = args
+  let { dragMinLeft, resizableConfig, scrollLeft, column, startColumnLeft, left } = args
 
   let dragLeft = Math.max(left, dragMinLeft)
+
+  if (resizableConfig?.limit instanceof Function) {
+    let currentMouseLeft = dragLeft - scrollLeft
+    let width = resizableConfig.limit({ field: column.own.field, width: currentMouseLeft - startColumnLeft })
+    dragLeft = startColumnLeft + width
+  }
 
   return { left, dragMinLeft, dragLeft }
 }
@@ -175,10 +180,12 @@ function getThPropsArg(args) {
       colspan: column.colSpan,
       rowspan: column.rowSpan
     },
-    style: {
-      left: `${column.style?.left}px`,
-      right: `${column.style?.right + scrollbarWidth}px`
-    },
+    style: fixedHiddenColumn
+      ? {
+          left: `${column.style?.left}px`,
+          right: `${column.style?.right + scrollbarWidth}px`
+        }
+      : null,
     on: thOns,
     key: isDragHeaderSorting ? random() : columnKey || isColGroup ? column.id : columnIndex
   }
@@ -221,7 +228,7 @@ function renderThCell(args) {
     $table.isShapeTable ? column.renderHeader(h, { isHidden: fixedHiddenColumn, ...params }) : null
   )
 }
-function renderThResize({ _vm, border, column, fixedHiddenColumn, isColGroup, params, resizable }) {
+function renderThResize({ _vm, border, column, fixedHiddenColumn, isColGroup, params, resizable, isColResize }) {
   let res = null
 
   const classMap = {
@@ -229,11 +236,7 @@ function renderThResize({ _vm, border, column, fixedHiddenColumn, isColGroup, pa
   }
 
   // 删除fixedHiddenColumn，冻结表头放开可以拖拽调节宽度。
-  if (
-    !isColGroup &&
-    !~['index', 'radio', 'selection'].indexOf(column.type) &&
-    (isBoolean(column.resizable) ? column.resizable : resizable)
-  ) {
+  if (!isColGroup && isColResize && (isBoolean(column.resizable) ? column.resizable : resizable)) {
     res = h('div', {
       class: ['tiny-grid-resizable', { [classMap.isLine]: !border }],
       on: {
@@ -267,6 +270,8 @@ function getThHandler(args) {
     tableListeners
   } = args
 
+  let { operationColumnResizable } = $table
+
   return (column, $columnIndex) => {
     let { showHeaderOverflow, showHeaderTip, headerAlign, align, headerClassName } = column
     let isColGroup = column.children && column.children.length
@@ -279,6 +284,9 @@ function getThHandler(args) {
     let thOns = {}
     let hasEllipsis = showTitle || showTooltip || showEllipsis
     const { columnStore, scrollbarWidth } = $table
+
+    // type为index或radio或selection的列使用operationColumnResizable控制是否可拖动列宽，其它列默认是true
+    let isColResize = ['index', 'radio', 'selection'].includes(column.type) ? operationColumnResizable : true
 
     // 索引列、选择列如果不配置对齐方式则默认为居中对齐
     headAlign = modifyHeadAlign({ column, headAlign })
@@ -305,7 +313,7 @@ function getThHandler(args) {
       renderThPartition({ border, column, isColGroup, resizable }),
       renderThCell(args2),
       // 列宽拖动
-      renderThResize({ _vm, border, column, fixedHiddenColumn, isColGroup, params, resizable })
+      renderThResize({ _vm, border, column, fixedHiddenColumn, isColGroup, params, resizable, isColResize })
     ])
   }
 }
@@ -418,7 +426,8 @@ export default defineComponent({
     isGroup: Boolean,
     tableColumn: Array,
     tableData: Array,
-    visibleColumn: Array
+    visibleColumn: Array,
+    resizableConfig: Object
   },
   watch: {
     tableColumn() {
@@ -431,9 +440,9 @@ export default defineComponent({
     }
   },
   mounted() {
-    let { $el, $parent: $table, $refs } = this
-    let elemStore = $table.elemStore
-    let keyPrefix = 'main-header-'
+    const { $el, $parent: $table, $refs } = this
+    const { elemStore, dropConfig } = $table
+    const keyPrefix = 'main-header-'
 
     elemStore[`${keyPrefix}wrapper`] = $el
     elemStore[`${keyPrefix}table`] = $refs.table
@@ -441,6 +450,17 @@ export default defineComponent({
     elemStore[`${keyPrefix}list`] = $refs.thead
     elemStore[`${keyPrefix}x-space`] = $refs.xSpace
     elemStore[`${keyPrefix}repair`] = $refs.repair
+
+    if (dropConfig) {
+      const { plugin, column = true, scheme } = dropConfig
+
+      if (scheme !== 'v2') {
+        plugin && column && (this.columnSortable = $table.columnDrop(this.$el))
+      }
+    }
+  },
+  beforeUnmount() {
+    this.columnSortable && this.columnSortable.destroy()
   },
   created() {
     this.uploadColumn()
@@ -478,15 +498,18 @@ export default defineComponent({
       this.headerColumn = this.isGroup ? this.$parent._sliceColumnTree(this.tableColumn) : [this.tableColumn]
     },
     resizeMousedown(event, params) {
-      let { $el, $parent: $table } = this
+      let { $el, $parent: $table, resizableConfig } = this
       let { clientX: dragClientX, target: dragBtnElem } = event
       let { column } = params
       let { dragLeft = 0, minInterval = 36, fixedOffsetWidth = 0 } = {}
       let { resizeBar: resizeBarElem, tableBody } = $table.$refs
       let { cell = dragBtnElem.parentNode, dragBtnWidth = dragBtnElem.clientWidth } = {}
-      let { pos = getOffsetPos(dragBtnElem, $el), tableBodyElem = tableBody.$el } = {}
-      let dragMinLeft = pos.left - cell.clientWidth + dragBtnWidth + minInterval
-      let dragPosLeft = pos.left + Math.floor(dragBtnWidth / 2)
+      let startColumnLeft = cell.offsetLeft
+      let dragBtnOffsetWidth = Math.floor(dragBtnWidth / 2)
+      const tableBodyElem = tableBody.$el
+      const btnLeft = dragBtnElem?.getBoundingClientRect().left - $el?.getBoundingClientRect().left
+      let dragMinLeft = btnLeft - cell.clientWidth + dragBtnWidth + minInterval
+      let dragPosLeft = btnLeft + dragBtnOffsetWidth
       let { oldMousemove = document.onmousemove, oldMouseup = document.onmouseup } = {}
 
       // 处理拖动事件
@@ -496,14 +519,26 @@ export default defineComponent({
 
         let { offsetX = event.clientX - dragClientX, left = offsetX + dragPosLeft } = {}
         let scrollLeft = tableBodyElem.scrollLeft
-        let args = { cell, dragMinLeft, dragPosLeft, fixedOffsetWidth }
+        let args = {
+          cell,
+          dragMinLeft,
+          dragPosLeft,
+          fixedOffsetWidth,
+          resizableConfig,
+          scrollLeft,
+          column,
+          dragBtnOffsetWidth,
+          startColumnLeft
+        }
         Object.assign(args, { left, minInterval, tableBodyElem })
 
         let ret = computeDragLeft(args)
-        left = ret.left
         dragMinLeft = ret.dragMinLeft
         dragLeft = ret.dragLeft
-        resizeBarElem.style.left = `${dragLeft - scrollLeft}px`
+
+        let currentLeft = ret.dragLeft - scrollLeft
+
+        resizeBarElem.style.left = `${currentLeft}px`
       }
 
       resizeBarElem.style.display = 'block'

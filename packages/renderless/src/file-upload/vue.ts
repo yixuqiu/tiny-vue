@@ -21,7 +21,7 @@ import type {
 } from '@/types'
 
 import { downloadFile as ordinaryDownload } from '../upload-list'
-import { formatFileSize } from '../common/string'
+import { formatFileSize } from '@opentiny/utils'
 
 import {
   initService,
@@ -52,6 +52,7 @@ import {
   watchListType,
   watchFileList,
   handleClick,
+  handleFileClick,
   getFileUploadUrl,
   updateUrl,
   previewImage,
@@ -97,7 +98,7 @@ import {
   closeRecordPanel,
   getTipMessage
 } from './index'
-import { isEmptyObject } from '../common/type'
+import { isEmptyObject } from '@opentiny/utils'
 
 export const api = [
   'state',
@@ -116,6 +117,7 @@ export const api = [
   'handleReUploadTotal',
   'submit',
   'handleClick',
+  'handleFileClick',
   'getFileUploadUrl',
   'updateUrl',
   'previewImage',
@@ -208,13 +210,14 @@ const initState = ({
   return state
 }
 
-const initApi = ({ api, state, props, constants, vm, $service, t, Modal }) => {
+const initApi = ({ api, state, props, constants, vm, $service, t, Modal, emit }) => {
   Object.assign(api, {
     state,
     sliceChunk: sliceChunk({ state }),
     getFormData: getFormData({ constants, props, state }),
     abort: abort({ constants, vm, state }),
     handleClick: handleClick({ constants, vm }),
+    handleFileClick: handleFileClick({ props, emit }),
     getFile: getFile(state),
     clearFiles: clearFiles(state),
     watchFileList: watchFileList({ constants, state, props, api }),
@@ -247,10 +250,10 @@ const initApi = ({ api, state, props, constants, vm, $service, t, Modal }) => {
   })
 }
 
-const mergeApi = ({ api, props, $service, state, constants, emit, mode, Modal, t, vm, CryptoJS, Streamsaver }) => {
+const mergeApi = ({ api, props, $service, state, constants, emit, mode, Modal, t, vm, Streamsaver }) => {
   Object.assign(api, {
     segmentUploadInit: segmentUploadInit({ api, props, service: $service, state, constants }),
-    segmentUpload: segmentUpload({ api, props, service: $service, state, emit, constants, CryptoJS }),
+    segmentUpload: segmentUpload({ api, props, service: $service, state, emit, constants }),
     addFileToList: addFileToList({ api, constants, emit, props, state, mode }),
     downloadFile: downloadFile({ api, state }),
     downloadFileSingleInner: downloadFileSingleInner({ props, state, api, constants }),
@@ -277,7 +280,7 @@ const mergeApi = ({ api, props, $service, state, constants, emit, mode, Modal, t
     downloadFileInner: downloadFileInner({ api, props, state }),
     setWriterFile: setWriterFile({ state, emit, Streamsaver }),
     afterDownload: afterDownload({ api, state }),
-    getFileHash: getFileHash({ emit, Modal, constants, t, CryptoJS, state }),
+    getFileHash: getFileHash({ emit, Modal, constants, t, state }),
     modifyServiceUrlSingle: modifyServiceUrlSingle({ state, props, constants }),
     getKiaScanTip: getKiaScanTip({ Modal, constants, t }),
     downloadFileSingle: downloadFileSingle({ service: $service, constants, props, state, api, emit }),
@@ -294,7 +297,7 @@ const mergeApi = ({ api, props, $service, state, constants, emit, mode, Modal, t
 
 const initWatch = ({ watch, state, api, props, $service }) => {
   watch(
-    () => props.edm.upload,
+    () => props.edm?.upload,
     (value) => value && api.getToken({ token: value.token, isinit: true }),
     { immediate: true, deep: true }
   )
@@ -333,7 +336,7 @@ export const renderless = (
   props: IFileUploadProps,
   { computed, inject, onBeforeUnmount, provide, reactive, ref, watch, onMounted }: ISharedRenderlessParamHooks,
   { t, vm, parent, emit, service, mode, constants, useBreakpoint }: IFileUploadRenderlessParamUtils,
-  { Modal, CryptoJS, Streamsaver }: IFileUploadModalVm & { CryptoJS: object; Streamsaver: IFileUploadStreamsaver }
+  { Modal, Streamsaver }: IFileUploadModalVm & { Streamsaver: IFileUploadStreamsaver }
 ): IFileUploadApi => {
   let api = {} as IFileUploadApi
   const $service: IFileUploadService = initService({ props, service })
@@ -351,8 +354,8 @@ export const renderless = (
     useBreakpoint
   })
 
-  initApi({ api, state, props, constants, vm, $service, t, Modal })
-  mergeApi({ api, props, $service, state, constants, emit, mode, Modal, t, vm, CryptoJS, Streamsaver })
+  initApi({ api, state, props, constants, vm, $service, t, Modal, emit })
+  mergeApi({ api, props, $service, state, constants, emit, mode, Modal, t, vm, Streamsaver })
   getApi = () => api
 
   provide('uploader', parent)
@@ -362,7 +365,9 @@ export const renderless = (
   // 注册生命周期函数必须要在（watch）异步函数/组件之前，否则会 Vue3 警告
   onBeforeUnmount(() => {
     api.onBeforeDestroy()
-    api = {} as IFileUploadApi
+    api = null as unknown as IFileUploadApi
+
+    vm.$off('drag-over')
   })
 
   initWatch({ watch, state, api, props, $service })

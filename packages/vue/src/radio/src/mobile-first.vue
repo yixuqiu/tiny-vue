@@ -92,7 +92,6 @@
         :class="m(gcls('radio-input'))"
         :value="label"
         type="radio"
-        aria-hidden="true"
         v-model="state.model"
         @focus="state.focus = true"
         @blur="state.focus = false"
@@ -108,7 +107,7 @@
       :class="
         m(
           gcls('radio-text-common'),
-          gcls(state.size === 'medium' ? 'radio-text-size-medium' : 'radio-text-size-common'),
+          gcls(state.size !== 'mini' ? 'radio-text-size-medium' : 'radio-text-size-common'),
           gcls({ 'label-disabled': state.isDisabled }),
           gcls(
             state.isDisplayOnly ? (state.model === label ? 'readonly-checked-label' : '') : 'not-readly-common-label'

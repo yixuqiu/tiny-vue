@@ -14,7 +14,7 @@
       ></tiny-tree>
     </div>
     <div style="margin-left: 30px">
-      <div class="tip">默认展开节点2，仅点击图标才展开节点</div>
+      <div class="tip">默认展开节点 2，仅点击图标才展开节点</div>
       <div class="tip">
         <tiny-button @click="expandHlNode">展开高亮</tiny-button>
         <tiny-button @click="collapseHlNode">收起高亮</tiny-button>
@@ -24,7 +24,7 @@
         :data="data"
         node-key="id"
         :default-expanded-keys="['2']"
-        :current-node-key="'2'"
+        current-node-key="2"
         :expand-on-click-node="false"
       ></tiny-tree>
     </div>
@@ -32,12 +32,12 @@
 </template>
 
 <script lang="jsx">
-import { Tree, Button } from '@opentiny/vue'
+import { TinyTree, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTree: Tree,
-    TinyButton: Button
+    TinyTree,
+    TinyButton
   },
   data() {
     return {
@@ -46,7 +46,10 @@ export default {
         {
           id: '1',
           label: '数据 1',
-          children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+            { id: '1-2', label: '数据 1-2' }
+          ]
         },
         {
           id: '2',

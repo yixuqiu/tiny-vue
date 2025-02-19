@@ -10,7 +10,7 @@
  *
  */
 
-import { clearMilliseconds, timeWithinRange, limitTimeRange, modifyDate } from '../common/deps/date-util'
+import { clearMilliseconds, timeWithinRange, limitTimeRange, modifyDate } from '@opentiny/utils'
 
 export const minTimeOfDay =
   ({ MIN_TIME }) =>
@@ -70,8 +70,8 @@ export const adjustSpinners =
   ({ vm }) =>
   () => {
     if (vm.$refs.minSpinner) {
-      vm.$refs.minSpinner.adjustSpinners()
-      vm.$refs.maxSpinner.adjustSpinners()
+      vm.$refs.minSpinner.adjustSpinners('min')
+      vm.$refs.maxSpinner.adjustSpinners('max')
     }
   }
 

@@ -46,6 +46,10 @@ export default defineComponent({
       type: Boolean,
       default: true
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     indicatorPosition: String,
     arrow: {
       type: String,
@@ -68,7 +72,10 @@ export default defineComponent({
       type: String,
       default: 'light',
       validator: (value: string) => Boolean(!value || ~['light', 'dark'].indexOf(value))
-    }
+    },
+    swipeable: Boolean,
+    lite: Boolean,
+    beforeSwipe: Function
   },
   setup(props, context) {
     return $setup({

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="node-tip">点击节点后， 在开发者控制台中查看它的打印信息：</div>
+    <div class="node-tip">点击节点后，在开发者控制台中查看它的打印信息：</div>
     <div>
       <tiny-button @click="setHighlight">手动高亮节点</tiny-button>
     </div>
@@ -9,7 +9,7 @@
       :data="data"
       node-key="id"
       highlight-current
-      :current-node-key="'1-1'"
+      current-node-key="1-1"
       @current-change="currentChange"
       default-expand-all
     ></tiny-tree>
@@ -17,12 +17,12 @@
 </template>
 
 <script lang="jsx">
-import { Tree, Button } from '@opentiny/vue'
+import { TinyTree, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTree: Tree,
-    TinyButton: Button
+    TinyTree,
+    TinyButton
   },
   data() {
     return {
@@ -30,7 +30,10 @@ export default {
         {
           id: '1',
           label: '数据 1',
-          children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+            { id: '1-2', label: '数据 1-2' }
+          ]
         },
         {
           id: '2',
@@ -55,7 +58,7 @@ export default {
       const data = treeRef.getCurrentNode()
       // 节点对象
       const node = treeRef.getNode(id)
-      // 节点node-key
+      // 节点 node-key
       const nodeKey = treeRef.getCurrentKey()
       // 组件内部生成的节点唯一键值
       const innerKey = treeRef.getNodeKey(node)
@@ -64,7 +67,7 @@ export default {
       console.log('当前高亮节点的信息为：', { data, node, nodeKey, innerKey, nodePath })
     },
     // 事件
-    currentChange(data, currentNode) {
+    currentChange(data, _currentNode) {
       this.getResultById(data.id)
     },
     setHighlight() {

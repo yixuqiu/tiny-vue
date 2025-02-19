@@ -1,6 +1,7 @@
 <template>
   <div>
     <p>开启时区选择</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker
         v-model="timezoneValue"
@@ -11,13 +12,17 @@
         @select-change="selectChange"
       ></tiny-date-picker>
     </div>
+    <br />
 
     <p>默认时间</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="value" type="datetime"></tiny-date-picker>
     </div>
+    <br />
 
     <p>显示为东八区时间</p>
+    <br />
     <div class="demo-date-picker-wrap">
       <tiny-date-picker v-model="referenceDate" type="datetime" :isutc8="true"></tiny-date-picker>
     </div>
@@ -25,12 +30,12 @@
 </template>
 
 <script>
-import { DatePicker, Modal } from '@opentiny/vue'
+import { TinyDatePicker, TinyModal } from '@opentiny/vue'
 import tzData from '@opentiny/vue-renderless/picker/timezone'
 
 export default {
   components: {
-    TinyDatePicker: DatePicker
+    TinyDatePicker
   },
   data() {
     return {
@@ -42,7 +47,7 @@ export default {
   },
   methods: {
     selectChange(tz) {
-      Modal.message({ message: `当前值为 ${tz.tz.name}`, status: 'info' })
+      TinyModal.message({ message: `当前值为 ${tz.tz.name}`, status: 'info' })
     }
   }
 }
@@ -50,6 +55,6 @@ export default {
 
 <style scoped>
 .demo-date-picker-wrap {
-  width: 280px;
+  width: 360px;
 }
 </style>

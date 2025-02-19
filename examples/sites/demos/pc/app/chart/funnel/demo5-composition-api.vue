@@ -1,24 +1,20 @@
 <template>
   <div>
-    <tiny-chart-funnel :data="chartData" :settings="chartSettings"></tiny-chart-funnel>
+    <tiny-chart-funnel :options="options"></tiny-chart-funnel>
   </div>
 </template>
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { ChartFunnel as TinyChartFunnel } from '@opentiny/vue'
+import { TinyHuichartsFunnel as TinyChartFunnel } from '@opentiny/vue-huicharts'
 
-const chartData = ref({
-  columns: ['状态', '数值'],
-  rows: [
-    { 状态: '展示', 数值: 0.9 },
-    { 状态: '访问', 数值: 0.6 },
-    { 状态: '点击', 数值: 0.3 },
-    { 状态: '订单', 数值: 0.1 }
+const options = ref({
+  color: ['#fa2a2d', '#ff7500', '#ffbf00', '#41ba41'], // 自定义颜色组，循环使用该颜色组
+  data: [
+    { value: 100, name: 'Show' },
+    { value: 75, name: 'Click' },
+    { value: 50, name: 'Visit' },
+    { value: 25, name: 'Order' }
   ]
-})
-// 指定数据类型漏斗图
-const chartSettings = ref({
-  dataType: 'percent'
 })
 </script>

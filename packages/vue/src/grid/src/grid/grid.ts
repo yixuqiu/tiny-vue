@@ -23,9 +23,9 @@
  *
  */
 
-import { isBoolean } from '@opentiny/vue-renderless/grid/static/'
+import { isBoolean, toNumber } from '@opentiny/vue-renderless/grid/static/'
 import { getListeners, emitEvent } from '@opentiny/vue-renderless/grid/utils'
-import { extend } from '@opentiny/vue-renderless/common/object'
+import { extend } from '@opentiny/utils'
 import {
   h,
   emitter,
@@ -40,11 +40,11 @@ import {
 } from '@opentiny/vue-common'
 import TinyGridTable from '../table'
 import GlobalConfig from '../config'
-import debounce from '@opentiny/vue-renderless/common/deps/debounce'
+import { debounce } from '@opentiny/utils'
 
 const { themes, viewConfig } = GlobalConfig
 const { SAAS: T_SAAS } = themes
-const { GANTT: V_GANTT, MF: V_MF, CARD: V_CARD } = viewConfig
+const { GANTT: V_GANTT, MF: V_MF, CARD: V_CARD, DEFAULT: V_DEFAULT, CUSTOM: V_CUSTOM } = viewConfig
 
 const propKeys = Object.keys(TinyGridTable.props)
 
@@ -56,6 +56,7 @@ function createRender(opt) {
     vSize,
     props,
     selectToolbar,
+    slots,
     $slots,
     tableOns,
     renderedToolbar,
@@ -83,7 +84,7 @@ function createRender(opt) {
       selectToolbar ? null : renderedToolbar,
       columnAnchor ? _vm.renderColumnAnchor(columnAnchorParams, _vm) : null,
       // 这里会渲染tiny-grid-column插槽内容，从而获取列配置
-      h(TinyGridTable, { props, on: tableOns, ref: 'tinyTable' }, $slots.default && $slots.default()),
+      h(TinyGridTable, { props, on: tableOns, ref: 'tinyTable' }, slots.default && slots.default()),
       _vm.renderPager({
         $slots,
         _vm,
@@ -148,6 +149,12 @@ export default defineComponent({
         pageSize: 10,
         currentPage: 1
       },
+      tablePageLoading: false,
+      realTimeTablePage: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      },
       columnAnchorParams: {},
       columnAnchorKey: '',
       tasks: {},
@@ -174,9 +181,9 @@ export default defineComponent({
       return this.size || (this.$parent && this.$parent.size) || (this.$parent && this.$parent.vSize)
     },
     seqIndex() {
-      let { seqSerial, scrollLoad, pagerConfig, startIndex } = this
+      let { seqSerial, scrollLoad, pagerConfig: oldPage, startIndex, tablePageLoading, realTimeTablePage } = this
       let seqIndexValue = startIndex
-
+      const pagerConfig = tablePageLoading ? realTimeTablePage : oldPage
       if ((seqSerial || scrollLoad) && pagerConfig) {
         seqIndexValue = (pagerConfig.currentPage - 1) * pagerConfig.pageSize + startIndex
       }
@@ -191,6 +198,9 @@ export default defineComponent({
     },
     isViewGantt() {
       return this.viewType === V_GANTT
+    },
+    isViewCustom() {
+      return this.viewType === V_CUSTOM
     }
   },
   watch: {
@@ -277,11 +287,16 @@ export default defineComponent({
     }
 
     // 默认在mounted阶段执行fetch-data
-    if (!prefetch && fetchOption && autoLoad !== false) {
+    if (!prefetch && fetchOption) {
+      /*
+       *_pageSizeChangeCallback：先更新本地缓存的pageSize到表格内部，再判断autoLoad，再发起数据请求（如果autoLoad为true）
+       * 功能优化：额外增加autoLoad为false时也执行，保证本地缓存的pageSize更新到表格内部与autoLoad取值无关
+       */
       if (this._pageSizeChangeCallback) {
         this._pageSizeChangeCallback()
         this._pageSizeChangeCallback = null
-      } else {
+      } else if (autoLoad) {
+        // 如果_pageSizeChangeCallback不存在且autoLoad为true就发起数据请求
         const toolbarVm = this.getVm('toolbar')
         this.commitProxy('query', toolbarVm && toolbarVm.orderSetting())
       }
@@ -402,6 +417,7 @@ export default defineComponent({
       selectToolbar,
       renderedToolbar,
       tableOns,
+      slots: this.slots,
       $slots,
       loading,
       pager,
@@ -414,17 +430,24 @@ export default defineComponent({
     })
   },
   methods: {
+    // 配置高度减去（表格锚点+工具栏+分页）计算得出表格高度
     updateParentHeight() {
       if (!this.tasks.updateParentHeight) {
         this.tasks.updateParentHeight = debounce(10, () => {
           const { $el, $refs } = this
-          const { tinyTable } = $refs
+          const { tinyTable, tinyGridColumnAnchor } = $refs
           const toolbarVm = this.getVm('toolbar')
 
           if (tinyTable) {
+            let columnAnchorHeight = 0
+            if (tinyGridColumnAnchor) {
+              const { height, marginTop, marginBottom } = getComputedStyle(tinyGridColumnAnchor)
+              columnAnchorHeight = toNumber(height) + toNumber(marginTop) + toNumber(marginBottom)
+            }
             tinyTable.parentHeight =
               $el.parentNode.clientHeight -
               (toolbarVm ? toolbarVm.$el.clientHeight : 0) -
+              columnAnchorHeight -
               ($refs.pager ? $refs.pager.$el.clientHeight : 0)
           }
         })
@@ -442,7 +465,9 @@ export default defineComponent({
       if (type === 'pageSizeChangeCallback') {
         this._pageSizeChangeCallback = callback
       } else if (type === 'updateCustomsCallback') {
-        this._updateCustomsCallback = callback
+        // 表格可能有多个工具栏，因此工具栏个性化配置的回调应该是个数组
+        this._updateCustomsCallback = this._updateCustomsCallback || []
+        this._updateCustomsCallback.push(callback)
       }
     },
     // 从缓存获取实例
@@ -455,8 +480,10 @@ export default defineComponent({
     handleColumnInitReady() {
       // 如果存在更新工具栏动态列回调，就执行
       if (this._updateCustomsCallback) {
-        this._updateCustomsCallback()
-        this._updateCustomsCallback = null
+        this._updateCustomsCallback.forEach((fn) => {
+          fn()
+        })
+        this._updateCustomsCallback = []
       }
     },
     handleRowClassName(params) {
@@ -494,7 +521,8 @@ export default defineComponent({
     },
     // 监听某个元素是否出现在视口中
     addIntersectionObserver() {
-      if (this.intersectionOption && this.intersectionOption.disabled) return
+      if ((this.intersectionOption && this.intersectionOption.disabled) || typeof IntersectionObserver === 'undefined')
+        return
 
       this.intersectionObserver = new IntersectionObserver((entries) => {
         let entry = entries[0]

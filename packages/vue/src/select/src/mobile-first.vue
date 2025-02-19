@@ -10,12 +10,7 @@
         state.inputHovering = false
       }
     "
-    @mouseenter.self="
-      () => {
-        state.selectHover = true
-        state.inputHovering = true
-      }
-    "
+    @mouseenter.self="onMouseenterSelf"
     @click="toggleMenu"
     v-clickoutside="handleClose"
     v-bind="a($attrs, ['class', 'style'], true)"
@@ -28,6 +23,13 @@
         { 'absolute w-full': state.isExpand && hoverExpand },
         { 'z-[2]': state.isExpand && hoverExpand && (state.inputHovering || state.visible) }
       ]"
+      :title="
+        multiple && !state.selectDisabled && state.selected.length
+          ? state.selected.map((item) => (item.state ? item.state.currentLabel : item.currentLabel)).join('; ')
+          : !multiple && state.selectDisabled
+          ? state.selectedLabel
+          : ''
+      "
     >
       <tiny-filter-box
         v-if="shape === 'filter'"
@@ -87,8 +89,9 @@
               disable-transitions
             >
               <tiny-tooltip
-                effect="light"
-                placement="top"
+                :effect="tooltipConfig.effect || 'light'"
+                :placement="tooltipConfig.placement || 'top'"
+                :popper-class="tooltipConfig.popperClass || ''"
                 @mouseenter.native="handleEnterTag($event, getValueKey(state.selectedVal[0]))"
               >
                 <span :class="gcls('tags-text')">
@@ -150,8 +153,9 @@
               disable-transitions
             >
               <tiny-tooltip
-                effect="light"
-                placement="top"
+                :effect="tooltipConfig.effect || 'light'"
+                :placement="tooltipConfig.placement || 'top'"
+                :popper-class="tooltipConfig.popperClass || ''"
                 @mouseenter.native="handleEnterTag($event, getValueKey(item))"
               >
                 <span v-if="!state.visible && state.overflow === index" :class="gcls('tags-text')">{{
@@ -178,7 +182,12 @@
         </span>
 
         <span v-else :class="[gcls('tags-text'), 'flex']">
-          <tiny-tooltip effect="light" placement="top" :disabled="!showTips || state.device === 'mb'">
+          <tiny-tooltip
+            :effect="tooltipConfig.effect || 'light'"
+            :placement="tooltipConfig.placement || 'top'"
+            :disabled="!showTips || state.device === 'mb'"
+            :popper-class="tooltipConfig.popperClass || ''"
+          >
             <span class="inline-block w-full whitespace-nowrap text-ellipsis overflow-hidden text-color-text-disabled">
               <span v-for="item in state.selected" :key="item.value">
                 <slot name="label" :item="item">{{ item.state ? item.state.currentLabel : item.currentLabel }}</slot
@@ -251,6 +260,7 @@
         :unselectable="state.readonly ? 'on' : 'off'"
         :validate-event="false"
         :tabindex="multiple && filterable ? '-1' : tabindex"
+        :show-empty-value="showEmptyValue"
         @focus="handleFocus"
         @blur="handleBlur"
         @keyup="debouncedOnInputChange"
@@ -262,6 +272,7 @@
         @paste="debouncedOnInputChange"
         @mouseenter="onMouseenterNative"
         @mouseleave="onMouseleaveNative"
+        @compositionend.native="handleComposition"
       >
         <template #prefix v-if="slots.prefix">
           <slot name="prefix"></slot>
@@ -285,9 +296,10 @@
             @click="handleClearClick"
             @mouseenter="state.inputHovering = true"
           ></icon-close>
+          <!-- tiny 新增： 必须使用 state.getIcon.icon -->
           <component
             v-show="!(remote && filterable && !remoteConfig.showIcon)"
-            :is="dropdownIcon"
+            :is="state.getIcon.icon"
             :class="
               m(
                 gcls('caret'),
@@ -323,6 +335,7 @@
           :style="dropStyle"
           :popper-options="popperOptions"
           :class="m('duration-300')"
+          :height="dropdownHeight"
         >
           <div
             v-if="shape && filterable"
@@ -342,7 +355,7 @@
 
           <tiny-tree
             v-if="renderType === 'tree'"
-            class="[&_[data-tag=tiny-checkbox]_>span_>span]:p-1.5 sm:[&_[data-tag=tiny-checkbox]_>span_>span]:p-0"
+            class="[&_[data-tag=tiny-checkbox]_>span_>span]:p-1.5 sm:[&_[data-tag=tiny-checkbox]_>span_>span]:p-0 sm:max-h-56 overflow-auto"
             :filter-node-method="filterMethod"
             :props="{ label: textField, isLeaf: 'isLeaf', ...treeOp.props }"
             :expand-on-click-node="false"
@@ -350,7 +363,7 @@
             :node-key="valueField"
             :default-expand-all="state.isExpandAll"
             :check-strictly="treeOp.checkStrictly"
-            :default-checked-keys="multiple ? state.defaultCheckedKeys : []"
+            :default-checked-keys="multiple ? state.defaultCheckedKeys : treeOp.defaultCheckedKeys || []"
             ref="selectTree"
             :current-node-key="!multiple ? state.currentKey : ''"
             :show-checkbox="multiple"
@@ -368,7 +381,6 @@
                 ref="scrollbar"
                 style="height: 100%"
                 :key-field="valueField"
-                :key="state.magicKey"
                 :list-class="[
                   'tiny-select-dropdown__wrap sm:max-h-56 pb-1 sm:pb-0',
                   state.device === 'mb' ? 'scrollbar-size-0' : ''
@@ -427,7 +439,7 @@
                 },
                 { 'text-color-brand sm:bg-color-fill-6 bg-color-bg-1': state.selectCls === 'checked-sur' }
               ]"
-              data-tag="tiny-select-dropdown-item"
+              data-tag="tiny-option"
               @click.stop="toggleCheckAll(false)"
               @mousedown.stop
               @mouseenter="state.hoverIndex = -9"
@@ -438,9 +450,9 @@
                   m(['-mt-0.5 mr-2 fill-color-icon-secondary', state.selectCls !== 'check' && 'fill-color-brand'])
                 "
               />
-              <span :class="[state.selectCls === 'checked-sur' ? 'text-color-brand' : 'text-color-text-primary']">{{
-                t('ui.base.all')
-              }}</span>
+              <span :class="[state.selectCls === 'checked-sur' ? 'text-color-brand' : 'text-color-text-primary']">
+                {{ allText || t('ui.base.all') }}</span
+              >
             </div>
 
             <div
@@ -460,7 +472,7 @@
                 },
                 { 'text-color-brand sm:bg-color-fill-6 bg-color-bg-1': state.filteredSelectCls === 'checked-sur' }
               ]"
-              data-tag="tiny-select-dropdown-item"
+              data-tag="tiny-option"
               @click.stop="toggleCheckAll(true)"
               @mousedown.stop
               @mouseenter="state.hoverIndex = -9"
@@ -476,7 +488,7 @@
               />
               <span
                 :class="[state.filteredSelectCls === 'checked-sur' ? 'text-color-brand' : 'text-color-text-primary']"
-                >{{ t('ui.base.all') }}</span
+                >{{ allText || t('ui.base.all') }}</span
               >
             </div>
             <tiny-option
@@ -547,7 +559,7 @@ import TinyInput from '@opentiny/vue-input'
 import TinyOption from '@opentiny/vue-option'
 import TinyScrollbar from '@opentiny/vue-scrollbar'
 import TinySelectDropdown from '@opentiny/vue-select-dropdown'
-import Clickoutside from '@opentiny/vue-renderless/common/deps/clickoutside'
+import { Clickoutside } from '@opentiny/vue-directive'
 import {
   iconClose,
   iconHalfselect,
@@ -694,7 +706,12 @@ export default defineComponent({
     'title',
     'closeByMask',
     'searchPlaceholder',
-    'blank'
+    'initLabel',
+    'blank',
+    'showEmptyValue',
+    'tooltipConfig',
+    'dropdownHeight',
+    'allText'
   ],
   setup(props, context) {
     return setup({ props, context, renderless, api, classes })

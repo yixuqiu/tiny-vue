@@ -144,6 +144,21 @@ export default {
           mfDemo: ''
         },
         {
+          name: 'custom-column-names',
+          type: 'string[]',
+          defaultValue: "['TinyGridColumn']",
+          meta: {
+            stable: '3.17.0'
+          },
+          desc: {
+            'zh-CN': '封装 grid-column 时需要配置此字段，提供给表格收集配置',
+            'en-US':
+              'This field needs to be configured when encapsulating grid-column and is provided for table collection configuration'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-faq#custom-column'
+        },
+        {
           name: 'data',
           typeAnchorName: 'IRow',
           type: 'Row[]',
@@ -544,7 +559,7 @@ export default {
             'zh-CN': '自定义表格 loading ',
             'en-US': 'Whether the table is being loaded.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-loading#loading-grid-custom-loading'
         },
         {
@@ -675,7 +690,7 @@ export default {
         },
         {
           name: 'render-empty',
-          type: '()=> string | VNode',
+          type: '() => string | VNode',
           defaultValue: '',
           desc: {
             'zh-CN': '空数据渲染',
@@ -706,6 +721,25 @@ export default {
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-resize-column-width',
+          mfDemo: ''
+        },
+        {
+          name: 'resizable-config',
+          meta: {
+            stable: '3.19.0'
+          },
+          typeAnchorName: 'IResizableConfig',
+          type: 'IResizableConfig',
+          defaultValue: '',
+          metaData: {
+            new: '3.19.0'
+          },
+          desc: {
+            'zh-CN': '设置列宽拖拽参数',
+            'en-US': 'Set column width drag parameters'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-size#size-resizable-config',
           mfDemo: ''
         },
         {
@@ -1018,11 +1052,11 @@ export default {
         },
         {
           name: 'tooltip-config',
-          type: 'IToolTipConfig',
-          typeAnchorName: 'IToolTipConfig',
+          linkTo: 'tooltip#tooltip--props',
+          type: 'Tooltip.Props',
           defaultValue: '',
           desc: {
-            'zh-CN': 'Grid 内置 tooltip 配置项，请参考 Tooltip 组件属性说明',
+            'zh-CN': 'Grid 内置 tooltip 配置项，配置项将透传至 Tooltip，请参考 Tooltip 组件属性说明',
             'en-US':
               'Configuration item of the built-in tooltip of the Grid. For details, see the Tooltip Attribute Description.'
           },
@@ -1058,6 +1092,22 @@ export default {
         }
       ],
       events: [
+        {
+          name: 'after-refresh-column',
+          type: '()=> void',
+          meta: {
+            stable: '3.18.0'
+          },
+          defaultValue: '',
+          desc: {
+            'zh-CN': '在新增或者删除列后，列配置是异步更新的，列配置刷新后触发的回调',
+            'en-US':
+              'After adding or deleting a column, the column configuration is updated asynchronously, and the callback is triggered after the column configuration is refreshed.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-dynamically-columns#column-switching-scroll',
+          mfDemo: ''
+        },
         {
           name: 'before-page-change',
           typeAnchorName: 'IBeforePageChangeArgs',
@@ -1281,7 +1331,7 @@ export default {
         },
         {
           name: 'fullscreen',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '全屏时或关闭全屏时触发的时间',
@@ -1398,8 +1448,7 @@ export default {
         },
         {
           name: 'select-change',
-          typeAnchorName: 'ISelectChangeArgs',
-          type: '(args: ISelectChangeArgs, event: Event)=> void',
+          type: '(args: object, event: Event)=> void',
           defaultValue: '',
           desc: {
             'zh-CN': '只对 type=selection 有效，当手动勾选并且值发生改变时触发的事件',
@@ -1434,6 +1483,21 @@ export default {
           },
           mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-toggle-expand-change-event',
+          mfDemo: ''
+        },
+        {
+          name: 'toggle-group-change',
+          type: '(row: IRow) => void',
+          defaultValue: '',
+          meta: {
+            stable: '3.17.0'
+          },
+          desc: {
+            'zh-CN': '当分组的展开和收起时会触发该事件',
+            'en-US': 'This event is triggered when the group is expanded and collapsed.'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-row-grouping#row-grouping-row-group-render',
           mfDemo: ''
         },
         {
@@ -1480,29 +1544,18 @@ export default {
       methods: [
         {
           name: 'clearActived',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除单元格激活状态',
             'en-US': 'Manually clear cell activation status'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-has-row-change'
         },
         {
-          name: 'clearActived()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清除单元格激活状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearAll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -1510,64 +1563,30 @@ export default {
             'en-US':
               'Manually clear all conditions in the table and restore the table to the initial state. (This may be used in the scenario of adding, deleting, modifying, and querying, for example, clearing the table cache after data is saved.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
         },
         {
-          name: 'clearAll()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '手动清除表格所有条件，还原到初始状态（对于增删改查的场景中可能会用到，比如在数据保存之后清除表格缓存）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearCurrentColumn',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前列，手动清空当前高亮的状态',
             'en-US': 'This command is used to manually clear the current highlighted status.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-highlight#highlight-highlight-current-column'
         },
         {
-          name: 'clearCurrentColumn()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于当前列，手动清空当前高亮的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearCurrentRow',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前行，手动清空当前高亮的状态',
             'en-US': 'For the current line. Manually clear the highlighted status.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-highlight#highlight-highlight-current-row'
-        },
-        {
-          name: 'clearCurrentRow()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于当前行，手动清空当前高亮的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'clearData',
@@ -1580,20 +1599,8 @@ export default {
             'en-US':
               'Manually clear the cell content. If no parameter is transferred, the entire table content is cleared. If a row is transferred, the specified row content is cleared. If a specified field is transferred, the field content is cleared.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-clear-data'
-        },
-        {
-          name: 'clearData(rows, field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '手动清空单元格内容，如果不传参数，则清空整个表格内容，如果传了行则清空指定行内容，如果传了指定字段，则清空该字段内容',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'clearFilter',
@@ -1604,229 +1611,108 @@ export default {
             'en-US':
               'Manually clear the filter criteria (if field is not transferred, all filter criteria are cleared). Data will be restored to the unfiltered state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-filter#filter-default-filter'
         },
         {
-          name: 'clearFilter(field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清空筛选条件（如果不传 field 则清空所有筛选条件），数据会恢复成未筛选的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearRadioRow',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于单选行，手动清空用户的选择',
             'en-US': 'This is used to select a single row. Manually clear the user selection.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-clear-and-set-radio-row'
         },
         {
-          name: 'clearRadioRow()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于单选行，手动清空用户的选择',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearRowExpand',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空展开行状态，数据会恢复成未展开的状态',
             'en-US': 'Manually clear the expanded row status. The data will be restored to the unexpanded state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-expand#expand-set-row-expansion'
         },
         {
-          name: 'clearRowExpand()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清空展开行状态，数据会恢复成未展开的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearScroll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除滚动相关信息，还原到初始状态',
             'en-US': 'Manually clear scrolling information and restore the original state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-max-min-grid-height'
         },
         {
-          name: 'clearScroll()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清除滚动相关信息，还原到初始状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearSelected',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清除单元格选中状态',
             'en-US': 'Clear cell selection manually'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-highlight#highlight-highlight-cell'
         },
         {
-          name: 'clearSelected()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清除单元格选中状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearSelection',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '用于多选行，手动清空用户的选择',
             'en-US': 'For selecting multiple lines. Manually clear the user selection.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-selection-operation'
         },
         {
-          name: 'clearSelection()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，手动清空用户的选择',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearSort',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空排序条件，数据会恢复成未排序的状态',
             'en-US': 'Manually clear the sorting conditions. Data will be restored to the unsorted state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-default-sort'
         },
         {
-          name: 'clearSort()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清空排序条件，数据会恢复成未排序的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'clearTreeExpand',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动清空树形节点的展开状态，数据会恢复成未展开的状态',
             'en-US':
               'Manually clear the expanded state of the tree node. The data will be restored to the un-folded state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-tree-grid-insert-delete-update'
         },
         {
-          name: 'clearTreeExpand()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动清空树形节点的展开状态，数据会恢复成未展开的状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'closeFilter',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动关闭筛选面板（某些特殊场景可能会用到）',
             'en-US': 'Manually close the filter panel (which may be used in some special scenarios)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-filter#filter-default-filter'
         },
         {
-          name: 'closeFilter()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动关闭筛选面板（某些特殊场景可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'closeMenu',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动关闭快捷菜单（某些特殊场景可能会用到）',
             'en-US': 'Manually close the shortcut menu (which may be used in some special scenarios)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-context-menu#context-menu-cell-menu'
-        },
-        {
-          name: 'closeMenu()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动关闭快捷菜单（某些特殊场景可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
-          name: 'createData(records)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '创建 data 对象（对于某些特殊场景可能会用到，会自动对数据的字段名进行检测，如果不存在就自动定义）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'createRow',
@@ -1838,19 +1724,8 @@ export default {
             'en-US':
               'Create a IRow | IRows object. (This method may be used when data needs to be manually inserted in some special scenarios.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-tree-grid-insert-delete-update'
-        },
-        {
-          name: 'createRow(records)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '创建 Row|Rows 对象（对于某些特殊场景需要对数据进行手动插入时可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'exportCsv',
@@ -1862,66 +1737,33 @@ export default {
             'en-US':
               'Exports table data to a .csv file. (All mainstream browsers are supported. IRows or columns cannot be combined.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-import-export#import-export-export-excel'
-        },
-        {
-          name: 'exportCsv(options)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '将表格数据导出为 .csv 文件（支持所有主流的浏览器，不支持合并行或列）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'fullValidate',
           typeAnchorName: 'IRow',
-          type: '(rows: IRow[], callback: ()=> void)=> Promise',
+          type: '(rows: IRow[], callback: () => void)=> Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '表格完整校验函数，和 validate 的区别就是会对全量数据的所有规则进行完整校验',
             'en-US':
               'Complete table verification function. The difference between this function and validate is that all rules of full data are verified.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-validation#validation-before-submit-validation'
-        },
-        {
-          name: 'fullValidate(rows, callback)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '表格完整校验函数，和 validate 的区别就是会对全量数据的所有规则进行完整校验',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getActiveRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已激活的行数据',
             'en-US': 'Obtain activated row data'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-trigger-mode-hm-editing'
-        },
-        {
-          name: 'getActiveRow()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取已激活的行数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getColumnByField',
@@ -1932,19 +1774,8 @@ export default {
             'zh-CN': '根据列的字段名获取列',
             'en-US': 'Obtain columns based on column field names.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-scroll-to'
-        },
-        {
-          name: 'getColumnByField(field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据列的字段名获取列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getColumnById',
@@ -1955,19 +1786,8 @@ export default {
             'zh-CN': '根据列的唯一主键获取列',
             'en-US': 'Obtain a column based on the unique primary key of the column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
-        },
-        {
-          name: 'getColumnById(colid)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据列的唯一主键获取列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getColumnIndex',
@@ -1978,19 +1798,8 @@ export default {
             'zh-CN': '根据 column 获取相对于 columns 中的索引',
             'en-US': 'Obtain the index relative to the column based on the column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
-        },
-        {
-          name: 'getColumnIndex(column)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据 column 获取相对于 columns 中的索引',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getColumnNode',
@@ -2001,19 +1810,8 @@ export default {
             'zh-CN': '根据 th/td 元素获取对应的 column 信息',
             'en-US': 'Obtain the column information based on the th/td element.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
-        },
-        {
-          name: 'getColumnNode(cell)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据 th/td 元素获取对应的 column 信息',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getColumns',
@@ -2024,42 +1822,20 @@ export default {
             'zh-CN': '获取表格的可视列，也可以指定索引获取列',
             'en-US': 'Obtains the visual column of the table or specifies the index to obtain the column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-server-storage'
-        },
-        {
-          name: 'getColumns(columnIndex)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取表格的可视列，也可以指定索引获取列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getCurrentRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '用于当前行，获取当前行的数据',
             'en-US': 'This is used for the current row to obtain the data of the current row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-get-row-method'
-        },
-        {
-          name: 'getCurrentRow()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于当前行，获取当前行的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getData',
@@ -2071,112 +1847,57 @@ export default {
             'en-US':
               'The behavior of obtaining data is the same as that of data. You can also specify an index to obtain data.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-clear-data'
-        },
-        {
-          name: 'getData(rowIndex)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取数据，和 data 的行为一致，也可以指定索引获取数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getInsertRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取新增的数据',
             'en-US': 'Obtain the new data'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
-        },
-        {
-          name: 'getInsertRecords()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取新增的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRadioRow',
           typeAnchorName: 'IRow',
-          type: '()=> IRow',
+          type: '() => IRow',
           defaultValue: '',
           desc: {
             'zh-CN': '用于单选行，获取当已选中的数据',
             'en-US': 'This command is used to select a single row to obtain the selected data.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-get-row-method'
-        },
-        {
-          name: 'getRadioRow()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于单选行，获取当已选中的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRecordset',
           typeAnchorName: 'IRecordset',
-          type: '()=> IRecordset',
+          type: '() => IRecordset',
           defaultValue: '',
           desc: {
             'zh-CN': '获取表格数据集（获取新增、删除、更改的数据，对于增删改查表格非常方便）',
             'en-US':
               'Obtaining a table data set (Obtain the data of adding, deleting, and changing. It is very convenient for adding, deleting, modifying, and querying tables.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
-        },
-        {
-          name: 'getRecordset()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取表格数据集（获取新增、删除、更改的数据，对于增删改查表格非常方便）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRemoveRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已删除的数据',
             'en-US': 'Obtain deleted data'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
-        },
-        {
-          name: 'getRemoveRecords()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取已删除的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRowById',
@@ -2187,19 +1908,8 @@ export default {
             'zh-CN': '根据行的唯一主键获取行',
             'en-US': 'Obtain a row based on the unique primary key of the row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-get-row-method'
-        },
-        {
-          name: 'getRowById(rowid)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据行的唯一主键获取行',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRowIndex',
@@ -2210,19 +1920,8 @@ export default {
             'zh-CN': '根据 row 获取相对于 data 中的索引',
             'en-US': 'Obtains indexes relative to data based on rows.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-get-row-method'
-        },
-        {
-          name: 'getRowIndex(row:Object)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '根据 row 获取相对于 data 中的索引',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getRowNode',
@@ -2233,71 +1932,53 @@ export default {
             'zh-CN': '根据 tr 元素获取对应的 row 信息',
             'en-US': 'Obtain row information based on the tr element.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-event#event-get-row-method'
         },
         {
-          name: 'getRowNode(tr)',
-          type: '',
+          name: 'getAllSelection',
+          typeAnchorName: 'IRow',
+          type: '() => IRow[]',
+          meta: {
+            stable: '3.19.0'
+          },
           defaultValue: '',
           desc: {
-            'zh-CN': '根据 tr 元素获取对应的 row 信息',
-            'en-US': ''
+            'zh-CN': '获取所有翻页中保存的已选中的数据',
+            'en-US': 'This command is used to select multiple lines to obtain the selected data.'
           },
-          mode: ['mobile-first'],
-          mfDemo: ''
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid-operation-column#operation-column-grid-pager-reserve'
         },
         {
           name: 'getSelectRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
-            'zh-CN': '用于多选行，获取已选中的数据',
+            'zh-CN': '用于多选行，获取当前页已选中的数据',
             'en-US': 'This command is used to select multiple lines to obtain the selected data.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
-        },
-        {
-          name: 'getSelectRecords(notCopy)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，获取已选中的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getTableColumn',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取当前表格的列（完整的全量表头列、处理条件之后的全量表头列、当前渲染中的表头列）',
             'en-US':
               'Obtains columns in the current table. (full table header column, full table header column after processing condition, table header column in current rendering)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-hide-column'
-        },
-        {
-          name: 'getTableColumn()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取当前表格的列（完整的全量表头列、处理条件之后的全量表头列、当前渲染中的表头列）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getTableData',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -2305,65 +1986,31 @@ export default {
             'en-US':
               'Obtains data in the current table. (complete table body data, full table body data after processing conditions, table body data in the current rendering, table tail data in the current rendering)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-clear-data'
-        },
-        {
-          name: 'getTableData()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '获取当前表格的数据（完整的全量表体数据、处理条件之后的全量表体数据、当前渲染中的表体数据、当前渲染中的表尾数据）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'getUpdateRecords',
           typeAnchorName: 'IRow',
-          type: '()=> IRow[]',
+          type: '() => IRow[]',
           defaultValue: '',
           desc: {
             'zh-CN': '获取已修改的数据',
             'en-US': 'Obtain modified data'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
         },
         {
-          name: 'getUpdateRecords()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '获取已修改的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'handleFetch',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '触发表格的 fetch-data ',
             'en-US': 'Fetch-data of the trigger table'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-data-source#data-source-request-service'
-        },
-        {
-          name: 'handleFetch()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '触发表格的fetch-data',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'hasActiveRow',
@@ -2374,19 +2021,8 @@ export default {
             'zh-CN': '检查行是否已激活为编辑状态',
             'en-US': 'Check whether the row has been activated and is in the editing state.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-trigger-mode-hm-editing'
-        },
-        {
-          name: 'hasActiveRow(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '检查行是否已激活为编辑状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'hasRowChange',
@@ -2397,19 +2033,8 @@ export default {
             'zh-CN': '检查行或列数据是否发生改变',
             'en-US': 'Check whether the row or column data is changed.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-has-row-change'
-        },
-        {
-          name: 'hasRowChange(row, field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '检查行或列数据是否发生改变',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'hasRowExpand',
@@ -2420,19 +2045,8 @@ export default {
             'zh-CN': '检查行是否已展开',
             'en-US': 'Check whether the row is expanded.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-expand#expand-has-row-expand'
-        },
-        {
-          name: 'hasRowExpand(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '检查行是否已展开',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'hasTreeExpand',
@@ -2443,19 +2057,8 @@ export default {
             'zh-CN': '检查树节点是否已展开',
             'en-US': 'Check whether the tree node is expanded.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-has-tree-expand'
-        },
-        {
-          name: 'hasTreeExpand(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '检查树节点是否已展开',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'hideColumn',
@@ -2466,19 +2069,8 @@ export default {
             'zh-CN': '隐藏指定列',
             'en-US': 'Hide a specified column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-hide-column'
-        },
-        {
-          name: 'hideColumn(column)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '隐藏指定列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'insert',
@@ -2490,19 +2082,8 @@ export default {
             'en-US':
               'Add data to the table.; Insert data into the table, add one or more rows of data from the first row'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
-        },
-        {
-          name: 'insert(records)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '在表格中新增数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'insertAt',
@@ -2515,20 +2096,8 @@ export default {
             'en-US':
               'Inserts one or more rows into a table. Second parameter: row specified position (tree tables are not supported), null inserted from the first row, and –1 inserted from the last row'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-remove-rows'
-        },
-        {
-          name: 'insertAt(records, row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '往表格插入数据，从指定位置插入一行或多行；第二个参数：row 指定位置（不支持树表格）、null从第一行插入、-1 从最后插入',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'loadColumn',
@@ -2540,19 +2109,8 @@ export default {
             'en-US':
               'Load column configuration (This function may be used in the scenario where table columns need to be reloaded or partially incremented.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-load-column'
-        },
-        {
-          name: 'loadColumn(columns)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '加载列配置（对于表格列需要重载、局部递增场景下可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'loadData',
@@ -2564,69 +2122,36 @@ export default {
             'en-US':
               'Load data (This parameter may be used in the scenario where table data needs to be reloaded or partially incremented.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-full-data-loading'
         },
         {
-          name: 'loadData(data)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '加载数据（对于表格数据需要重载、局部递增场景下可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'recalculate',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '重新计算表格（对于某些特殊场景可能会用到，比如隐藏的表格、更新列宽...等）',
             'en-US':
               'Recalculate the table. (This may be used in some special scenarios, such as hidden tables and column width update.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-recalculate'
         },
         {
-          name: 'recalculate()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '重新计算表格（对于某些特殊场景可能会用到，比如隐藏的表格、更新列宽...等）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'refreshColumn',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '刷新列配置（对于显示/隐藏列场景下可能会用到）',
             'en-US':
               'Refresh column configuration (This parameter may be used in the scenario of displaying or hiding columns.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-hide-column'
         },
         {
-          name: 'refreshColumn()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '刷新列配置（对于显示/隐藏列场景下可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'refreshData',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN':
@@ -2634,20 +2159,8 @@ export default {
             'en-US':
               'Data data is refreshed synchronously. If this method is used, the component does not record the status of adding, deleting, and modifying, and can only implement the corresponding logic. (This parameter may be used in some special scenarios, for example, when a node element in a deep tree changes.)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-tree-grid-insert-delete-update'
-        },
-        {
-          name: 'refreshData()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '同步刷新 data 数据；如果用了该方法，那么组件将不再记录增删改的状态，只能自行实现对应逻辑（对于某些特殊的场景，比如深层树节点元素发生变动时可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'reloadCustoms',
@@ -2660,19 +2173,8 @@ export default {
             'en-US':
               'Initialize loading to display or hide columns (which may be used in asynchronous update scenarios).'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-server-storage'
-        },
-        {
-          name: 'reloadCustoms(customs, sort)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '初始化加载显示/隐藏列（对于异步更新的场景下可能会用到）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'remove',
@@ -2684,110 +2186,55 @@ export default {
             'en-US':
               'Deletes data in a specified row. Multiple data records in a specified row or [row, ...] are deleted. If the value is empty, all data records are deleted.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
         },
         {
-          name: 'remove(rows)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '删除指定行数据，指定 row 或 [row, ...] 删除多条数据，如果为空则删除所有数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'removeSelecteds',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '删除已选中的所有行数据',
             'en-US': 'Delete all selected rows.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
         },
         {
-          name: 'removeSelecteds()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '删除已选中的所有行数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'resetAll',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列的所有操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
             'en-US':
               'Manually reset all operations in the column to the initial state. If the toolbar has been associated, the operations will be updated accordingly.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-reset-resizable'
         },
         {
-          name: 'resetAll()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动重置列的所有操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'resetCustoms',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列的显示/隐藏操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
             'en-US':
               'Manually reset the display/hide operations of columns to restore the initial status (if the toolbar has been associated, it will be updated accordingly)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-reset-resizable'
         },
         {
-          name: 'resetCustoms()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动重置列的显示/隐藏操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'resetResizable',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '手动重置列宽拖动的操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
             'en-US':
               'Manually reset the column width and drag the column width to the initial state (if the toolbar has been associated, the column width will be updated accordingly).'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-reset-resizable'
-        },
-        {
-          name: 'resetResizable()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动重置列宽拖动的操作，还原到初始状态（如果已关联工具栏，则会同步更新）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'revertData',
@@ -2798,19 +2245,8 @@ export default {
             'zh-CN': '还原更改，还原指定行 row 或者整个表格的数据',
             'en-US': 'Restore the data of a specified row or the entire table.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-revert-data'
-        },
-        {
-          name: 'revertData(rows, field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '还原更改，还原指定行 row 或者整个表格的数据',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'scrollTo',
@@ -2820,19 +2256,8 @@ export default {
             'zh-CN': '如果有滚动条，则滚动到对应的位置',
             'en-US': 'If there is a scroll bar, scroll to the corresponding position.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-scroll-to'
-        },
-        {
-          name: 'scrollTo(scrollLeft, scrollTop)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '如果有滚动条，则滚动到对应的位置',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'scrollToColumn',
@@ -2843,19 +2268,8 @@ export default {
             'zh-CN': '如果有滚动条，则滚动到对应的列',
             'en-US': 'If there is a scroll bar, scroll to the corresponding column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-scroll-to'
-        },
-        {
-          name: 'scrollToColumn(column)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '如果有滚动条，则滚动到对应的列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'scrollToRow',
@@ -2866,19 +2280,8 @@ export default {
             'zh-CN': '如果有滚动条，则滚动到对应的行',
             'en-US': 'If there is a scroll bar, scroll to the corresponding line.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-large-data#large-data-scroll-to'
-        },
-        {
-          name: 'scrollToRow(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '如果有滚动条，则滚动到对应的行',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setActiveCell',
@@ -2889,19 +2292,8 @@ export default {
             'zh-CN': '激活单元格编辑',
             'en-US': 'Activate cell editing'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-trigger-mode-hm-editing'
-        },
-        {
-          name: 'setActiveCell(row, field)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '激活单元格编辑',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setActiveRow',
@@ -2912,19 +2304,8 @@ export default {
             'zh-CN': '激活行编辑，如果是 mode=cell 则默认激活第一个单元格',
             'en-US': 'Activate line editing. If mode=cell is selected, the first cell is activated by default.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-trigger-mode-hm-editing'
-        },
-        {
-          name: 'setActiveRow(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '激活行编辑，如果是 mode=cell 则默认激活第一个单元格',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setAllRowExpansion',
@@ -2934,19 +2315,8 @@ export default {
             'zh-CN': '设置所有行的展开与否',
             'en-US': 'Set whether to expand all rows.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-expand#expand-set-row-expansion'
-        },
-        {
-          name: 'setAllRowExpansion(checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '设置所有行的展开与否',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setAllSelection',
@@ -2957,19 +2327,8 @@ export default {
             'en-US':
               'The input parameter is boolean, which is used to select multiple lines and set the selected status of all lines.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-selection-operation'
-        },
-        {
-          name: 'setAllSelection(checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，设置所有行的选中状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setAllTreeExpansion',
@@ -2979,19 +2338,8 @@ export default {
             'zh-CN': '设置所有树节点的展开与否',
             'en-US': 'Sets whether to expand all tree nodes.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-set-tree-expansion'
-        },
-        {
-          name: 'setAllTreeExpansion(checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '设置所有树节点的展开与否',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setCurrentRow',
@@ -3002,19 +2350,8 @@ export default {
             'zh-CN': '用于当前行，设置某一行为高亮状态',
             'en-US': 'Sets the highlight status of a row for the current row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-highlight#highlight-set-current-row'
-        },
-        {
-          name: 'setCurrentRow(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于当前行，设置某一行为高亮状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setRadioRow',
@@ -3025,19 +2362,8 @@ export default {
             'zh-CN': '用于单选行，设置某一行为选中状态',
             'en-US': 'Select a row and set the selected status of a row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-clear-and-set-radio-row'
-        },
-        {
-          name: 'setRadioRow(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于单选行，设置某一行为选中状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setRowExpansion',
@@ -3048,19 +2374,8 @@ export default {
             'zh-CN': '设置展开行，第二个参数设置这一行展开与否',
             'en-US': 'Set the expansion row, and set whether to expand the row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-expand#expand-set-row-expansion'
-        },
-        {
-          name: 'setRowExpansion(rows, checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '设置展开行，二个参数设置这一行展开与否',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setSelection',
@@ -3072,19 +2387,8 @@ export default {
             'en-US':
               'This parameter is used to select multiple lines. The second parameter is whether to select or not.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-selection-operation'
-        },
-        {
-          name: 'setSelection(rows, checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，设置行为选中状态，第二个参数为选中与否',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'setTreeExpansion',
@@ -3095,19 +2399,8 @@ export default {
             'zh-CN': '设置展开树形节点，第二个参数设置这一行展开与否',
             'en-US': 'Set the expansion tree node and set whether to expand the row.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-set-tree-expansion'
-        },
-        {
-          name: 'setTreeExpansion(rows, checked)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '设置展开树形节点，二个参数设置这一行展开与否',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'showColumn',
@@ -3118,19 +2411,8 @@ export default {
             'zh-CN': '显示指定列',
             'en-US': 'Display the specified column.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-hide-column'
-        },
-        {
-          name: 'showColumn(column)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '显示指定列',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'sort',
@@ -3140,41 +2422,19 @@ export default {
             'zh-CN': '手动对表格进行排序（如果 order 为空则自动切换排序）',
             'en-US': 'Sort the table manually. If the value of order is empty, the table is automatically sorted.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-sort'
         },
         {
-          name: 'sort(field, order)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '手动对表格进行排序（如果 order 为空则自动切换排序）',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
-        },
-        {
           name: 'toggleAllSelection',
-          type: '()=> Promise',
+          type: '() => Promise',
           defaultValue: '',
           desc: {
             'zh-CN': '用于多选行，切换所有行的选中状态',
             'en-US': 'Selection of multiple lines and switch the selected status of all lines.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-selection-operation'
-        },
-        {
-          name: 'toggleAllSelection()',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，切换所有行的选中状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'toggleRowExpansion',
@@ -3185,19 +2445,8 @@ export default {
             'zh-CN': '用于可展开表格，切换展开行',
             'en-US': 'For expanding tables or switching rows.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-expand#expand-set-row-expansion'
-        },
-        {
-          name: 'toggleRowExpansion(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于可展开表格，切换展开行',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'toggleRowSelection',
@@ -3208,19 +2457,8 @@ export default {
             'zh-CN': '用于多选行，切换某一行的选中状态',
             'en-US': 'Selection of multiple lines and switch the selected status of a line.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-operation-column#operation-column-selection-operation'
-        },
-        {
-          name: 'toggleRowSelection(row)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN': '用于多选行，切换某一行的选中状态',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         },
         {
           name: 'toggleTreeExpansion',
@@ -3231,45 +2469,33 @@ export default {
             'zh-CN': '用于可树形表格，切换展开树形节点',
             'en-US': 'This parameter is used to switch and expand tree nodes in a tree table.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-set-tree-expansion'
         },
         {
-          name: 'toggleTreeExpansion(row)',
+          name: 'updateFooter',
           type: '',
           defaultValue: '',
           desc: {
-            'zh-CN': '用于可树形表格，切换展开树形节点',
+            'zh-CN': '更新表尾数据',
             'en-US': ''
           },
-          mode: ['mobile-first'],
+          mode: ['pc', 'mobile-first'],
           mfDemo: ''
         },
         {
           name: 'validate',
           typeAnchorName: 'IRow',
-          type: '(rows: IRow | IRow[], callback: ()=> void)=> Promise',
+          type: '(rows: IRow | IRow[], callback: () => void)=> Promise',
           defaultValue: '',
           desc: {
             'zh-CN':
-              '表格校验函数，如果指定 row 或 rows 则校验指定一行或多行，否则校验整个表格。该回调函数会在校验结束后被调用，并传入两个参数：（是否校验成功，最近一列未通过校验的字段）。若不传入回调函数，则会返回一个 promise',
+              '表格校验函数，如果指定 row 或 rows 则校验指定一行或多行，否则校验整个表格。该回调函数会在校验结束后被调用，并传入两个参数：（是否校验成功，最近一列未通过校验的字段）。若不传入回调函数，则会返回一个 promise, 校验成功返回 true (3.22.0新增)，校验失败返回错误信息对象',
             'en-US':
               'Table verification function. If a row or rows is specified, the specified row or multiple rows are verified. Otherwise, the entire table is verified. This callback function is called after the verification is complete and the following parameters are transferred: (Whether the verification is successful. The fields in the latest column fail the verification.) If no callback function is passed in, a promise is returned'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-validation#validation-before-submit-validation'
-        },
-        {
-          name: 'validate(rows, callback)',
-          type: '',
-          defaultValue: '',
-          desc: {
-            'zh-CN':
-              '表格校验函数，如果指定 row 或 rows 则校验指定一行或多行，否则校验整个表格。该回调函数会在校验结束后被调用，并传入两个参数：（是否校验成功，最近一列未通过校验的字段）。若不传入回调函数，则会返回一个 promise',
-            'en-US': ''
-          },
-          mode: ['mobile-first'],
-          mfDemo: ''
         }
       ],
       slots: [
@@ -3334,7 +2560,7 @@ export default {
             'zh-CN': '列对齐方式',
             'en-US': 'Column pair mode; The optional values for this property are left, center, right'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-align#align-grid-align'
         },
         {
@@ -3346,7 +2572,7 @@ export default {
             'zh-CN': '给单元格附加 className，也可以是函数',
             'en-US': 'Add a class name to a cell. The class name can also be the Function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom-style#custom-style-class-name'
         },
         {
@@ -3359,19 +2585,31 @@ export default {
             'en-US':
               'Cell editing rendering configuration item, which can also be the function Function(h, params). Sets the editing type of the table column'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-editor#editor-custom-editor-select'
+        },
+        {
+          name: 'field',
+          type: 'string',
+          defaultValue: '',
+          desc: {
+            'zh-CN': '设置表格列的单元格显示字段',
+            'en-US': 'Set the cell display field for table columns'
+          },
+          mode: ['pc', 'mobile-first'],
+          pcDemo: 'grid#base-basic-usage'
         },
         {
           name: 'filter',
           type: 'boolean | IFilterConfig',
+          typeAnchorName: 'IFilterConfig',
           defaultValue: 'false',
           desc: {
             'zh-CN': '设置表格列的筛选配置信息。默认值为 false 不配置筛选信息',
             'en-US':
               'Set the filtering configuration of the table column. The default value is false. No filtering information is configured.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-filter#filter-default-filter'
         },
         {
@@ -3384,7 +2622,7 @@ export default {
             'en-US':
               'Fix columns on the left. Freezable can be frozen or unfrozen, but can be operated in the table personalized panel. Frozen can only be frozen but cannot be operated in the personalized panel. Fix the column to the left or right (Note: The fixed columns should be placed on the left and right sides.) The optional values of this attribute are left (fixed left) and right (fixed right)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-fixed#fixed-left-fixed'
         },
         {
@@ -3396,7 +2634,7 @@ export default {
             'en-US':
               'Alignment mode of the column at the end of the table; The optional values for this property are left, center, right'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-align#align-footer-align'
         },
         {
@@ -3408,7 +2646,7 @@ export default {
             'zh-CN': '给表尾的单元格附加 className，也可以是函数',
             'en-US': 'Add a class name to the cell at the end of the table. The class name can also be the Function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom-style#custom-style-footer-style'
         },
         {
@@ -3420,7 +2658,7 @@ export default {
             'zh-CN': '开启该列数据异步渲染',
             'en-US': 'Enable the asynchronous rendering of the column data'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-renderer#renderer-inner-renderer'
         },
         {
@@ -3433,7 +2671,7 @@ export default {
             'en-US':
               'Sets the display and editing mode of the current table column. Sets the display and obtaining editing type of the current table column. It can also be the function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-renderer#renderer-inner-renderer'
         },
         {
@@ -3445,7 +2683,7 @@ export default {
             'en-US':
               'The alignment mode of the table header column; The optional values for this property are left, center, right'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-align#align-header-align'
         },
         {
@@ -3457,7 +2695,7 @@ export default {
             'zh-CN': '设置列头样式名称；给表头的单元格附加 className，也可以是函数',
             'en-US': 'Set the column header style name. Add className to the cell in the table header, or the function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom-style#custom-style-header-style'
         },
         {
@@ -3469,7 +2707,7 @@ export default {
             'zh-CN': '只对 type=index 有效，自定义索引方法',
             'en-US': 'This parameter is valid only for type=index'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-serial-column#serial-column-custom-serial-column'
         },
         {
@@ -3481,7 +2719,7 @@ export default {
             'en-US':
               'Minimum column width; The remaining space will be allocated in proportion. The optional values of this property are integers, px,%'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-min-width'
         },
         {
@@ -3494,7 +2732,7 @@ export default {
             'en-US':
               "is an attribute built in the filter object. Whether multiple selections are allowed for filtering. Sets whether to display the check box in the selected column. This parameter is valid only when columnType is set to'select'."
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-filter#filter-default-filter'
         },
         {
@@ -3505,7 +2743,7 @@ export default {
             'zh-CN': '额外的参数（自定义一些数据参数，对于某些特殊的场景可能会用到）',
             'en-US': 'Extra parameters (User-defined data parameters, which may be used in some special scenarios)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
         },
         {
@@ -3516,7 +2754,7 @@ export default {
             'zh-CN': '是否使用服务端排序，如果设置为 true 则不会对数据进行处理',
             'en-US': 'Whether to use server sorting. If this parameter is set to true, data will not be processed.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-server-sort'
         },
         {
@@ -3530,7 +2768,7 @@ export default {
             'en-US':
               'Set the rendering type of the table column. The priority of the column is higher than that of the column type attribute. Cell rendering configuration item. Its priority is higher than that of the formatText attribute of the column'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-renderer#renderer-custom-renderer'
         },
         {
@@ -3542,7 +2780,7 @@ export default {
             'en-US':
               'Mandatory. If this parameter is not set, the system will automatically generate a value based on the verification rule.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
         },
         {
@@ -3554,7 +2792,7 @@ export default {
             'en-US':
               'Set whether the column width can be adjusted. Allows you to drag the column width to adjust the column size.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-column-width'
         },
         {
@@ -3566,7 +2804,7 @@ export default {
             'zh-CN': '表单的验证功能',
             'en-US': 'Form verification function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: ''
         },
         {
@@ -3579,7 +2817,7 @@ export default {
             'en-US':
               'When the table header content is too long, the ellipsis is displayed. The optional values for this property are ellipsis (only the ellipsis is displayed), title (and the native title is displayed), tooltip (and the tooltip prompt is displayed)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tip#tip-column-header-tip'
         },
         {
@@ -3590,7 +2828,7 @@ export default {
             'zh-CN': '表格列头是否需要提示',
             'en-US': 'Whether to prompt the table column header.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tip#tip-column-header-tip'
         },
         {
@@ -3601,7 +2839,7 @@ export default {
             'zh-CN': '是否显示列头编辑图标，在编辑时有效',
             'en-US': 'Whether to display the column header editing icon. This parameter is valid during editing.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-edit#edit-editing'
         },
         {
@@ -3614,7 +2852,7 @@ export default {
             'en-US':
               'When the content is too long, an ellipsis is displayed. The optional values for this property are ellipsis (only the ellipsis is displayed), title (and the native title is displayed), tooltip (and the tooltip is displayed)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tip#tip-cell-tip'
         },
         {
@@ -3625,7 +2863,7 @@ export default {
             'zh-CN': '表格列单元格是否需要提示',
             'en-US': 'Does the table column cells require prompts?'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tip#tip-cell-tip'
         },
         {
@@ -3636,7 +2874,7 @@ export default {
             'zh-CN': '只对 sortable 有效，自定义排序的属性',
             'en-US': 'This parameter is valid only for sortable. It is a user-defined sorting attribute.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-combinations-sort'
         },
         {
@@ -3648,7 +2886,7 @@ export default {
             'zh-CN': '自定义所有列的排序方法，当触发排序时会调用该函数',
             'en-US': 'Customize the sorting method of all columns. When sorting is triggered.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-custom-sort'
         },
         {
@@ -3659,7 +2897,7 @@ export default {
             'zh-CN': '设置该列数据是否可以排序',
             'en-US': 'Whether the data in the column can be sorted.; Allow Sorting Columns'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-sort#sort-default-sort'
         },
         {
@@ -3670,7 +2908,7 @@ export default {
             'zh-CN': '列标题（支持开启国际化），可以是函数',
             'en-US': 'Column title (internationalization can be enabled). It can be the function'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid#base-basic-usage'
         },
         {
@@ -3681,7 +2919,7 @@ export default {
             'zh-CN': '只对 tree-config 配置时有效，指定为树节点',
             'en-US': 'This parameter is valid only when tree-config is configured. It is specified as a tree node.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-tree-table#tree-table-tree-grid-base'
         },
         {
@@ -3692,7 +2930,7 @@ export default {
             'zh-CN': '设置内置列的类型',
             'en-US': 'Set the type of the built-in column'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-serial-column#serial-column-default-serial-column'
         },
         {
@@ -3705,7 +2943,7 @@ export default {
             'en-US':
               'Set the column width. The value can be pixel, percentage, or auto. If the value is auto, the column width automatically adapts.; column width; The optional value of this property is integer/px/%'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-size#size-fixed-column-width'
         }
       ],
@@ -3720,7 +2958,7 @@ export default {
               '自定义显示内容模板，作用插槽参数说明：slots.default({ $table, column, row },h)，$table：表格组件对象，column：当前列配置，row：当前行数据,h：vue的渲染函数',
             'en-US': 'Customized display content template'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-slot#slot-default-slot'
         },
         {
@@ -3731,7 +2969,7 @@ export default {
               '自定义可编辑组件模板，作用插槽参数说明：slots.edit({ $table, column, row },h)，$table：表格组件对象，column：当前列配置，row：当前行数据,h：vue的渲染函数',
             'en-US': 'Customized Editable Component Template'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-slot#slot-editor-slot'
         },
         {
@@ -3742,7 +2980,7 @@ export default {
               '自定义筛选模板，作用插槽参数说明：slots.filter({ $grid, values, args, context },h)，$grid：表格组件对象，values：筛选项集合，args：筛选相关参数,context：筛选面板组件上下文对象',
             'en-US': 'User-defined filtering template'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-filter#filter-custom-filter'
         },
         {
@@ -3753,7 +2991,7 @@ export default {
               '自定义表头内容的模板，作用插槽参数说明：slots.header({ $table, column, columnIndex，$rowIndex},h)，$table：表格组件对象，column：当前列配置，columnIndex：当前列索引,$rowIndex:当前行索引,h：vue的渲染函数',
             'en-US': 'Template of custom table header content'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-slot#slot-header-slot'
         }
       ]
@@ -3764,26 +3002,26 @@ export default {
       props: [
         {
           name: 'before-close-full-screen',
-          type: '()=> boolean',
+          type: '() => boolean',
           defaultValue: '',
           desc: {
             'zh-CN': '关闭全屏前的拦截方法，返回 false 则阻止关闭全屏，返回 true 则不阻止',
             'en-US':
               'Intercept method before full screen is disabled. If false is returned, the full screen is disabled. If true is returned, the full screen is not disabled.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-grid-full-screen'
         },
         {
           name: 'before-open-full-screen',
-          type: '()=> boolean',
+          type: '() => boolean',
           defaultValue: '',
           desc: {
             'zh-CN': '全屏前的拦截方法，返回 false 则阻止全屏，返回 true 则不阻止',
             'en-US':
               'Intercept method before full screen, If false is returned, the full screen is blocked. If true is returned, the full screen is not blocked.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-grid-full-screen'
         },
         {
@@ -3794,7 +3032,7 @@ export default {
             'zh-CN': '按钮列表',
             'en-US': 'Button List'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-insert-delete-update'
         },
         {
@@ -3806,7 +3044,7 @@ export default {
             'en-US':
               'Sets whether the table can be displayed in full screen mode or whether the container needs to be displayed in full screen mode.; Sets whether to display the full-screen button on the toolbar.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-grid-full-screen'
         },
         {
@@ -3817,7 +3055,7 @@ export default {
             'zh-CN': '唯一 ID 标识',
             'en-US': 'Unique ID'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-column-width'
         },
         {
@@ -3828,7 +3066,7 @@ export default {
             'zh-CN': '工具栏组件开启表格刷新功能',
             'en-US': 'The table refresh function is enabled for the toolbar component.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-refresh-grid'
         },
         {
@@ -3839,7 +3077,7 @@ export default {
             'zh-CN': '列宽拖动配置（需要设置 id）',
             'en-US': 'Column width dragging configuration (id needs to be set)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-column-width'
         },
         {
@@ -3853,7 +3091,7 @@ export default {
             'en-US':
               'Whether to display the table attribute on the personalized panel. This parameter is valid only when the name attribute of the table is set. Set whether to display personalized configuration for toolbar attributes (id needs to be set)'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-column-width'
         },
         {
@@ -3864,7 +3102,7 @@ export default {
             'zh-CN': '表格的尺寸',
             'en-US': 'Dimension; The options of this attribute are medium, small, and mini'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-copy-row-data'
         }
       ],
@@ -3878,7 +3116,7 @@ export default {
             'zh-CN': '当工具栏的按钮被点击时会后触发该事件',
             'en-US': 'This event is triggered when a button on the toolbar is clicked'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-validation#validation-before-submit-validation'
         },
         {
@@ -3891,18 +3129,18 @@ export default {
             'en-US':
               'Click the Cancel button on the personalized panel to trigger the event. settingConfigs: personalized data of the table'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-ordercolumn-local'
         },
         {
           name: 'reset-setting',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '点击个性化面板的重置按钮触发该事件',
             'en-US': 'Click the Reset button on the personalized panel to trigger the event.'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-ordercolumn-local'
         },
         {
@@ -3915,7 +3153,7 @@ export default {
             'en-US':
               'Click the OK button on the personalized panel to trigger the event. settingConfigs: personalized data of the table'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-custom#custom-ordercolumn-local'
         }
       ],
@@ -3928,7 +3166,7 @@ export default {
             'zh-CN': '按钮列表',
             'en-US': 'Button List'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-custom-toolbar'
         },
         {
@@ -3938,7 +3176,7 @@ export default {
             'zh-CN': '工具栏插槽',
             'en-US': 'Toolbar slot'
           },
-          mode: ['pc'],
+          mode: ['pc', 'mobile-first'],
           pcDemo: 'grid-toolbar#toolbar-custom-toolbar'
         }
       ]
@@ -3951,13 +3189,14 @@ export default {
       code: `
 interface IRow {
   // 表格行数据
-  [filed: string]: any
+  [field: string]: any
 }
       `
     },
     {
       name: 'IColumnConfig',
       type: 'interface',
+      depTypes: ['IValidRules'],
       code: `
 interface IColumnConfig {
   type: 'index' | 'radio' | 'checkbox'
@@ -3996,7 +3235,7 @@ interface IPagerConfig {
     pageSize: number
     pageSizes: number[]
     total: number
-    // 分页组件布局默认值：'total, prev, pager, next, jumper, sizes'
+    // 分页组件布局默认值：'total, prev, pager, next, jumper'
     layout: string
   }
 }
@@ -4007,7 +3246,7 @@ interface IPagerConfig {
       type: 'type',
       code: `
 interface IDataHandler {
-  api: ()=> Promise
+  api: () => Promise
 }
       `
     },
@@ -4016,8 +3255,16 @@ interface IDataHandler {
       type: 'type',
       code: `
 interface IRowGroup {
+  // 自定义渲染内容
+  render: () => Vnode
   // 列标识符，行分组会将具有相同值的列进行分组展示
   field: string
+  // 3.17版本新增，配置分组行的列合并数量
+  colspan: number
+  // 3.17版本新增，控制分组行是否可以手动折叠
+  closeable: boolean
+  // 3.17版本新增，控制分组生成时是否默认收起
+  activeMethod: (row: IRow) => boolean
 }
       `
     },
@@ -4045,7 +3292,7 @@ interface IToolTipConfig {
   type?: 'normal' | 'warning' | 'error' | 'info' | 'success'
   effect?: 'dark' | 'light'
   // 自定义提示内容
-  contentMethod?: ()=> string | VNode
+  contentMethod?: () => string | VNode
 }
       `
     },
@@ -4067,7 +3314,7 @@ interface IContextMenuConfig {
   footer?: { 
     options: IMenuOptions
   }
-  visibleMethod?: ()=> boolean
+  visibleMethod?: () => boolean
 }
       `
     },
@@ -4076,7 +3323,7 @@ interface IContextMenuConfig {
       type: 'type',
       code: `
 interface IValidRules {
- [filed:string]: { 
+ [field:string]: { 
   type?: string
   required?: boolean
   validator?: () => boolean
@@ -4176,7 +3423,7 @@ interface IRadioConfig {
   // 默认选中指定行（只会在初始化时被触发一次，需要有 row-id）
   checkRowKey?: string
   // 是否允许选中的方法，该方法的返回值用来决定这一行的 Radio 是否可以选中
-  checkMethod?: ()=> boolean
+  checkMethod?: () => boolean
 }
       `
     },
@@ -4192,7 +3439,7 @@ interface ISelectConfig {
   // 默认勾选开指定行（只会在初始化时被触发一次，需要有 row-id）
   checkRowKeys?: string[] 
   // 是否允许选中的方法，该方法的返回值用来决定这一行的 checkbox 是否可以勾选
-  checkMethod?: ()=> boolean 
+  checkMethod?: () => boolean 
   // 默认勾选所有（只会在初始化时被触发一次）}
   checkAll?: boolean
   // 是否显示全选按钮（如果 checkStrictly=true 则默认为 false）
@@ -4279,7 +3526,7 @@ interface IScrollLoadConfig {
       type: 'type',
       code: `
 interface IEventsConfig {
-  [field: string]: ()=> void
+  [field: string]: () => void
 }
       `
     },
@@ -4295,7 +3542,7 @@ interface IDropConfig {
   // 开启列拖拽
   column: boolean
   // 拖拽前函数，返回 false 取消拖动
-  onBeforeMove?: ()=> boolean
+  onBeforeMove?: () => boolean
   // 拖拽触发源选择器一般是class类名
   trigger?: string
   // 根据行的类名来控制是否可以拖动
@@ -4318,6 +3565,8 @@ interface IEditConfig {
   showStatus?: boolean
   // 自定义编辑规则，返回true可以编辑返回false则禁止编辑
   activeMethod?: ({row: IRow, column: IColumnConfig})=> boolean
+  // （3.19新增）当mode为'row'时，行编辑激活状态下默认会忽略activeMethod，配置为true使其生效
+  activeStrictly?: boolean
 }
       `
     },
@@ -4341,7 +3590,7 @@ interface IPageChangeArgs {
   $grid: Component
   // 当前页码
   currentPage: number
-  //当前分页组件布局信息 'total, prev, pager, next, jumper, sizes'
+  //当前分页组件布局信息 'total, prev, pager, next, jumper'
   layout: string
   // 当前每页显示条数
   pageSize: number
@@ -4366,9 +3615,9 @@ interface IBeforePageChangeArgs {
   //当前的页大小
   currentPageSize: number
   //生效回调
-  callback: ()=> void
+  callback: () => void
   //失效回调
-  rollback: ()=> void
+  rollback: () => void
 }
       `
     },
@@ -4392,6 +3641,7 @@ interface IToolbarButtonClickArgs {
     {
       name: 'ICellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ICellClickArgs {
   // 当前行
@@ -4418,6 +3668,7 @@ interface ICellContextMenuArgs {
     {
       name: 'ICellArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ICellArgs {
   //当前行
@@ -4444,6 +3695,7 @@ interface ICurrentChangeArgs {
     {
       name: 'IEditActivedArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditActivedArgs {
   // 当前行
@@ -4456,6 +3708,7 @@ interface IEditActivedArgs {
     {
       name: 'IEditClosedArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditClosedArgs {
   // 当前行
@@ -4468,6 +3721,7 @@ interface IEditClosedArgs {
     {
       name: 'IEditDisabledArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IEditDisabledArgs {
   //当前行
@@ -4492,6 +3746,7 @@ interface IFilterChangeArgs {
     {
       name: 'IFooterCellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFooterCellClickArgs {
   $columnIndex: number
@@ -4509,6 +3764,7 @@ interface IFooterCellClickArgs {
     {
       name: 'IContextMenuArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IContextMenuArgs {
   $columnIndex: number
@@ -4530,6 +3786,7 @@ interface IContextMenuArgs {
     {
       name: 'IFooterCellDblClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFooterCellDblClickArgs {
   $columnIndex: number
@@ -4547,6 +3804,7 @@ interface IFooterCellDblClickArgs {
     {
       name: 'IHeaderCellClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IHeaderCellClickArgs {
   $columnIndex: number
@@ -4568,6 +3826,7 @@ interface IHeaderCellClickArgs {
     {
       name: 'IHeaderCellDblClickArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IHeaderCellDblClickArgs {
   // 列数据
@@ -4584,6 +3843,7 @@ interface IHeaderCellDblClickArgs {
     {
       name: 'IResizableChangeArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IResizableChangeArgs {
   // table组件的vue 实例 
@@ -4594,6 +3854,16 @@ interface IResizableChangeArgs {
   columnIndex: number
   // 是否固定列
   fixed: boolean
+}
+      `
+    },
+    {
+      name: 'IResizableConfig',
+      type: 'type',
+      code: `
+interface IResizableConfig {
+  // 拖拽宽度限制函数，field: 当前拖拽的列名，width: 当前拖拽的宽度
+  limit: ({ field: string, width: number }) => number
 }
       `
     },
@@ -4620,6 +3890,7 @@ interface IScrollArgs {
     {
       name: 'ISelectAllArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISelectAllArgs {
   $columnIndex: number
@@ -4679,6 +3950,7 @@ interface IToggleTreeChangeArgs {
     {
       name: 'IValidErrorArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IValidErrorArgs { 
   // 校验的单元格信息对象
@@ -4695,6 +3967,7 @@ interface IValidErrorArgs {
     {
       name: 'ISortChangeArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISortChangeArgs { 
   // 表格实例对象信息
@@ -4713,6 +3986,7 @@ interface ISortChangeArgs {
     {
       name: 'IClassNameArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IClassNameArgs {
   seq: number
@@ -4728,6 +4002,7 @@ interface IClassNameArgs {
     {
       name: 'IIndexMethodArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IIndexMethodArgs {
   row: IRow
@@ -4740,6 +4015,7 @@ interface IIndexMethodArgs {
     {
       name: 'IFormatConfig',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface IFormatConfig {
   // 列数据源
@@ -4791,6 +4067,7 @@ interface ISettingConfigs {
     {
       name: 'ISpanMethodArgs',
       type: 'type',
+      depTypes: ['IColumnConfig'],
       code: `
 interface ISpanMethodArgs {
   // 行标
@@ -4806,6 +4083,7 @@ interface ISpanMethodArgs {
     },
     {
       name: 'IExportCsvOptions',
+      depTypes: ['IRow'],
       type: 'type',
       code: `
 interface IExportCsvOptions {
@@ -4825,7 +4103,7 @@ interface IEditorConfig {
   component: 'input' | 'select' | Component
   // 传递给组件的事件集合
   events?: {
-    [event]: ()=> void
+    [event]: () => void
   }
   // 传递给编辑器组件的属性集合
   attrs?: {
@@ -4855,19 +4133,7 @@ interface IFilterConfig {
     label: string
     // 设置枚举数据的实际值属性字段， 默认'value'
     value: string 
-  }[] | ()=> Promise
-}
-      `
-    },
-    {
-      name: 'IOPConfig',
-      type: 'type',
-      code: `
-interface IOPConfig {
-  editConfig?: IEditConfig
-  pagerConfig?: IPagerConfig
-  columns: IColumnConfig[]
-  data: IRow[]
+  }[] | () => Promise
 }
       `
     },

@@ -1,5 +1,5 @@
-name: Dispatch Renderless Theme
-run-name: Dispatch Renderless Theme--${{ inputs.components }}
+name: Dispatch Renderless Theme Runtime
+run-name: Dispatch Renderless Theme Runtime--${{ inputs.components }}
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       components:
         description: |
           输入需要打包的模块名称，多个以英文逗号分隔,
-          例如： `theme,renderless`
+          例如： `theme,renderless,runtime`
         required: true
         type: string
 concurrency:
@@ -26,7 +26,7 @@ jobs:
             const branchName = `${{ github.ref_name }}`
             const moduleName = `${{ inputs.components }}`
 
-            if (!moduleName.includes('theme') && !moduleName.includes('renderless')) {
+            if (!moduleName.includes('theme') && !moduleName.includes('renderless') && !moduleName.includes('runtime')) {
               throw new Error('请输入正确的包名称')
             }
 
@@ -76,9 +76,9 @@ jobs:
         if: contains(inputs.components, 'theme-saas') == true
         run: pnpm build:themeSaas
 
-      - name: Run Build ThemeMobile
-        if: contains(inputs.components, 'theme-mobile') == true
-        run: pnpm build:themeMobile
+      - name: Run Build Runtime
+        if: contains(inputs.components, 'runtime') == true
+        run: pnpm build:runtime
 
       - name: Publish
         run: |

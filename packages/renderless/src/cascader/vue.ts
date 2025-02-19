@@ -44,9 +44,9 @@ import {
   handleMouseenter,
   handleMouseleave
 } from './index'
-import { removeResizeListener } from '../common/deps/resize-event'
-import userPopper from '../common/deps/vue-popper'
-import { DATEPICKER } from '../common'
+import { removeResizeListener } from '@opentiny/utils'
+import { userPopper } from '@opentiny/vue-hooks'
+import { DATEPICKER } from '@opentiny/utils'
 import type {
   ICascaderProps,
   ICascaderApi,
@@ -73,7 +73,8 @@ export const api = [
   'toggleDropDownVisible',
   'handleKeyDown',
   'handleMouseenter',
-  'handleMouseleave'
+  'handleMouseleave',
+  'computePresentContent'
 ]
 
 const initState = ({
@@ -85,7 +86,8 @@ const initState = ({
   t,
   constants,
   vm,
-  inject
+  inject,
+  designConfig
 }: {
   reactive: ISharedRenderlessFunctionParams<null>['reactive']
   props: ICascaderProps
@@ -96,6 +98,7 @@ const initState = ({
   constants: ICascaderConstants
   vm: ICascadeRenderlessParamUtils['vm']
   inject: ISharedRenderlessFunctionParams<null>['inject']
+  designConfig: ISharedRenderlessFunctionParams<null>['designConfig']
 }) => {
   const state = reactive({
     showAutoWidth: inject('showAutoWidth', null),
@@ -129,7 +132,8 @@ const initState = ({
     collapseTagsLength: 0,
     isHidden: false,
     tooltipVisible: false,
-    tooltipContent: ''
+    tooltipContent: '',
+    tagTypeWhenMultiple: designConfig?.tagTypeWhenMultiple || ''
   })
 
   return state as ICascaderState
@@ -269,7 +273,7 @@ export const renderless = (
     watch,
     inject
   }: ISharedRenderlessFunctionParams<null>,
-  { t, emit, nextTick, constants, parent, slots, dispatch, vm }: ICascadeRenderlessParamUtils
+  { t, emit, nextTick, constants, parent, slots, dispatch, vm, designConfig }: ICascadeRenderlessParamUtils
 ) => {
   parent.tinyForm = parent.tinyForm || inject('form', null)
 
@@ -295,7 +299,18 @@ export const renderless = (
   } as any)
 
   const api: Partial<ICascaderApi> = {}
-  const state = initState({ reactive, props, computed, parent, api: api as ICascaderApi, t, constants, vm, inject })
+  const state = initState({
+    reactive,
+    props,
+    computed,
+    parent,
+    api: api as ICascaderApi,
+    t,
+    constants,
+    vm,
+    inject,
+    designConfig
+  })
 
   initApi({ api: api as ICascaderApi, state, constants, dispatch, emit, vm, props, updatePopper, nextTick, parent, t })
 

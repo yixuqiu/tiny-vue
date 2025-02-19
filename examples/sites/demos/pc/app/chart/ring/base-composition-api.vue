@@ -1,23 +1,20 @@
 <template>
   <div>
-    <tiny-chart-ring :data="chartData" :settings="chartSettings"></tiny-chart-ring>
+    <tiny-chart-ring :options="options"></tiny-chart-ring>
   </div>
 </template>
 
 <script setup lang="jsx">
 import { ref } from 'vue'
-import { ChartRing as TinyChartRing } from '@opentiny/vue'
+import { TinyHuichartsRing as TinyChartRing } from '@opentiny/vue-huicharts'
 
-const chartData = ref({
-  columns: ['日期', '访问用户'],
-  rows: [
-    { 日期: '1/1', 访问用户: 1393 },
-    { 日期: '1/2', 访问用户: 3530 },
-    { 日期: '1/3', 访问用户: 2923 },
-    { 日期: '1/4', 访问用户: 1723 },
-    { 日期: '1/5', 访问用户: 3792 },
-    { 日期: '1/6', 访问用户: 4593 }
+const options = ref({
+  type: 'circle',
+  data: [
+    { value: 100, name: 'VPC' },
+    { value: 98, name: 'IM' },
+    { value: 49, name: 'EIP' },
+    { value: 14, name: 'SG' }
   ]
 })
-const chartSettings = ref({})
 </script>

@@ -4,7 +4,6 @@ import { cmpMenus as mfCmpMenus } from '../mobile-first/menus'
 
 const noSaasComponents = [
   'ActionMenu',
-  'Anchor',
   'ColorPicker',
   'ColorSelectPanel',
   'ConfigProvider',
@@ -43,6 +42,11 @@ const cmpMenus = pcCmpMenus.map((pcMenusitem) => {
     })
   }
   pcMenusitem.children = pcMenusitem.children.filter((item) => !noSaasComponents.includes(item.name))
+
+  // 插入 queryBuild 的菜单。 pc 文档下线该组件，仅在saas文档展示
+  if (pcMenusitem.label === '表单组件') {
+    pcMenusitem.children.push({ 'nameCn': '查询生成器', 'name': 'QueryBuilder ', 'key': 'query-builder' })
+  }
   return pcMenusitem
 })
 

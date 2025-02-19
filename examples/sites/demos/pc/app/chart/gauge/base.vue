@@ -1,23 +1,26 @@
 <template>
   <div>
-    <tiny-gauge :data="chartData" :settings="chartSettings"></tiny-gauge>
+    <tiny-gauge :options="options"></tiny-gauge>
   </div>
 </template>
 
 <script lang="jsx">
-import { ChartGauge } from '@opentiny/vue'
+import { TinyHuichartsGauge } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyGauge: ChartGauge
+    TinyGauge: TinyHuichartsGauge
   },
   data() {
     return {
-      chartData: {
-        columns: ['type', 'a', 'b', 'value'],
-        rows: [{ type: '速度', value: 80, a: 1, b: 2 }]
-      },
-      chartSettings: {}
+      options: {
+        data: [
+          {
+            value: 71,
+            name: 'Utilization rate'
+          }
+        ]
+      }
     }
   }
 }

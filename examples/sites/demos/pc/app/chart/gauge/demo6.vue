@@ -1,78 +1,32 @@
 <template>
   <div>
-    <tiny-gauge :data="chartData" :settings="chartSettings" :extend="echartsOption" theme-type="ict"></tiny-gauge>
+    <tiny-gauge :options="options"></tiny-gauge>
   </div>
 </template>
 
-<script>
-import { ChartGauge } from '@opentiny/vue'
+<script lang="jsx">
+import { TinyHuichartsGauge } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyGauge: ChartGauge
+    TinyGauge: TinyHuichartsGauge
   },
   data() {
     return {
-      chartData: {
-        columns: ['type', 'value'],
-        rows: [{ type: '占比', value: 40 }]
-      },
-      echartsOption: {
-        series: [
-          { type: 'gauge' },
+      options: {
+        min: 0,
+        max: 1000,
+        splitNumber: 4,
+
+        // 阈值线，超出阈值线时，进度条会变红色
+        markLine: 888,
+        pointer: true,
+        data: [
           {
-            type: 'gauge',
-            splitLine: { show: false },
-            axisTick: { show: false },
-            axisLabel: { show: false },
-            radius: '80%',
-            axisLine: {
-              lineStyle: {
-                color: [[1, '#f2efde']],
-                width: 1
-              }
-            }
+            value: 900,
+            name: 'Rgistered Persons'
           }
         ]
-      },
-      chartSettings: {
-        dataName: {
-          占比: 'Average'
-        },
-        seriesMap: {
-          占比: {
-            progress: {
-              show: false
-            },
-            splitLine: {
-              distance: -30,
-              length: 30,
-              lineStyle: {
-                color: '#fff',
-                width: 2
-              }
-            },
-            pointer: { show: true, offsetCenter: [0, '-106%'] },
-            detail: {
-              formatter: '{value}{unit|%}',
-              rich: {
-                value: { fontSize: 60, color: '#191919' },
-                unit: { fontSize: 12, color: '#4E4E4E', padding: [0, 0, -20, 0] }
-              }
-            },
-            splitNumber: 4,
-            axisLine: {
-              lineStyle: {
-                color: [
-                  [0.25, '#2da769'],
-                  [0.5, '#eeba18'],
-                  [0.75, '#ec6f1a'],
-                  [1, '#f43146']
-                ]
-              }
-            }
-          }
-        }
       }
     }
   }

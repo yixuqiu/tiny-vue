@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import { CalendarView, Button, Modal } from '@opentiny/vue'
+import { TinyCalendarView, TinyButton, TinyModal } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyCalendarView: CalendarView,
-    TinyButton: Button
+    TinyCalendarView,
+    TinyButton
   },
   data() {
     return {
@@ -37,13 +37,33 @@ export default {
   methods: {
     setDays(type) {
       if (!this.selectedDate.length) {
-        Modal.message({ message: '请选择日期', status: 'info' })
+        TinyModal.message({ message: '请选择日期', status: 'info' })
         return
       }
       this[type].push(...this.selectedDate)
+
+      this.selectedDate.forEach((date) => {
+        if (type === 'workingDays') {
+          this.removeFromArray(this.offDays, date)
+          this.removeFromArray(this.holidays, date)
+        } else if (type === 'offDays') {
+          this.removeFromArray(this.holidays, date)
+          this.removeFromArray(this.workingDays, date)
+        } else {
+          this.removeFromArray(this.offDays, date)
+          this.removeFromArray(this.workingDays, date)
+        }
+      })
       this.selectedDates = []
       this.selectedDate = []
     },
+    removeFromArray(array, item) {
+      const index = array.indexOf(item)
+      if (index !== -1) {
+        array.splice(index, 1)
+      }
+    },
+
     setDayBgColor(date) {
       if (this.workingDays.includes(date)) {
         return 'blue'

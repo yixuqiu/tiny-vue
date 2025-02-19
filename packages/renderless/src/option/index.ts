@@ -10,8 +10,7 @@
  *
  */
 
-import { getObj } from '../common/object'
-import { omitText } from '../common/string'
+import { getObj } from '@opentiny/utils'
 
 export const escapeRegexpString = (value = '') => String(value).replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
 
@@ -52,18 +51,7 @@ export const handleGroupDisabled =
 
 export const hoverItem =
   ({ select, props, state }) =>
-  (e) => {
-    // 选项超出省略时新增title提示
-    const dom = e.target
-    const text = dom.textContent
-    const style = window.getComputedStyle(dom)
-    const font = style.font
-    const rect = dom.getBoundingClientRect()
-
-    const textWidth = rect.width - parseInt(style.paddingLeft || 0) - parseInt(style.paddingRight || 0)
-    const res = omitText(text, font, textWidth)
-    state.showTitle = res.o
-
+  () => {
     if (!props.disabled && !state.groupDisabled && !select.state.disabledOptionHover) {
       select.state.hoverIndex = select.state.optionIndexArr.indexOf(state.index)
     }
@@ -82,7 +70,8 @@ export const queryChange =
   ({ select, props, state }) =>
   (query) => {
     const oldVisible = state.visible
-    const newVisible = new RegExp(escapeRegexpString(query), 'i').test(state.currentLabel) || !!props.created
+    // tiny 新增： 优化判断query是否匹配。 使用正则性能差！
+    const newVisible = state.currentLabel.toLowerCase().includes(query.toLowerCase()) || !!props.created
 
     if (oldVisible !== newVisible) {
       state.visible = newVisible

@@ -5,9 +5,9 @@
       <tiny-button @click="getChecks">查询勾选状态</tiny-button>
       <tiny-button @click="clear">清除全部勾选</tiny-button><br /><br />
       <tiny-button @click="setChecked">根据节点数据勾选/反勾选</tiny-button>
-      <tiny-button @click="setCheckedByNodeKey">根据node-key勾选/反勾选 </tiny-button><br /><br />
-      <tiny-button @click="setCheckedKeys">根据node-key,多值勾选</tiny-button>
-      <tiny-button @click="setCheckedNodes">根据node,多值勾选</tiny-button><br /><br />
+      <tiny-button @click="setCheckedByNodeKey">根据 node-key 勾选/反勾选 </tiny-button><br /><br />
+      <tiny-button @click="setCheckedKeys">根据 node-key，多值勾选</tiny-button>
+      <tiny-button @click="setCheckedNodes">根据 node，多值勾选</tiny-button><br /><br />
     </div>
     <tiny-tree
       ref="treeRef"
@@ -22,12 +22,12 @@
 </template>
 
 <script lang="jsx">
-import { Tree, Button } from '@opentiny/vue'
+import { TinyTree, TinyButton } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyTree: Tree,
-    TinyButton: Button
+    TinyTree,
+    TinyButton
   },
   data() {
     return {
@@ -35,7 +35,10 @@ export default {
         {
           id: '1',
           label: '数据 1',
-          children: [{ id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] }]
+          children: [
+            { id: '1-1', label: '数据 1-1', children: [{ id: '1-1-1', label: '数据 1-1-1' }] },
+            { id: '1-2', label: '数据 1-2' }
+          ]
         },
         {
           id: '2',
@@ -71,6 +74,7 @@ export default {
       const checkedHalfNodes = this.$refs.treeRef.getHalfCheckedNodes()
 
       console.log('当前组件的勾选状态为： ', this.$refs.treeRef, {
+        currentKey,
         checkedKeys,
         checkedKeysOnlyLeaf,
         checkedNodes,
@@ -83,7 +87,7 @@ export default {
       this.$refs.treeRef.setCheckedKeys([])
     },
     setChecked() {
-      // setChecked: (data, checked, deep) => void， deep为true时，深度勾选
+      // setChecked: (data, checked, deep) => void，deep 为 true 时，深度勾选
       this.$refs.treeRef.setChecked({ id: '1-1' }, true, true)
       this.$refs.treeRef.setChecked({ id: '3' }, true, false)
     },
@@ -100,10 +104,10 @@ export default {
       this.$refs.treeRef.setCheckedNodes([{ id: '1-1' }, { id: '2-1' }, { id: '3-1' }], true)
     },
     check(data, currentChecked) {
-      console.log('check事件：', arguments)
+      console.log('check 事件：', data, currentChecked)
     },
     checkChange(data, checked, indeterminate) {
-      console.log('checkChange事件：', arguments)
+      console.log('checkChange 事件：', data, checked, indeterminate)
     }
   }
 }

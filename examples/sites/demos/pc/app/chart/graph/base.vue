@@ -1,30 +1,26 @@
 <template>
   <div>
-    <tiny-graph :extend="extend"></tiny-graph>
+    <tiny-graph :options="options"></tiny-graph>
   </div>
 </template>
 
 <script lang="jsx">
-import { ChartGraph } from '@opentiny/vue'
+import { TinyHuichartsGraph } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyGraph: ChartGraph
+    TinyGraph: TinyHuichartsGraph
   },
   data() {
     return {
-      extend: {
-        title: {
-          text: 'Graph 简单示例'
-        },
-        tooltip: {},
-        animationDurationUpdate: 1500,
+      options: {
+        animationDurationUpdate: 1600,
         animationEasingUpdate: 'quinticInOut',
         series: [
           {
             type: 'graph',
             layout: 'none',
-            symbolSize: 50,
+            symbolSize: 48,
             color: '#42A5F5',
             roam: true,
             label: {
@@ -33,32 +29,32 @@ export default {
               }
             },
             edgeSymbol: ['circle', 'arrow'],
-            edgeSymbolSize: [4, 10],
+            edgeSymbolSize: [3, 10],
             edgeLabel: {
               normal: {
                 textStyle: {
-                  fontSize: 20
+                  fontSize: 18
                 }
               }
             },
             data: [
               {
-                name: '节点1',
+                name: '节点 1',
                 x: 300,
                 y: 300
               },
               {
-                name: '节点2',
+                name: '节点 2',
                 x: 800,
                 y: 300
               },
               {
-                name: '节点3',
+                name: '节点 3',
                 x: 550,
                 y: 100
               },
               {
-                name: '节点4',
+                name: '节点 4',
                 x: 550,
                 y: 500
               }
@@ -81,8 +77,8 @@ export default {
                 }
               },
               {
-                source: '节点2',
-                target: '节点1',
+                source: '节点 2',
+                target: '节点 1',
                 label: {
                   normal: {
                     show: true
@@ -95,20 +91,20 @@ export default {
                 }
               },
               {
-                source: '节点1',
-                target: '节点3'
+                source: '节点 1',
+                target: '节点 3'
               },
               {
-                source: '节点2',
-                target: '节点3'
+                source: '节点 2',
+                target: '节点 3'
               },
               {
-                source: '节点2',
-                target: '节点4'
+                source: '节点 2',
+                target: '节点 4'
               },
               {
-                source: '节点1',
-                target: '节点4'
+                source: '节点 1',
+                target: '节点 4'
               }
             ],
             lineStyle: {

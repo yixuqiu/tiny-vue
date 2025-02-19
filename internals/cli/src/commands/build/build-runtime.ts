@@ -1,17 +1,17 @@
 import path from 'node:path'
 import type { UserConfig } from 'vite'
 import { build } from 'vite'
-import minimist from 'minimist'
 import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
 import { logGreen } from '../../shared/utils'
 import type { BuildUiOption, BaseConfig } from './build-ui'
 import { pathFromPackages, getBaseConfig, requireModules } from './build-ui'
 import { createProcessor } from 'tailwindcss/src/cli/build/plugin'
+import { visualizer } from 'rollup-plugin-visualizer'
 
-async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope, min }) {
+async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope, min, isVisualizer }) {
   const rootDir = pathFromPackages('')
-  const runtimeDir = `dist${vueVersion}/@opentiny/vue/runtime`
+  const runtimeDir = `vue-runtime/dist${vueVersion}`
   const outDir = path.resolve(rootDir, runtimeDir)
 
   await batchBuild({
@@ -20,7 +20,8 @@ async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope
     message,
     emptyOutDir,
     npmScope,
-    min
+    min,
+    isVisualizer
   })
 
   function toEntry(libs) {
@@ -36,13 +37,19 @@ async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope
       '@vue/composition-api': 'VueCompositionAPI',
       '@opentiny/vue-locale': 'TinyVueLocale',
       '@opentiny/vue-common': 'TinyVueCommon',
-      '@opentiny/vue-icon': 'TinyVueIcon'
+      '@opentiny/vue-icon': 'TinyVueIcon',
+      '@opentiny/vue-icon-multicolor': 'TinyVueIconMulticolor',
+      'echarts': 'Echarts'
     }
   }
 
-  async function batchBuild({ vueVersion, tasks, message, emptyOutDir, npmScope, min }) {
+  async function batchBuild({ vueVersion, tasks, message, emptyOutDir, npmScope, min, isVisualizer }) {
     if (tasks.length === 0) return
     logGreen(`====== 开始构建 ${message} ======`)
+
+    const { mode, libPath } = tasks[0]
+
+    const modeList = ['pc', 'mobile-first']
 
     const entry = toEntry(tasks)
     const baseConfig = getBaseConfig({
@@ -50,7 +57,8 @@ async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope
       dtsInclude: [] as string[],
       dts: false,
       npmScope,
-      isRuntime: true
+      isRuntime: true,
+      design: libPath === 'tiny-vue-saas-common' ? 'saas' : null
     } as BaseConfig) as UserConfig
 
     baseConfig.define = Object.assign(baseConfig.define || {}, {
@@ -72,7 +80,32 @@ async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope
         babel({
           extensions: ['.js', '.jsx', '.mjs', '.ts', '.tsx'],
           presets: ['@babel/preset-env']
-        })
+        }),
+        isVisualizer
+          ? visualizer({
+              filename: `${tasks[0].libPath}.html`,
+              open: true
+            })
+          : null,
+        {
+          name: 'vite-plugin-transfer-mode',
+          enforce: 'pre',
+          transform(code, id) {
+            if (mode && id.includes('src/index.ts') && code.includes(`${mode}.vue`)) {
+              let newCode = code
+              modeList
+                .filter((value) => value !== mode)
+                .forEach((item) => {
+                  newCode = newCode.replace(`./${item}.vue`, `./${mode}.vue`)
+                })
+
+              return {
+                code: newCode,
+                map: null
+              }
+            }
+          }
+        }
       ] as any[])
     )
 
@@ -81,12 +114,15 @@ async function batchBuildAll({ vueVersion, tasks, message, emptyOutDir, npmScope
       ...baseConfig,
       build: {
         emptyOutDir,
-        minify: min,
+        minify: true,
         sourcemap: min,
         rollupOptions: {
           external: (source, importer, isResolved) => {
             if (isResolved || !importer) return false
 
+            if (libPath === 'tiny-vue-saas-common') {
+              return ['@vue/composition-api', 'vue'].includes(source)
+            }
             return Object.keys(getExternal()).includes(source)
           },
           output: {
@@ -130,8 +166,27 @@ function getEntryTasks() {
       libPath: 'tiny-vue-common'
     },
     {
-      path: 'vue/app.ts',
-      libPath: 'tiny-vue'
+      path: 'vue-saas-common/src/index.ts',
+      libPath: 'tiny-vue-saas-common'
+    },
+    {
+      path: 'vue-runtime/all.ts',
+      libPath: 'tiny-vue-all'
+    },
+    {
+      path: 'vue-runtime/simple.ts',
+      libPath: 'tiny-vue-simple',
+      mode: 'pc'
+    },
+    {
+      path: 'vue-runtime/pc.ts',
+      libPath: 'tiny-vue-pc',
+      mode: 'pc'
+    },
+    {
+      path: 'vue-runtime/mobile-first.ts',
+      libPath: 'tiny-vue-mobile-first',
+      mode: 'mobile-first'
     },
     {
       path: 'vue-icon-saas/index.ts',
@@ -140,6 +195,14 @@ function getEntryTasks() {
     {
       path: 'vue-icon/index.ts',
       libPath: 'tiny-vue-icon'
+    },
+    {
+      path: 'vue-icon-multicolor/index.ts',
+      libPath: 'tiny-vue-icon-multicolor'
+    },
+    {
+      path: 'vue-directive/index.ts',
+      libPath: 'tiny-vue-directive'
     }
   ]
   return entry
@@ -149,7 +212,8 @@ export async function buildRuntime({
   vueVersions = ['2', '3'],
   clean = false,
   scope = 'opentiny',
-  min = false
+  min = false,
+  isVisualizer = false
 }: BuildUiOption) {
   // 是否清空构建目录
   let emptyOutDir = clean
@@ -163,15 +227,15 @@ export async function buildRuntime({
 
     // 这里注意不能使用多入口打包，rollup多入口打包会抽取公共依赖（再由inlineChunksPlugin插件处理），导致组件库运行时加载失败
     for (let i = 0; i < tasks.length; i++) {
-      await batchBuildAll({ vueVersion, tasks: [tasks[i]], message, emptyOutDir, npmScope: scope, min })
+      await batchBuildAll({ vueVersion, tasks: [tasks[i]], message, emptyOutDir, npmScope: scope, min, isVisualizer })
     }
     const rootDir = pathFromPackages('')
-    const runtimeDir = `dist${vueVersion}/@opentiny/vue/runtime`
+    const runtimeDir = `vue-runtime/dist${vueVersion}`
     const outDir = path.resolve(rootDir, runtimeDir)
     const processor = await createProcessor(
       {
         '--output': path.join(outDir, 'tailwind.css'),
-        '--content': path.join(outDir, 'tiny-vue.mjs')
+        '--content': path.join(outDir, 'tiny-vue-all.mjs')
       },
       path.resolve(rootDir, 'theme-saas/tailwind.config.js')
     )

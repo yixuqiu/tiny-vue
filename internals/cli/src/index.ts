@@ -3,10 +3,24 @@ import { Command, Option } from 'commander'
 import { createIconSaas } from './commands/create/index.js'
 import { buildUi, buildEntry, buildRuntime, buildReact, buildEntryReact, chartTheme } from './commands/build'
 import { releaseAurora } from './commands/release/releaseAurora'
+import { releaseAlpha } from './commands/release/releaseAlpha'
+import { releaseE2EConfig } from './commands/release/releaseE2EConfig'
 
 const program = new Command()
 
 program.command('release:aurora').description('转换为aurora的包').action(releaseAurora)
+
+program
+  .command('release:alpha')
+  .description('转换为组织名为@opentinyvue的包')
+  .option('-u, --updateVersion', '是否自动升级patch版本号', false)
+  .action(releaseAlpha)
+
+program
+  .command('release:e2eConfig')
+  .description('定制E2E测试配置的origin源')
+  .addOption(new Option('-o --origin <origin>', 'origin源地址'))
+  .action(releaseE2EConfig)
 
 program.command('create:icon-saas').description('同步生成 icon-saas').action(createIconSaas)
 
@@ -34,6 +48,7 @@ program
   .description('打包组件 runtime 包')
   .addOption(new Option('-v --vue-versions <vueVersions...>', '目标框架，默认所有').choices(['2', '2.7', '3']))
   .option('-m, --min', '是否压缩输出文件', false)
+  .option('-vi, --isVisualizer', '是否分析打包产物', false)
   .option('--tiny_mode', '输出的模板类型', 'pc')
   .action(buildRuntime)
 

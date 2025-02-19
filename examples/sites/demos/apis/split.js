@@ -14,7 +14,7 @@ export default {
             'en-US': 'Easy Mode Enables Left/Top Expand Collapse Button'
           },
           mode: ['pc'],
-          pcDemo: 'split-threshold'
+          pcDemo: 'horizontal-collapse'
         },
         {
           name: 'collapse-right-bottom',
@@ -25,7 +25,7 @@ export default {
             'en-US': 'Easy Mode Enables Right/Down Expand Collapse Button'
           },
           mode: ['pc'],
-          pcDemo: 'split-threshold'
+          pcDemo: 'horizontal-collapse'
         },
         {
           mode: []
@@ -84,27 +84,48 @@ export default {
             'en-US': 'Three blocks are configured.'
           },
           mode: ['pc'],
-          pcDemo: 'split-threshold'
+          pcDemo: 'three-areas'
         },
         {
-          mode: []
+          name: 'border',
+          type: 'boolean',
+          defaultValue: 'true',
+          desc: {
+            'zh-CN': '是否显示边框',
+            'en-US': 'Indicates whether to display the border.'
+          },
+          mode: ['pc'],
+          pcDemo: ''
+        },
+        {
+          name: 'right-bottom-value',
+          type: 'boolean',
+          defaultValue: 'false',
+          desc: {
+            'zh-CN':
+              '默认情况下，v-model的值为左/上面板的位置。 当设置right-bottom-value 为true时，指明 v-model的值为 右/下面板的位置。 ',
+            'en-US':
+              'By default, the value of v-model is the position of the left/top panel. When right-bottom-value is set to true, the value of v-model is the position of the right/lower panel.'
+          },
+          mode: ['pc'],
+          pcDemo: ''
         }
       ],
       events: [
         {
           name: 'left-top-click',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '左箭头收起时触发',
             'en-US': 'Triggered when the left arrow is folded'
           },
           mode: ['pc'],
-          pcDemo: 'moving-event'
+          pcDemo: 'event-click'
         },
         {
           name: 'moveend',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '拖拽结束的事件',
@@ -115,7 +136,7 @@ export default {
         },
         {
           name: 'movestart',
-          type: '()=> void',
+          type: '() => void',
           defaultValue: '',
           desc: {
             'zh-CN': '拖拽开始的事件',
@@ -144,7 +165,7 @@ export default {
             'en-US': 'Triggered when the right arrow is folded'
           },
           mode: ['pc'],
-          pcDemo: 'moving-event'
+          pcDemo: 'event-click'
         }
       ],
       methods: [],

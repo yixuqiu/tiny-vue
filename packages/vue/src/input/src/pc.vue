@@ -11,6 +11,7 @@
  -->
 <template>
   <div
+    v-bind="a($attrs, ['class'])"
     :class="[
       $attrs.class,
       type === 'textarea' ? 'tiny-textarea' : 'tiny-input',
@@ -24,10 +25,10 @@
         'tiny-input-prefix': slots.prefix || prefixIcon,
         'tiny-input-suffix': slots.suffix || suffixIcon || clearable || showPassword || (mask && state.inputDisabled),
         'tiny-input-word-limit': state.isWordLimitVisible,
-        'is-display-only': state.isDisplayOnly
+        'is-display-only': state.isDisplayOnly,
+        'tiny-input-underline': inputBoxType === 'underline'
       }
     ]"
-    :style="$attrs.style"
     @mouseenter="
       ($event) => {
         state.hovering = true
@@ -50,10 +51,11 @@
       <span class="tiny-input-display-only">
         <tiny-tooltip
           v-if="state.isDisplayOnly"
+          :disabled="!showTooltip"
           effect="light"
           :content="state.displayOnlyTooltip"
-          :display="type === 'password'"
           placement="top"
+          :popper-class="state.tooltipConfig.popperClass || ''"
           @mouseenter.native="handleEnterDisplayOnlyContent"
         >
           <span class="tiny-input-display-only__content" v-if="type === 'password'">{{ state.hiddenPassword }}</span>
@@ -71,7 +73,7 @@
           ref="input"
           :name="name"
           data-tag="tiny-input-inner"
-          v-bind="a($attrs, ['type', 'class', 'style', '^on\w+', 'id'])"
+          v-bind="a($attrs, ['type', 'class', 'style', '^on[A-Z]', 'id'])"
           :class="['tiny-input__inner', mask && state.inputDisabled && !state.maskValueVisible && 'tiny-input__mask']"
           :tabindex="tabindex"
           :type="showPassword ? (state.passwordVisible ? 'text' : 'password') : type"
@@ -164,22 +166,38 @@
         <slot name="panel"></slot>
       </div>
     </template>
-    <span
-      :class="[
-        autosize ? 'tiny-textarea-autosize-display-only' : 'tiny-textarea-display-only',
-        hoverExpand && 'tiny-textarea__inner-con'
-      ]"
-      v-else
-    >
+    <span v-else :class="['tiny-textarea-display-only', hoverExpand && 'tiny-textarea__inner-con']">
       <tiny-tooltip
         v-if="state.isDisplayOnly"
+        :disabled="!showTooltip"
+        pre
         effect="light"
         :content="state.displayOnlyTooltip"
         placement="top"
+        :popper-class="state.tooltipConfig.popperClass || ''"
         @mouseenter.native="handleEnterDisplayOnlyContent($event, 'textarea')"
       >
-        <span class="tiny-textarea-display-only__content">{{ state.displayOnlyText }}</span>
+        <div class="tiny-textarea-display-only__wrap">
+          <span ref="textBox" class="tiny-textarea-display-only__content text-box">
+            <span v-if="state.showMoreBtn" @click="state.showDisplayOnlyBox = true" class="more-btn"
+              >{{ t('ui.input.more') }}></span
+            >
+            <span>{{ state.displayOnlyText }}</span>
+          </span>
+        </div>
       </tiny-tooltip>
+      <tiny-dialog-box
+        :title="t('ui.input.detail')"
+        v-if="state.isDisplayOnly && popupMore"
+        :visible="state.showDisplayOnlyBox"
+        :append-to-body="true"
+        @update:visible="state.showDisplayOnlyBox = $event"
+      >
+        <pre>{{ state.displayOnlyText }}</pre>
+        <template #footer>
+          <tiny-button @click="state.showDisplayOnlyBox = false">{{ t('ui.input.close') }}</tiny-button>
+        </template>
+      </tiny-dialog-box>
       <textarea
         ref="textarea"
         v-bind="a($attrs, ['type', 'class', 'style', 'id'])"
@@ -200,6 +218,9 @@
         @change="handleChange"
         @mouseenter="handleEnterTextarea($event)"
         @mouseleave="handleLeaveTextarea($event)"
+        @mousedown="handleTextareaMouseDown()"
+        @mouseup="handleTextareaMouseUp()"
+        v-clickoutside.mouseup="() => handleTextareaMouseUp(true)"
         :aria-label="label"
         @keyup="$emit('keyup', $event)"
         @keydown="$emit('keydown', $event)"
@@ -223,14 +244,18 @@
 
 <script>
 import { renderless, api } from '@opentiny/vue-renderless/input/vue'
-import { props, setup, defineComponent } from '@opentiny/vue-common'
+import { props, setup, defineComponent, directive } from '@opentiny/vue-common'
+import { Clickoutside } from '@opentiny/vue-directive'
 import TinyTallStorage from './tall-storage.vue'
 import { IconClose, IconEyeopen, IconEyeclose } from '@opentiny/vue-icon'
 import Tooltip from '@opentiny/vue-tooltip'
+import TinyButton from '@opentiny/vue-button'
+import TinyDialogBox from '@opentiny/vue-dialog-box'
 import '@opentiny/vue-theme/input/index.less'
 import '@opentiny/vue-theme/textarea/index.less'
 
 export default defineComponent({
+  inheritAttrs: false, // 勿删，兼容灵雀特殊场景,MR#1861
   emits: [
     'update:modelValue',
     'change',
@@ -245,12 +270,15 @@ export default defineComponent({
     'click',
     'input'
   ],
+  directives: directive({ Clickoutside }),
   components: {
     IconClose: IconClose(),
     IconEyeopen: IconEyeopen(),
     IconEyeclose: IconEyeclose(),
     TinyTallStorage,
-    TinyTooltip: Tooltip
+    TinyTooltip: Tooltip,
+    TinyButton,
+    TinyDialogBox
   },
 
   props: [
@@ -281,7 +309,10 @@ export default defineComponent({
     'displayOnlyContent',
     'frontClearIcon',
     'showEmptyValue',
-    'hoverExpand'
+    'hoverExpand',
+    'popupMore',
+    'showTooltip',
+    'inputBoxType'
   ],
   setup(props, context) {
     return setup({ props, context, renderless, api })

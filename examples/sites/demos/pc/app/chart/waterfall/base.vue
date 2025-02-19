@@ -1,27 +1,42 @@
 <template>
   <div>
-    <tiny-waterfall :data="chartData" :settings="chartSettings"></tiny-waterfall>
+    <tiny-waterfall :options="options"></tiny-waterfall>
   </div>
 </template>
 
 <script lang="jsx">
-import { ChartWaterfall } from '@opentiny/vue'
+import { TinyHuichartsWaterfall } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyWaterfall: ChartWaterfall
+    TinyWaterfall: TinyHuichartsWaterfall
   },
   data() {
     return {
-      chartData: {
-        columns: ['活动', '时间'],
-        rows: [
-          { 活动: '吃饭', 时间: 4 },
-          { 活动: '睡觉', 时间: 10 },
-          { 活动: '打豆豆', 时间: 5 }
-        ]
-      },
-      chartSettings: {}
+      options: {
+        padding: [50, 30, 20, 20],
+        legend: {
+          show: false
+        },
+
+        // water-fall 表示为瀑布形态，此时图中会自动添加一个 Total(总和) 数据
+        type: 'water-fall',
+        data: [
+          { Name: 'NLE', User: 10 },
+          { Name: 'HIN', User: 20 },
+          { Name: 'FBP', User: 9 },
+          { Name: 'VEDIO', User: 35 },
+          { Name: 'SASS', User: 20 },
+          { Name: 'RDS', User: 35 },
+          { Name: 'E-SYS', User: 9 }
+        ],
+        xAxis: {
+          data: 'Name'
+        },
+        yAxis: {
+          name: 'Number'
+        }
+      }
     }
   }
 }

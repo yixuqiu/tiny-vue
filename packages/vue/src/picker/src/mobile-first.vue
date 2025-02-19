@@ -2,7 +2,7 @@
   <div ref="reference" data-tag="tiny-date-container" :class="state.isDisplayOnly ? 'inline' : ''">
     <tiny-filter-box
       v-if="shape === 'filter'"
-      v-clickoutside="handleClose"
+      v-clickoutside.mousedown="handleClose"
       @click="handleFocus"
       :show-close="clearable"
       :placeholder="placeholder"
@@ -22,7 +22,7 @@
       :size="state.pickerSize"
       :name="name"
       v-bind="state.firstInputId"
-      v-clickoutside="handleClose"
+      v-clickoutside.mousedown="handleClose"
       :placeholder="placeholder"
       @focus="handleFocus"
       @keydown="handleKeydown"
@@ -65,7 +65,7 @@
             custom-class="h-5 w-5 sm:h-4 sm:w-4"
             :class="
               !state.isDisplayOnly && state.pickerDisabled
-                ? 'fill-color-icon-placeholder sm:fill-color-icon-secondary'
+                ? 'fill-color-icon-placeholder sm:fill-color-icon-disabled'
                 : 'fill-color-icon-secondary sm:fill-color-text-placeholder'
             "
           />
@@ -87,7 +87,7 @@
       @mouseenter="handleMouseEnter"
       @mouseleave="state.showClose = false"
       @keydown="handleKeydown"
-      v-clickoutside="handleClose"
+      v-clickoutside.mousedown="handleClose"
       v-else
     >
       <tiny-tooltip
@@ -188,13 +188,15 @@
       :step="step"
       :show-week-number="showWeekNumber"
       :format-weeks="formatWeeks"
+      :now-click="nowClick"
       ref="picker"
       :visible="state.pickerVisible"
-      class="tiny-tw"
       @pick="handlePick"
       @select-range="handleSelectRange"
       @select-change="handleSelectChange"
-    ></component>
+    >
+      <slot name="now"></slot>
+    </component>
     <!-- 小屏 - 日期面板 -->
     <tiny-date-picker-mobile
       v-if="state.isMobileScreen && state.isDateMobileComponent"
@@ -220,6 +222,7 @@
       v-if="state.isMobileScreen && state.isTimeMobileComponent"
       ref="datePickerMobile"
       v-model="state.timeMobileOption.value"
+      :default-value="state.timeMobileOption.defaultValue"
       :title="title"
       :clearable="clearable"
       :step="step"
@@ -238,7 +241,7 @@
 import { renderless, api } from '@opentiny/vue-renderless/picker/vue'
 import { setup, directive, defineComponent } from '@opentiny/vue-common'
 import Input from '@opentiny/vue-input'
-import Clickoutside from '@opentiny/vue-renderless/common/deps/clickoutside'
+import { Clickoutside } from '@opentiny/vue-directive'
 import DatePanel from '@opentiny/vue-date-panel'
 import DateRangePanel from '@opentiny/vue-date-range'
 import MonthRangePanel from '@opentiny/vue-month-range'

@@ -133,8 +133,14 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>可通过 `resize` 属性设置文本域的缩放。可选值：`none / both / horizontal / vertical`。注意：只在 `type="textarea"` 时有效。<p>',
-        'en-US': '<p>bbutton click</p>'
+          '<p>可通过 <code>resize</code> 属性设置文本域的缩放。可选值：<code>none / both / horizontal / vertical</code>。注意：只在 <code>type="textarea"</code> 时有效。</p>\n ' +
+          '<p>可通过 <code>autosize</code> 属性设置文本域自适应内容高度。可传入对象，如<code>{ minRows: 2, maxRows: 6 }</code>。</p> \n<p></p>' +
+          '<p>可通过 <code>hover-expand</code> 属性设置文本域鼠标悬浮展开/收起，只对 <code>type=textarea</code> 有效，最好搭配 <code>autosize</code> 一起使用<p>',
+
+        'en-US':
+          '<p>You can use the <code>resize</code> property to set the scaling of the text field. The value can be <code>none / both / horizontal / vertical</code>. Note: This parameter is valid only when <code>type="textarea"</code>.</p>' +
+          '<p>The <code>autosize</code> property allows you to set the text field to adapt to the content height. You can transfer an object, for example, <code>{minRows: 2, maxRows: 6}</code>.</p>' +
+          '<p>You can use the <code>hover-expand</code> attribute to set the text field to be expanded or collapsed by hovering the mouse. This parameter is valid only for <code>type=textarea</code>. It is recommended that you use it together with <code>autosize</code></p>'
       },
       codeFiles: ['resize.vue']
     },
@@ -502,6 +508,20 @@ export default {
         'en-US': '<p>bbutton click</p>'
       },
       codeFiles: ['display-only-content.vue']
+    },
+    {
+      demoId: 'display-only-popup-more',
+      name: {
+        'zh-CN': '文本域只读超出显示更多按钮',
+        'en-US': 'Text field read-only beyond Show more button'
+      },
+      desc: {
+        'zh-CN':
+          '在只读的基础上增加<code>popup-more</code>属性，可使文本域超出显示更多按钮，点击更多按钮可以查看详细信息。',
+        'en-US':
+          'The <code>popup-more</code> attribute is added to enable the text field to exceed the display of more buttons. You can click more buttons to view details.'
+      },
+      codeFiles: ['display-only-popup-more.vue']
     }
   ]
 }

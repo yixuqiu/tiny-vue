@@ -3,11 +3,11 @@
 </template>
 
 <script lang="jsx">
-import { Grid } from '@opentiny/vue'
+import { TinyGrid } from '@opentiny/vue'
 
 export default {
   components: {
-    TinyGrid: Grid
+    TinyGrid
   },
   data() {
     return {
@@ -24,8 +24,8 @@ export default {
           field: 'employees',
           title: '员工数',
           slots: {
-            default: ({ row }, h) => <span style="color: #5e7ce0;cursor: pointer;">{row.employees}</span>,
-            header: ({ column }, h) => <span style="color: #5e7ce0;cursor: pointer;">{column.title + 2}</span>
+            default: ({ row }, h) => <span style="color: #1476FF;cursor: pointer;">{row.employees}</span>,
+            header: ({ column }, h) => <span style="color: #1476FF;cursor: pointer;">{column.title + 2}</span>
           }
         },
         {
@@ -47,7 +47,7 @@ export default {
       tableData: [
         {
           id: '1',
-          name: 'GFD科技YX公司',
+          name: 'GFD 科技 YX 公司',
           city: '福州',
           employees: 800,
           createdDate: '2014-04-30 00:56:00',
@@ -55,7 +55,7 @@ export default {
         },
         {
           id: '2',
-          name: 'WWW科技YX公司',
+          name: 'WWW 科技 YX 公司',
           city: '深圳',
           employees: 300,
           createdDate: '2016-07-08 12:36:22',

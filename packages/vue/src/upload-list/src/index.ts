@@ -89,7 +89,8 @@ export const uploadListProps = {
   compact: {
     type: Boolean,
     default: false
-  }
+  },
+  imageBgColor: String
 }
 
 export default defineComponent({

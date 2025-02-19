@@ -23,10 +23,10 @@
  *
  */
 import { get, isFunction } from '@opentiny/vue-renderless/grid/static/'
-import { random } from '@opentiny/vue-renderless/common/string'
+import { random } from '@opentiny/utils'
 import { getColumnConfig, getFuncText, formatText } from '@opentiny/vue-renderless/grid/utils'
 import { Renderer } from '../../adapter'
-import { getCellLabel } from '../../tools'
+import { getCellLabel, warn } from '../../tools'
 import GLOBAL_CONFIG from '../../config'
 import { hooks, isVnode } from '@opentiny/vue-common'
 import {
@@ -36,11 +36,14 @@ import {
   iconEllipsis,
   iconArrowBottom,
   iconRadio,
-  iconRadioselected
+  iconRadioselected,
+  iconExpand,
+  iconPutAway
 } from '@opentiny/vue-icon'
 import Dropdown from '@opentiny/vue-dropdown'
 import DropdownMenu from '@opentiny/vue-dropdown-menu'
 import DropdownItem from '@opentiny/vue-dropdown-item'
+import { handleActivedCanActive } from '../../edit/src/utils/handleActived'
 
 const insertedField = GLOBAL_CONFIG.constant.insertedField
 
@@ -222,7 +225,7 @@ export const Cell = {
       renderHeader: this.renderHeader,
       renderCell: getCellRender(isTreeNode, 'renderTreeCell', 'renderCell', this)
     }
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+
     let _vm = this
     let ruleChains = [
       getColumnRuleTypeIndex({ _vm, isTreeNode, renMaps, type }),
@@ -264,7 +267,12 @@ export const Cell = {
     let { slots, own, title } = column
 
     if (slots && slots.header) {
-      return [h('div', { class: 'tiny-grid-cell-text' }, [slots.header(params, h)])]
+      // Tiny新增，修复多端表格表头插槽显示异常问题
+      if (type === 'card') {
+        return [slots.header(params, h)]
+      } else {
+        return [h('div', { class: 'tiny-grid-cell-text' }, [slots.header(params, h)])]
+      }
     }
 
     if (typeof title === 'function') {
@@ -325,6 +333,12 @@ export const Cell = {
       }
     }
     let icon = GLOBAL_CONFIG.icon
+    const defaultIcon = (h, { active }) => {
+      const IconExpand = iconExpand()
+      const IconPutAway = iconPutAway()
+      return active ? h(IconExpand) : h(IconPutAway)
+    }
+    const customExpandIcon = (renderIcon || $table.$grid?.designConfig?.treeConfig?.renderIcon) ?? defaultIcon
 
     if (trigger && trigger !== 'default') {
       listeners = {}
@@ -334,8 +348,8 @@ export const Cell = {
 
     if (rowChildren && rowChildren.length) {
       iconVNode = [
-        renderIcon
-          ? renderIcon(h, { active: isActive, ...params })
+        customExpandIcon
+          ? customExpandIcon(h, { active: isActive, ...params })
           : h(iconArrowBottom(), {
               class: ['tiny-grid-tree__node-btn', icon.tree, { 'is__active': isActive }]
             })
@@ -379,12 +393,17 @@ export const Cell = {
     return Cell.renderTreeIcon(h, params).concat(Cell.renderIndexCell(h, params))
   },
   renderIndexCell(h, params) {
-    const { $seq, level, seq } = params
+    const { $table, column, row, seq, $seq, level } = params
     // startIndex：序号列的起始值
-    const { startIndex, treeConfig = {} } = params.$table
-    const { indexMethod, slots } = params.column
-    const isOrdered = !!treeConfig.ordered
-    const indexValue = level && !isOrdered ? `${$seq}.${seq}` : startIndex + seq
+    const { startIndex, treeConfig, scrollYLoad, treeOrdered } = $table
+    const { indexMethod, slots } = column
+    const { temporaryIndex = '_$index_' } = treeConfig || {}
+    const isTreeOrderedFalse = treeConfig && !treeOrdered
+    let indexValue = startIndex + seq
+    // tree-config为false的情况下，序号为1.1这种形式
+    if (isTreeOrderedFalse && level) {
+      indexValue = scrollYLoad ? row[temporaryIndex] : `${$seq}.${seq}`
+    }
 
     if (slots && slots.default) {
       return slots.default(params, h)
@@ -517,12 +536,6 @@ export const Cell = {
     checkMethod && (options.attrs.disabled = isDisabled = !checkMethod(params))
     treeConfig && (indeterminate = ~treeIndeterminates.indexOf(row))
     options.domProps = { checked: ~$table.selection.indexOf(row) }
-    options.on = {
-      change(event) {
-        $table.triggerCheckRowEvent(event, params, event.target.checked)
-        $table.showSelectToolbar()
-      }
-    }
 
     let { twcls } = params
     let labelCls = [
@@ -546,7 +559,31 @@ export const Cell = {
       options.class = inputCls
     }
 
-    let vnode = h('label', { class: labelCls, key: random() }, [
+    /** 之前版本通过监听input的change事件切换选中状态，
+     * 当同时配置了单选和多选时，且单选的trigger为row时：
+     * 点击后由于先触发了单元格点击事件，切换了行单元状态，导致行重渲染，input的change事件无法触发，导致多选无法选中问题
+     * 3.19.0将选切换提前至点击事件，从而支持单选和多选同时配置。
+     */
+    const checkboxEvent = {
+      click(event) {
+        // 忽略label特性触发的input点击冒泡
+        if (event?.target?.tagName.toLowerCase() === 'input') {
+          return
+        }
+        const isChecked = $table.selection.includes(row)
+        /** triggerCheckRowEvent会修改dom，导致事件冒泡处理时，依靠dom的逻辑判断有误。
+         * 例如：onClickSelectColumn方法中，会使用event.target向上查找父元素判断是否点击复现框，从而避免重复处理选中逻辑。
+         * 修改dom后，原本复选框已被移出document，因此需要使用setTimeout宏任务来将修改dom的操作延迟到所有事件冒泡处理完毕。
+         */
+        setTimeout(() => {
+          $table.triggerCheckRowEvent(event, params, !isChecked)
+          // TODO: 多选工具栏，貌似没什么用，待梳理后去除。
+          $table.showSelectToolbar()
+        }, 0)
+      }
+    }
+
+    let vnode = h('label', { class: labelCls, key: random(), on: checkboxEvent }, [
       h('input', options),
       h('span', { class: spanCls }, [
         h(iconCheck(), { class: ['tiny-svg-size', 'icon-check'] }),
@@ -561,6 +598,7 @@ export const Cell = {
   renderTreeSelectionCell(h, params) {
     return Cell.renderTreeIcon(h, params).concat(Cell.renderSelectionCell(h, params))
   },
+  // TODO: 与renderSelectionCell代码方法高度相似，待提取公共逻辑。
   renderSelectionCellByProp(h, params) {
     let { $table, column, row } = params
     let { slots } = column
@@ -818,7 +856,9 @@ export const Cell = {
   renderRowEdit(h, params) {
     let { actived } = params.$table.editStore
 
-    return Cell.runRenderer(h, params, this, actived && actived.row === params.row)
+    const { editConfig } = params.$table
+    const isActiveCell = () => (editConfig?.activeStrictly ? handleActivedCanActive({ editConfig, params }) : true)
+    return Cell.runRenderer(h, params, this, actived?.row === params.row && isActiveCell())
   },
   renderTreeCellEdit(h, params) {
     return Cell.renderTreeIcon(h, params).concat(Cell.renderCellEdit(h, params))
@@ -834,7 +874,8 @@ export const Cell = {
     let { formatText, own, slots } = column
     let editor = own.editor
     let compConf = Renderer.get(editor.component)
-    let showEdit = editor.type === 'visible' || isEdit
+    // 表格没有配置editConfig时，type === 'visible'不展示编辑态
+    let showEdit = ($table.editConfig && editor.type === 'visible') || isEdit
 
     if (showEdit && slots && slots.edit) {
       return slots.edit(params, h)
@@ -945,11 +986,13 @@ export const Cell = {
 
     if (visibleButtons.length > max) {
       const end = max - 1
+      const dropdownProps = { trigger: 'hover', showIcon: false }
 
       groupBig = visibleButtons.slice(0, end).map((buttonConfig) => renderBig(buttonConfig, viewClass))
-      groupBig.push(
-        h(Dropdown, { on: { 'item-click': handleItemClick }, props: { trigger: 'hover', showIcon: false } }, [
-          h(iconEllipsis(), { class: 'tiny-grid__oper-col-elps' }),
+
+      const scopedSlots = {
+        default: () => h(iconEllipsis(), { class: 'tiny-grid__oper-col-elps' }),
+        dropdown: () =>
           h(
             DropdownMenu,
             { slot: 'dropdown' },
@@ -964,13 +1007,16 @@ export const Cell = {
               )
             )
           )
-        ])
-      )
+      }
+
+      groupBig.push(h(Dropdown, { on: { 'item-click': handleItemClick }, props: dropdownProps, scopedSlots }))
     } else {
       groupBig = visibleButtons.map((buttonConfig) => renderBig(buttonConfig, viewClass))
     }
 
-    return [h('span', { class: 'inline-flex' }, groupBig)]
+    return [
+      h('span', { class: 'tiny-grid__oper-col-wrapper', attrs: { 'data-tag': 'operation-cell-buttons' } }, groupBig)
+    ]
   }
 }
 

@@ -10,10 +10,10 @@
  *
  */
 import type { ITabNavRenderlessParams } from '@/types'
-import { KEY_CODE, POSITION } from '../common'
-import { capitalize } from '../common/string'
-import { addResizeListener, removeResizeListener } from '../common/deps/resize-event'
-import { on, off } from '../common/deps/dom'
+import { KEY_CODE, POSITION } from '@opentiny/utils'
+import { capitalize } from '@opentiny/utils'
+import { addResizeListener, removeResizeListener } from '@opentiny/utils'
+import { on, off } from '@opentiny/utils'
 
 export const computedNavStyle = (state: ITabNavRenderlessParams['state']): { transform: string; width?: string } => {
   const dir = ~[POSITION.Top, POSITION.Bottom].indexOf(state.rootTabs.position) ? 'X' : 'Y'
@@ -427,11 +427,18 @@ export const watchCurrentName =
   }
 
 export const handleTitleMouseenter =
-  ({ state, vm }) =>
+  ({ state, vm, props }) =>
   (e, title) => {
     const dom = e.target
+    // 以下逻辑与aui不同，tiny不能通过dom宽度判断是否超出隐藏
+    const el = title?.el
 
-    if (dom && dom.scrollWidth > dom.offsetWidth) {
+    // 如果用户配置了tooltipConfig属性，优先级最高
+    if (props.tooltipConfig) {
+      return
+    }
+
+    if (dom && el && el.scrollWidth > el.offsetWidth) {
       const tooltip = vm.$refs.tooltip
       tooltip.state.referenceElm = dom
       tooltip.state.popperElm && (tooltip.state.popperElm.style.display = 'none')
@@ -448,7 +455,4 @@ export const handleTitleMouseleave =
   ({ state }) =>
   () => {
     state.tooltipVisible = false
-    setTimeout(() => {
-      state.tooltipContent = ''
-    }, 20)
   }

@@ -14,7 +14,7 @@ const moduleMap = require(pathFromWorkspaceRoot('packages/modules.json'))
 type mode = 'pc' | 'mobile' | 'mobile-first'
 
 // 需要在入口文件中排除的组件，比如：富文本
-export const excludeComponents = ['RichText']
+export const excludeComponents = ['RichText', 'RichTextEditor', 'TimeLineNew']
 
 export interface Module {
   /** 源码路径，如 vue/src/button/index.ts */
@@ -51,7 +51,10 @@ export interface Module {
  * @returns 模块对象
  */
 const getAllModules = (isSort: boolean) => {
-  return getSortModules({ filterIntercept: () => true, isSort })
+  const callback = (item) => {
+    return !item.path.split('/').includes('huicharts')
+  }
+  return getSortModules({ filterIntercept: callback, isSort })
 }
 
 /**
@@ -147,6 +150,7 @@ const getSortModules = ({ filterIntercept, isSort = true }: { filterIntercept: F
         .replace('vue-common/src/', 'packages/common/')
         .replace('vue-locale/src/', 'packages/locale/')
         .replace('vue-icon/src/', 'packages/icon/')
+        .replace('vue-icon-multicolor/src/', 'packages/icon-multicolor/')
         .replace('/index.ts', '/src/index.js')
         .replace('/src/', '/dist/lib/')
         .replace('.vue', '.js')

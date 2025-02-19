@@ -14,15 +14,6 @@ export default {
       'codeFiles': ['header/hide-grid-header.vue']
     },
     {
-      'demoId': 'header-custom-grid-header',
-      'name': { 'zh-CN': '自定义表头', 'en-US': 'User-defined table header' },
-      'desc': {
-        'zh-CN': '<p>通过列 <code>slot</code> 插槽自定义表头。</p>\n',
-        'en-US': '<p>Customize the table header by column <code>slot</code> slot</p>\n'
-      },
-      'codeFiles': ['header/custom-grid-header.vue']
-    },
-    {
       'demoId': 'header-config-grid-header',
       'name': { 'zh-CN': '配置式多级表头', 'en-US': 'Configure the template for customizing table header content' },
       'desc': {
@@ -33,6 +24,15 @@ export default {
       'codeFiles': ['header/config-grid-header.vue']
     },
     {
+      'demoId': 'header-custom-grid-header',
+      'name': { 'zh-CN': '自定义表头', 'en-US': 'User-defined table header' },
+      'desc': {
+        'zh-CN': '<p>列 <code>title</code> 可以传入函数用于返回自定义表头。</p>\n',
+        'en-US': '<p>Customize the table header by column <code>slot</code> slot</p>\n'
+      },
+      'codeFiles': ['header/custom-grid-header.vue']
+    },
+    {
       'demoId': 'header-slot-header',
       'name': { 'zh-CN': '自定义表头内容模板', 'en-US': 'Basic Description' },
       'desc': {
@@ -41,6 +41,15 @@ export default {
           '<p>Add the class name to the cell of the table header through the column attribute <code>header-class-name</code>, or the function Function({$rowIndex, column, columnIndex, $columnIndex}) . \n</p>\n'
       },
       'codeFiles': ['header/slot-header.vue']
+    },
+    {
+      'demoId': 'many-header-switching',
+      'name': { 'zh-CN': '多级表头列动态切换', 'en-US': '' },
+      'desc': {
+        'zh-CN': '<p>动态的切换多级表头中子表头的显示与隐藏。</p>\n',
+        'en-US': '<p></p>\n'
+      },
+      'codeFiles': ['header/many-header-switching.vue']
     }
   ],
   apis: [{ 'name': 'grid-header', 'type': 'component', 'props': [], 'events': [], 'slots': [] }]

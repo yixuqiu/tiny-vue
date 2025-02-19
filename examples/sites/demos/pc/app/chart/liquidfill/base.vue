@@ -1,28 +1,52 @@
 <template>
   <div>
-    <tiny-liquidfill :data="chartData" :settings="chartSettings"></tiny-liquidfill>
+    <tiny-liquidfill :options="options"></tiny-liquidfill>
   </div>
 </template>
 
 <script lang="jsx">
-import { ChartLiquidfill } from '@opentiny/vue'
+import { TinyHuichartsLiquidfill } from '@opentiny/vue-huicharts'
 
 export default {
   components: {
-    TinyLiquidfill: ChartLiquidfill
+    TinyLiquidfill: TinyHuichartsLiquidfill
   },
   data() {
     return {
-      chartData: {
-        columns: ['city', 'percent'],
-        rows: [
+      options: {
+        label: {
+          formatter: '{a}\n\n购房比：{c}',
+          fontSize: 40
+        },
+        legend: {
+          show: false
+        },
+        series: [
           {
-            city: '上海',
-            percent: 0.6
+            name: '广东深圳',
+            data: [
+              0.6,
+              {
+                value: 0.5,
+                itemStyle: {
+                  color: 'red'
+                }
+              },
+              0.4
+            ],
+            center: ['25%', '50%'],
+            shape: 'circle',
+            waveAnimation: false
+          },
+          {
+            name: '江苏南京',
+            data: [0.7, 0.5, 0.4, 0.3],
+            color: ['#BD72f0', '#6D8FF0', '#6D8FF0'],
+            center: ['75%', '50%'],
+            shape: 'rect'
           }
         ]
-      },
-      chartSettings: {}
+      }
     }
   }
 }

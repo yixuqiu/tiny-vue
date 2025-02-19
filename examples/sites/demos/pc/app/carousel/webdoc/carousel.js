@@ -52,9 +52,9 @@ export default {
       },
       desc: {
         'zh-CN':
-          '<p>通过配置 <code>loop</code> 属性为<code>false</code>后，若走马灯幻灯片已切换到最后一项，则将不能再从第一项开始循环切换。即切换到最后一项时，右侧切换箭头不再显示，切换到第一项时，左侧切换箭头不再显示。</p>\n',
+          '<p>通过配置 <code>loop</code> 属性为<code>true</code>，<code>disabled</code> 属性为<code>true</code>后，若走马灯幻灯片已切换到最后一项，则将不能再从第一项开始循环切换。即切换到最后一项时，右侧切换箭头不再显示，切换到第一项时，左侧切换箭头不再显示。</p>\n',
         'en-US':
-          '<p>After the <code>loop</code> attribute is set to <code>false</code>, if the slide is switched to the last item, the slide cannot be switched cyclically from the first item. That is, when switching to the last item, the right toggle arrow is no longer displayed, and when switching to the first item, the left toggle arrow is no longer displayed. </p>\n'
+          '<p>After the <code>loop</code> attribute is set to <code>true</code> and the <code>disabled</code> attribute is set to <code>true</code> if the slide is switched to the last item, the slide cannot be switched cyclically from the first item. That is, when switching to the last item, the right toggle arrow is no longer displayed, and when switching to the first item, the left toggle arrow is no longer displayed. </p>\n'
       },
       codeFiles: ['close-loop.vue']
     },
@@ -155,7 +155,7 @@ export default {
       desc: {
         'zh-CN': '<p>通过配置 <code>type</code> 属性为<code>card</code>后，走马灯将以卡片形式进行展示。</p>\n',
         'en-US':
-          '<p>After the <code>type</code> attribute is set to <code>card</code>, the lantern is displayed as a card. </p>\n'
+          '<p>After the <code>type</code> attribute is set to <code>card</code>, the carousel is displayed as a card. </p>\n'
       },
       codeFiles: ['card-mode.vue']
     },
@@ -163,7 +163,7 @@ export default {
       demoId: 'carousel-events',
       name: {
         'zh-CN': '走马灯事件',
-        'en-US': 'The Ma Deng incident'
+        'en-US': 'Carousel Events'
       },
       desc: {
         'zh-CN':
@@ -171,6 +171,48 @@ export default {
         'en-US': ''
       },
       codeFiles: ['carousel-events.vue']
+    },
+    {
+      demoId: 'swipeable',
+      name: {
+        'zh-CN': '触屏轮播',
+        'en-US': 'Touchscreen Carousel'
+      },
+      desc: {
+        'zh-CN': ` 
+          通过<code>swipeable</code> 属性，让多端模板支持触屏轮播。<br>
+          通过 <code>lite</code> 属性打开精简模式，不显示切换按钮和指示器。
+        `,
+        'en-US': `
+          The <code>swipeable</code> attribute is used to support touchscreen carousel.<br>
+          Enable the compact mode with the <code>lite</code> attribute. The toggle button and indicator are not displayed.
+        `
+      },
+      codeFiles: ['swipeable.vue']
+    },
+    {
+      demoId: 'card-show',
+      name: {
+        'zh-CN': '轮播卡片',
+        'en-US': 'Carousel Card'
+      },
+      desc: {
+        'zh-CN': '<p>通过设置 <code>default</code> 插槽，自定义卡片轮播场景。</p>',
+        'en-US': '<p>Customize the card carousel scene by setting <code>default</code> slots.</p>'
+      },
+      codeFiles: ['card-show.vue']
+    },
+    {
+      demoId: 'dialog-show',
+      name: {
+        'zh-CN': '弹窗展示',
+        'en-US': 'Dialog Show'
+      },
+      desc: {
+        'zh-CN': '<p>在弹窗中嵌入轮播场景。</p>',
+        'en-US': '<p>Embed a carousel scene in the pop-up window.</p>'
+      },
+      codeFiles: ['dialog-show.vue']
     }
   ]
 }

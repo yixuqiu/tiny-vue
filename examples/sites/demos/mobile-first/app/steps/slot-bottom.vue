@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import { Steps, Modal } from '@opentiny/vue'
+import { TinySteps, TinyModal } from '@opentiny/vue'
 
 export default {
   components: {
-    TinySteps: Steps
+    TinySteps
   },
   data() {
     return {
@@ -53,13 +53,13 @@ export default {
     advancedClick(index, node) {
       this.advancedActive = index
 
-      Modal.message(`节点index: ${index}; 节点信息: ${JSON.stringify(node)}.`)
+      TinyModal.message(`节点index: ${index}; 节点信息: ${JSON.stringify(node)}.`)
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 /* 文本超出两行显示...，IE下不支持 */
 .multi-line {
   display: -webkit-box;

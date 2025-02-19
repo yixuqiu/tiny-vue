@@ -13,10 +13,25 @@
 <template>
   <table class="tiny-year-table" @mousemove="handleMouseMove" @click="handleYearTableClick">
     <tbody>
-      <tr v-for="(row, key) in state.rows" :key="key">
-        <td v-for="(cell, key) in row" class="available" :class="getCellStyle(cell)" :key="key">
+      <tr v-for="(row, trKey) in state.rows" :key="trKey">
+        <td
+          v-for="(cell, tdKey) in row"
+          class="available"
+          :key="tdKey"
+          :class="[
+            {
+              'disabled': getIsDisabled(cell.text),
+              'current': getIsCurrent(cell.text),
+              'default': getIsDefault(cell.text),
+              'today': state.currentYear === cell.text,
+              'in-range': cell.inRange,
+              'start-date': cell.start,
+              'end-date': cell.end
+            }
+          ]"
+        >
           <div>
-            <a class="cell">{{ cell.text }}</a>
+            <a class="cell" :aria-disabled="getIsDisabled(cell.text) ? true : undefined">{{ cell.text }}</a>
           </div>
         </td>
       </tr>
@@ -26,32 +41,26 @@
 
 <script lang="ts">
 import { renderless, api } from '@opentiny/vue-renderless/year-table/vue'
-import { isDate } from '@opentiny/vue-renderless/common/deps/date-util'
-import { $prefix, setup, defineComponent } from '@opentiny/vue-common'
+import { setup, props, defineComponent } from '@opentiny/vue-common'
+import '@opentiny/vue-theme/year-table/index.less'
 
 export default defineComponent({
-  name: $prefix + 'YearTable',
-  emits: ['pick'],
-  props: {
-    disabledDate: {},
-    value: {},
-    defaultValue: {
-      validator(val) {
-        // null or valid Date Object
-        return val === null || (val instanceof Date && isDate(val))
-      }
-    },
-    date: [Date, Array],
-    selectionMode: String,
-    startYear: Number,
-    maxDate: {},
-    minDate: {},
-    rangeState: {
-      default: () => ({ endDate: null, selecting: false })
-    }
-  },
+  emits: ['pick', 'changerange'],
+  props: [
+    ...props,
+    'disabledDate',
+    'value',
+    'defaultValue',
+    'date',
+    'selectionMode',
+    'startYear',
+    'maxDate',
+    'minDate',
+    'rangeState',
+    'readonly'
+  ],
   setup(props, context): any {
-    return setup({ props, context, renderless, api, mono: true })
+    return setup({ props, context, renderless, api })
   }
 })
 </script>

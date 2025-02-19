@@ -10,7 +10,7 @@ import { getAlias, pathFromWorkspaceRoot } from '../../config/vite'
 import { external } from '../../shared/config'
 import type { Module } from '../../shared/module-utils'
 import { getAllIcons, getAllModules, getByName } from '../../shared/module-utils'
-import { logGreen, kebabCase, capitalizeKebabCase, getPatchVersion, isValidVersion } from '../../shared/utils'
+import { capitalizeKebabCase, getPatchVersion, isValidVersion, kebabCase, logGreen } from '../../shared/utils'
 import generatePackageJsonPlugin from './rollup/generate-package-json'
 import inlineChunksPlugin from './rollup/inline-chunks'
 import replaceModuleNamePlugin from './rollup/replace-module-name'
@@ -200,7 +200,16 @@ export const getBaseConfig = ({ vueVersion, dtsInclude, dts, buildTarget, isRunt
               dependencies['@vue/composition-api'] = '1.7.2'
             }
 
-            const matchList = ['vue-icon', 'vue-icon-saas', 'vue', 'design/smb', 'design/aurora', 'design/saas']
+            const matchList = [
+              'vue-icon',
+              'vue-icon-saas',
+              'vue-icon-multicolor',
+              'vue',
+              'design/aurora',
+              'design/saas',
+              'design/smb',
+              'vue-directive'
+            ]
 
             // 如果是主入口、svg图标或者主题规范包则直接指向相同路径
             if (matchList.includes(filePath)) {
@@ -248,11 +257,7 @@ export const getBaseConfig = ({ vueVersion, dtsInclude, dts, buildTarget, isRunt
       extensions: ['.js', '.ts', '.tsx', '.vue'],
       alias: {
         ...getAlias(vueVersion, '', design),
-        '@tiptap/vue': `${
-          vueVersion === '2'
-            ? path.resolve(pathFromPackages(''), 'vue/src/rich-text-editor/node_modules/@tiptap/vue-2')
-            : path.resolve(pathFromPackages(''), 'vue/src/rich-text-editor/node_modules/@tiptap/vue-3')
-        }`,
+        '@tiptap/vue': `${vueVersion === '2' ? '@tiptap/vue-2' : '@tiptap/vue-3'}`,
         '@vue/babel-helper-vue-jsx-merge-props': 'node_modules/@vue/babel-helper-vue-jsx-merge-props/dist/helper.js'
       }
     },
@@ -320,18 +325,18 @@ async function batchBuildAll({ vueVersion, tasks, formats, message, emptyOutDir,
               if (source.includes('vue-design-') || source.includes('vue-icon') || source.includes('vue-common')) {
                 return false
               }
-            } else if (/vue-icon(-saas)?\/index/.test(importer)) {
+            } else if (/vue-icon(-saas|-multicolor)?\/index/.test(importer)) {
               // 图标入口排除子图标
               return /^\.\//.test(source)
             }
 
             // design包不排除png文件
-            if (/design\/(saas|aurora|smb|)/.test(importer) && /\.png/.test(source)) {
+            if (/design\/(saas|aurora|)/.test(importer) && /\.png/.test(source)) {
               return false
             }
 
             // 子图标排除周边引用, 这里注意不要排除svg图标
-            if (/vue-icon(-saas)?\/.+\/index/.test(importer)) {
+            if (/vue-icon(-saas|-multicolor)?\/.+\/index/.test(importer)) {
               return !/\.svg/.test(source)
             }
 
@@ -373,11 +378,12 @@ export interface BuildUiOption {
   scope?: string // npm的组织名称
   min?: boolean // 是否压缩产物
   design?: string // 构建目标的设计规范
+  isVisualizer?: boolean // 是否开启打包产物分析
 }
 
 function getEntryTasks(): Module[] {
   // 读取TinyVue组件库入口文件
-  return ['index', 'pc', 'mobile'].map((mode) => ({
+  return ['index', 'pc', 'mobile-first'].map((mode) => ({
     path: `vue/${mode}.ts`,
     dtsRoot: true,
     libPath: `vue/${mode}`,
@@ -431,6 +437,7 @@ export async function buildUi(
   // 如果指定了打包icon或者没有传入任何组件
   if (names.some((name) => name.includes('icon')) || !names.length) {
     tasks.push(...getByName({ name: kebabCase({ str: 'icon-saas' }), isSort: false }))
+    tasks.push(...getByName({ name: kebabCase({ str: 'icon-multicolor' }), isSort: false }))
     tasks.push(...getAllIcons())
   }
 

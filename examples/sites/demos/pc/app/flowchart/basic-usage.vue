@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { Modal, Popover } from '@opentiny/vue'
+import { TinyModal, TinyPopover } from '@opentiny/vue'
 import Flowchart from '@opentiny/vue-flowchart'
 import { hooks } from '@opentiny/vue-common'
 import { iconYes, iconPanelMini, iconChevronDown, iconChevronUp } from '@opentiny/vue-icon'
@@ -117,7 +117,7 @@ const HandlerList = {
     IconDown: iconChevronDown(),
     IconUp: iconChevronUp(),
     HandlerDropdown,
-    TinyPopover: Popover
+    TinyPopover
   },
   props: {
     params: Object
@@ -137,7 +137,7 @@ const HandlerList = {
       const imgStyle = `width:${headSize}px;height:${headSize}px`
       const res = []
 
-      items.map(({ key }, i) => {
+      items.forEach(({ key }, i) => {
         let left
 
         if (items.length > 1) {
@@ -183,7 +183,7 @@ const chartData = {
     createNode('11', 2, '审批', '2018.08.02', [], 4, 3),
     createNode('12', 3, '运算调职兑现率', '', [], 4, 4),
     createNode('13', 1, '复核', '2018.08.02', [], 6, 2),
-    createNode('14', 4, '审批审批审批审批审批0123456789asdfghjkl', '2018.08.02', [], 6, 3)
+    createNode('14', 4, '审批审批审批审批审批 0123456789asdfghjkl', '2018.08.02', [], 6, 3)
   ],
   links: [
     createLink('1', '2', '0 r0.5 t1 c r1.5', 1),
@@ -236,20 +236,20 @@ export default {
       // 2.刷新流程图
       this.$refs.chart.refresh()
     },
-    onClickNode(afterNode, e) {
-      Modal.message('click-node')
+    onClickNode(_afterNode, _e) {
+      TinyModal.message('click-node')
     },
-    onClickLink(afterLink, e) {
-      Modal.message('click-link')
+    onClickLink(_afterLink, _e) {
+      TinyModal.message('click-link')
     },
-    onClickBlank(param, e) {
-      Modal.message('click-blank')
+    onClickBlank(_param, _e) {
+      TinyModal.message('click-blank')
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 /* HandlerList */
 .tiny-handler-list {
   width: calc(100% - 2px);

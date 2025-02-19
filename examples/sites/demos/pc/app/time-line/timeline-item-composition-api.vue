@@ -1,12 +1,13 @@
 <template>
   <tiny-time-line :active="active" space="200px">
-    <tiny-timeline-item v-for="(item, i) in data" :node="item" @click="onItemClick"> </tiny-timeline-item>
+    <tiny-timeline-item v-for="(item, i) in data" :key="i" :node="item" :nodeIndex="i" @click="onItemClick">
+    </tiny-timeline-item>
   </tiny-time-line>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { TimeLine as TinyTimeLine, TimelineItem as TinyTimelineItem, Modal } from '@opentiny/vue'
+import { TinyTimeLine, TinyTimelineItem, TinyModal } from '@opentiny/vue'
 
 const active = ref(1)
 const data = ref([
@@ -17,7 +18,7 @@ const data = ref([
 
 const onItemClick = (index, node) => {
   active.value = index
-  Modal.message({
+  TinyModal.message({
     message: 'click 事件，当前 index：' + index + ' 节点信息：' + node.name + ',' + node.time,
     status: 'info'
   })

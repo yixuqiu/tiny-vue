@@ -10,13 +10,15 @@
  *
  */
 
-import { getNodeKey as innerGetNodekey } from '../common/deps/tree-model/util'
-import { KEY_CODE } from '../common'
-import TreeStore from '../common/deps/tree-model/tree-store'
-import { addClass, removeClass } from '../common/deps/dom'
-import { on, off } from '../common/deps/dom'
-import { getDataset } from '../common/dataset'
-import { copyArray } from '../common/object'
+import { getNodeKey as innerGetNodekey } from '@opentiny/utils'
+import { KEY_CODE } from '@opentiny/utils'
+import { TreeStore } from '@opentiny/utils'
+import { addClass, removeClass } from '@opentiny/utils'
+import { on, off } from '@opentiny/utils'
+import { getDataset } from '@opentiny/utils'
+import { copyArray } from '@opentiny/utils'
+
+import { logger } from '@opentiny/utils'
 
 export const setChildren = (props) => (data) => (props.data = data)
 
@@ -140,7 +142,7 @@ const setDropIndicatorTop = (dropNode, parent, dropType) => {
   dropType === 'inner' ? addClass(dropNode.$el, 'is-drop-inner') : removeClass(dropNode.$el, 'is-drop-inner')
 }
 
-const getDragDir = ({ draggingNode, dropNode, allowDrop, emit, dragState }) => {
+const getDragDir = ({ draggingNode, dropNode, allowDrop, emit, dragState, event }) => {
   let dropPrev = true
   let dropInner = true
   let dropNext = true
@@ -152,7 +154,6 @@ const getDragDir = ({ draggingNode, dropNode, allowDrop, emit, dragState }) => {
     userAllowDropInner = dropInner = allowDrop(draggingNode.node, dropNode.node, 'inner')
     dropNext = allowDrop(draggingNode.node, dropNode.node, 'next')
   }
-  // 这里访问window.event
   event.dataTransfer.dropEffect = dropInner ? 'copy' : 'none'
 
   if ((dropPrev || dropInner || dropNext) && oldDropNode !== dropNode) {
@@ -207,7 +208,8 @@ export const dragOver =
       dropNode,
       allowDrop: props.allowDrop,
       emit,
-      dragState
+      dragState,
+      event
     })
 
     const dropType = getDropType(dropPrev, dropInner, dropNext, dropNode)
@@ -433,13 +435,19 @@ export const updated =
   }
 
 export const filter =
-  ({ props, state }) =>
+  ({ props, state, api }) =>
   (value) => {
     if (!props.filterNodeMethod) {
       throw new Error('[Tree] filterNodeMethod is required when filter')
     }
 
     state.store.filter(value)
+    // tiny 新增： 记录一下过滤的值
+    state.filterText = value
+    // tiny 新增： 移除了watch,所以要手动调用一下该方法
+    if (props.willChangeView) {
+      api.initPlainNodeStore()
+    }
   }
 
 export const getNodeKey = (props) => (node) => innerGetNodekey(props.nodekey, node.data)
@@ -592,7 +600,7 @@ export const initTabIndex =
   }
 
 export const handleKeydown =
-  ({ vm, state }) =>
+  ({ vm, state, TreeAdapter }) =>
   (event) => {
     const currentItem = event.target
 
@@ -616,7 +624,19 @@ export const handleKeydown =
         nextIndex = currentIndex < state.treeItemArray.length - 1 ? currentIndex + 1 : 0
       }
 
-      state.treeItemArray[nextIndex].focus()
+      const treeNode = state.treeItemArray[nextIndex]
+
+      if (TreeAdapter) {
+        const nodeContent = treeNode.querySelector('div.tiny-tree-node__content')
+
+        treeNode.focus({ preventScroll: true })
+
+        if (nodeContent && nodeContent.scrollIntoView) {
+          nodeContent.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'nearest' })
+        }
+      } else {
+        treeNode.focus()
+      }
     } else if ([KEY_CODE.ArrowLeft, KEY_CODE.ArrowRight].includes(keyCode)) {
       event.preventDefault()
       currentItem.click()
@@ -790,9 +810,25 @@ export const saveNode =
   }
 
 export const addNode =
-  ({ api }) =>
+  ({ api, props, state }) =>
   (node) => {
-    const newNode = { label: '' }
+    let nodeId = 0
+
+    if (typeof props.editConfig.initNodeIdMethod === 'function') {
+      nodeId = props.editConfig.initNodeIdMethod(node)
+    } else {
+      nodeId = state.newNodeId
+
+      state.newNodeId++
+    }
+
+    if (state.allNodeKeys.includes(nodeId) && !props.editConfig.noWarning) {
+      logger.warn(`the ${props.nodeKey || 'id'} ${nodeId} is already exists. Please check.`)
+    }
+
+    state.allNodeKeys.push(nodeId)
+
+    const newNode = { label: '', [props.nodeKey || 'id']: nodeId }
     const isLeafField = node.store && node.store.props.isLeaf
 
     if (isLeafField) {
@@ -886,9 +922,26 @@ export const openEdit =
     state.action.show = true
     state.action.data = copyArray(props.data)
 
+    if (!state.allNodeKeys.length) {
+      getAllNodeKeys(state.action.data, state.allNodeKeys, props.nodeKey || 'id', props.props.children || 'children')
+    }
+
     api.watchData(state.action.data)
     emit('open-edit')
   }
+
+const getAllNodeKeys = (node, nodeKeys, nodeKey, children) => {
+  if (Array.isArray(node)) {
+    node.forEach((item) => {
+      if (item[nodeKey] || item[nodeKey] !== 0) {
+        nodeKeys.push(item[nodeKey])
+      }
+      if (item[children]) {
+        getAllNodeKeys(item[children], nodeKeys, nodeKey, children)
+      }
+    })
+  }
+}
 
 export const closeEdit =
   ({ props, state, api, emit }) =>
